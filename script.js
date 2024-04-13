@@ -52,6 +52,7 @@ function addCategoryItem() {
     container.appendChild(newItem);
     togglePopupNewCategory();
     clearInputValues('.input-new-category');
+    validateInput('addCategoryButton', document.getElementById('categoryInput'));
 }
 
 function openNewCategory(item, category) {
@@ -125,8 +126,12 @@ function addNewItem() {
     let productAmount = document.getElementById('productAmount').value;
     let productValue = document.getElementById('productValue').value;
     let productInfo = document.getElementById('productInfo').value;
+
 }      
 
 function validateInput(buttonId, inputElement) {
-    document.getElementById(buttonId).disabled = !(inputElement.value.trim() !== '');
+    console.log(inputElement.value.length);
+    console.log(document.getElementById(buttonId).disabled)
+    document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
 }
+

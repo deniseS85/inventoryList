@@ -9,6 +9,7 @@
 body {
     background-color: rgb(5,43,56);
     box-sizing: border-box;
+    user-select: none;
 }
 
 header {
