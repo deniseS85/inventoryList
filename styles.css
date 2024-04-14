@@ -232,7 +232,17 @@ footer {
     height: 220px;
 }
 
-form {
+#addCategoryForm {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+    height: 63%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#addProductForm {
     width: 90%;
     margin: 20px 0;
 }
@@ -253,6 +263,7 @@ label {
 
 .input-new-category {
     width: 90%;
+    margin: 0 auto;
 }
 
 .btn-container {

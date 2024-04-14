@@ -8,7 +8,7 @@
     <script language="javascript" type="text/javascript" src="script.js"></script>
 </head>
 <body>
-
+    <?php include 'db_connection.php'; ?>
     <header>
         <img class="logo-icon" src="./assets/img/inventar.png">
         <div class="title">Inventar</div>
@@ -39,18 +39,20 @@
     <div id="newCategoryPopup" class="new-category-popup-bg" onclick="togglePopupNewCategory()">
         <div class="new-category-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neue Kategorie</h4>
-            <input id="categoryInput" class="input-new-category" type="text" name="category-name" placeholder="Kategoriename" required oninput="validateInput('addCategoryButton', this)">
-            <div class="btn-container">
-                <button onclick="togglePopupNewCategory()">Abbrechen</button>
-                <button id="addCategoryButton" onclick="addCategoryItem()" disabled>Hinzufügen</button>
-            </div>
+            <form id="addCategoryForm" action="addCategory.php" method="post">
+                <input id="categoryInput" class="input-new-category" type="text" name="category-name" placeholder="Kategoriename" required oninput="validateInput('addCategoryButton', this)">
+                <div class="btn-container">
+                    <button type="reset" onclick="togglePopupNewCategory()">Abbrechen</button>
+                    <button type="submit" id="addCategoryButton" disabled>Hinzufügen</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem()">
         <div class="new-item-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neues Produkt</h4>
-            <form>
+            <form id="addProductForm">
                 <div class="form-group">
                     <label for="productName">Produktname:</label>
                     <input id="productName" class="input-new-item" type="text" name="product-name" required oninput="validateInput('addItemButton', this)">
@@ -74,7 +76,6 @@
             </div>
         </div>
     </div>
-
     
 </body>
 

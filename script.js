@@ -39,30 +39,35 @@ function filterCategories() {
     });
 }
 
-function addCategoryItem() {
-    let categoryName = document.querySelector('.input-new-category').value;
-    let newItem = document.createElement('div');
-    let container = document.querySelector('.category-item-container');
 
-    newItem.classList.add('category-item');
-    newItem.innerHTML = categoryName;
+function fetchCategories() {
+    fetch('getCategories.php')
+        .then(response => response.json())
+        .then(categories => {
+            const container = document.querySelector('.category-item-container');
+            categories.forEach(categoryName => {
+                const categoryElement = document.createElement('div');
+                categoryElement.classList.add('category-item');
+                categoryElement.textContent = categoryName;
+                openNewCategory(categoryElement, categoryName);
+                container.appendChild(categoryElement);
 
-    openNewCategory(newItem, categoryName);
-    
-    container.appendChild(newItem);
-    togglePopupNewCategory();
-    clearInputValues('.input-new-category');
-    validateInput('addCategoryButton', document.getElementById('categoryInput'));
+            });
+        })
+        .catch(error => console.error('Error fetching categories:', error));
 }
 
-function openNewCategory(item, category) {
+document.addEventListener('DOMContentLoaded', fetchCategories);
+
+
+function openNewCategory(item, categoryName) {
     let itemContainer = document.getElementById('itemContainer');
 
     item.onclick = function() {
         if (item.classList.contains('active')) {
-            removeItem(item, itemContainer, category);
+            removeItem(item, itemContainer, categoryName);
         } else {
-            showItem(item, itemContainer, category); 
+            showItem(item, itemContainer, categoryName); 
         }
     };
 }
@@ -79,17 +84,17 @@ function removeItem(item, itemContainer, category) {
     });
 }
 
-function showItem(item, itemContainer, category) {
+function showItem(item, itemContainer, categoryName) {
     item.classList.add('active');
-    itemContainer.innerHTML += generateItemHTML(category);
+    itemContainer.innerHTML += generateItemHTML(categoryName);
 }
 
-function generateItemHTML(category) {
+function generateItemHTML(categoryName) {
     return /*html*/`
         <div class="item-info">
             <div class="item-header">
                 <div class="item-title">
-                    <h4>${category}</h4>
+                    <h4>${categoryName}</h4>
                     <h6>Artikelmenge</h6>
                 </div>
                 <img onclick="togglePopupNewItem()" class="add-icon" src="./assets/img/add.png">
@@ -130,8 +135,6 @@ function addNewItem() {
 }      
 
 function validateInput(buttonId, inputElement) {
-    console.log(inputElement.value.length);
-    console.log(document.getElementById(buttonId).disabled)
     document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
 }
 
