@@ -1,9 +1,21 @@
 let itemAdded = false;
+let currentCategoryID;
+
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
     focusInput('categoryInput');
     clearInputValues('.input-new-category');
+}
+
+function togglePopupDeleteCategory() {
+    togglePopup('deleteCategoryConfirmation');
+}
+
+function togglePopupEditCategory(categoryName, categoryID) {
+    document.getElementById('categoryCurrentInput').value = categoryName;
+    document.getElementById('categoryIdInput').value = categoryID;
+    togglePopup('editCategoryPopup')
 }
 
 function togglePopupNewItem() {
@@ -98,10 +110,14 @@ function showItem(item, itemContainer, categoryName, categoryID) {
 }
 
 function generateItemHTML(categoryName, categoryID) {
+    currentCategoryID = categoryID;
     return /*html*/`
         <div class="item-info" data-category-id="${categoryID}">
             <div class="item-header">
-                <img onclick="deleteCategoryItem(${categoryID})" class="delete-icon" src="./assets/img/delete.png">
+                <div>
+                    <img onclick="togglePopupDeleteCategory()" class="delete-icon" src="./assets/img/delete.png">
+                    <img onclick="togglePopupEditCategory('${categoryName}', ${categoryID})" class="edit-icon" src="./assets/img/edit.png">
+                </div>
                 <div class="item-title">
                     <h4>${categoryName}</h4>
                     <h6>Artikelmenge</h6>
@@ -112,20 +128,21 @@ function generateItemHTML(categoryName, categoryID) {
         </div>`;
 }
 
-async function deleteCategoryItem(categoryID) {
+async function deleteCategoryItem() {
     try {
         const response = await fetch('deleteCategory.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ ID: categoryID })
+            body: JSON.stringify({ ID: currentCategoryID })
         });
         
         if (!response.ok) {
             throw new Error('Fehler beim Löschen der Kategorie');
         }
-        removeCategoryFromHTML(categoryID);
+        removeCategoryFromHTML(currentCategoryID);
+        togglePopupDeleteCategory();
     } catch (error) {
         console.error('Fehler beim Löschen der Kategorie:', error.message);
     }

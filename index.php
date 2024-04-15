@@ -49,7 +49,34 @@
             </form>
         </div>
     </div>
-    <!-- ################ -->
+
+    <!-- Change Category Name -->
+    <div id="editCategoryPopup" class="new-category-popup-bg" onclick="togglePopupEditCategory(null)">
+        <div class="new-category-container" onclick="doNotClose(event)">
+            <h4 class="popup-title">Kategorie ändern</h4>
+            <form id="updateCategoryForm" action="updateCategory.php" method="post">
+                <input id="categoryCurrentInput" class="input-new-category" type="text" name="newCategoryName" placeholder="Kategoriename">
+                <input type="hidden" id="categoryIdInput" name="categoryId" value="">
+                <div class="btn-container">
+                    <button type="reset" onclick="togglePopupEditCategory(null)">Abbrechen</button>
+                    <button type="submit">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Category -->
+    <div id="deleteCategoryConfirmation" class="new-category-popup-bg" onclick="togglePopupDeleteCategory()">
+        <div class="delete-category-container" onclick="doNotClose(event)">
+            <h4 class="popup-title">Kategorie löschen</h4>
+            <p class="confirmation-message">Bist du sicher, dass du diese Kategorie löschen möchtest?</p>
+            <div class="btn-container">
+                <button onclick="togglePopupDeleteCategory()">Abbrechen</button>
+                <button onclick="deleteCategoryItem()">Löschen</button>
+            </div>
+        </div>
+    </div>
+
     <!-- New Product Form -->
     <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem()">
         <div class="new-item-container" onclick="doNotClose(event)">
