@@ -52,6 +52,19 @@ header {
     transform: scale(1.2);
 }
 
+.delete-icon {
+    filter: brightness(130%);
+    width: clamp(1.5625rem, 1.4286rem + 0.6696vw, 2.5rem);
+    height: clamp(1.25rem, 1.1161rem + 0.6696vw, 2.1875rem);
+    cursor: pointer;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.delete-icon:hover {
+    filter: brightness(180%);
+    transform: scale(1.2);
+}
+
 main {
     margin-top: 100px; 
     margin-bottom: 100px;

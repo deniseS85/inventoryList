@@ -36,6 +36,7 @@
 
     </footer>
 
+    <!-- New Category Form -->
     <div id="newCategoryPopup" class="new-category-popup-bg" onclick="togglePopupNewCategory()">
         <div class="new-category-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neue Kategorie</h4>
@@ -48,7 +49,8 @@
             </form>
         </div>
     </div>
-
+    <!-- ################ -->
+    <!-- New Product Form -->
     <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem()">
         <div class="new-item-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neues Produkt</h4>
