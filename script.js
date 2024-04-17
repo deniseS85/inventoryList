@@ -19,7 +19,8 @@ function togglePopupEditCategory(categoryName, categoryID) {
     togglePopup('editCategoryPopup');
 }
 
-function togglePopupNewItem() {
+function togglePopupNewItem(categoryID) {
+    document.getElementById('categoryId').value = categoryID;
     togglePopup('newItemPopup');
     focusInput('productName');
     clearInputValues('.input-new-item');
@@ -124,7 +125,7 @@ function generateItemHTML(categoryName, categoryID) {
                     <h4>${categoryName}</h4>
                     <h6>Artikelmenge</h6>
                 </div>
-                <img onclick="togglePopupNewItem()" class="add-icon" src="./assets/img/add.png">
+                <img onclick="togglePopupNewItem(${categoryID})" class="add-icon" src="./assets/img/add.png">
             </div>
 
         </div>`;

@@ -79,7 +79,7 @@
     </div>
 
     <!-- New Product Form -->
-    <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem()">
+    <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem(null)">
         <div class="new-item-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neues Produkt</h4>
             <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off">
@@ -99,8 +99,9 @@
                     <label for="productInfo">Produktinformationen:</label>
                     <input id="productInfo" class="input-new-item" type="text" name="product-info">
                 </div>
+                <input type="hidden" id="categoryId" name="category-id" value="">
                 <div class="btn-container">
-                    <button type="reset" onclick="togglePopupNewItem()">Abbrechen</button>
+                    <button type="reset" onclick="togglePopupNewItem(null)">Abbrechen</button>
                     <button type="submit" id="addItemButton" disabled>Hinzufügen</button>
                 </div>
             </form>
