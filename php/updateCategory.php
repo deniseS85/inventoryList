@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newCategoryName = $_POST['newCategoryName'];
     $categoryId = $_POST['categoryId'];
 
-    
     $sql = "UPDATE Categories SET category_name='$newCategoryName' WHERE ID=$categoryId";
 
     if (mysqli_query($conn, $sql)) {

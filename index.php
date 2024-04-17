@@ -8,7 +8,8 @@
     <script language="javascript" type="text/javascript" src="script.js"></script>
 </head>
 <body>
-    <?php include 'db_connection.php'; ?>
+    <?php include 'php/db_connection.php'; ?>
+    
     <header>
         <img class="logo-icon" src="./assets/img/inventar.png">
         <div class="title">Inventar</div>
@@ -40,7 +41,7 @@
     <div id="newCategoryPopup" class="new-category-popup-bg" onclick="togglePopupNewCategory()">
         <div class="new-category-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neue Kategorie</h4>
-            <form id="addCategoryForm" action="addCategory.php" method="post">
+            <form id="addCategoryForm" action="php/addCategory.php" method="post" autocomplete="off">
                 <input id="categoryInput" class="input-new-category" type="text" name="category-name" placeholder="Kategoriename" required oninput="validateInput('addCategoryButton', this)">
                 <div class="btn-container">
                     <button type="reset" onclick="togglePopupNewCategory()">Abbrechen</button>
@@ -54,7 +55,7 @@
     <div id="editCategoryPopup" class="new-category-popup-bg" onclick="togglePopupEditCategory(null)">
         <div class="new-category-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Kategorie ändern</h4>
-            <form id="updateCategoryForm" action="updateCategory.php" method="post">
+            <form id="updateCategoryForm" action="php/updateCategory.php" method="post" autocomplete="off">
                 <input id="categoryCurrentInput" class="input-new-category" type="text" name="newCategoryName" placeholder="Kategoriename">
                 <input type="hidden" id="categoryIdInput" name="categoryId" value="">
                 <div class="btn-container">
@@ -81,7 +82,7 @@
     <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem()">
         <div class="new-item-container" onclick="doNotClose(event)">
             <h4 class="popup-title">Neues Produkt</h4>
-            <form id="addProductForm">
+            <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off">
                 <div class="form-group">
                     <label for="productName">Produktname:</label>
                     <input id="productName" class="input-new-item" type="text" name="product-name" required oninput="validateInput('addItemButton', this)">
@@ -98,11 +99,12 @@
                     <label for="productInfo">Produktinformationen:</label>
                     <input id="productInfo" class="input-new-item" type="text" name="product-info">
                 </div>
+                <div class="btn-container">
+                    <button type="reset" onclick="togglePopupNewItem()">Abbrechen</button>
+                    <button type="submit" id="addItemButton" disabled>Hinzufügen</button>
+                </div>
             </form>
-            <div class="btn-container">
-                <button onclick="togglePopupNewItem()">Abbrechen</button>
-                <button id="addItemButton" onclick="addNewItem()" disabled>Hinzufügen</button>
-            </div>
+           
         </div>
     </div>
     

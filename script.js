@@ -6,6 +6,7 @@ function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
     focusInput('categoryInput');
     clearInputValues('.input-new-category');
+    validateInput('addCategoryButton', document.getElementById('categoryInput'));
 }
 
 function togglePopupDeleteCategory() {
@@ -15,13 +16,14 @@ function togglePopupDeleteCategory() {
 function togglePopupEditCategory(categoryName, categoryID) {
     document.getElementById('categoryCurrentInput').value = categoryName;
     document.getElementById('categoryIdInput').value = categoryID;
-    togglePopup('editCategoryPopup')
+    togglePopup('editCategoryPopup');
 }
 
 function togglePopupNewItem() {
     togglePopup('newItemPopup');
     focusInput('productName');
     clearInputValues('.input-new-item');
+    validateInput('addItemButton', document.getElementById('productName'));
 }
 
 function togglePopup(popupID) {
@@ -57,7 +59,7 @@ function validateInput(buttonId, inputElement) {
 
 async function getCategories() {
     try {
-        fetch('getCategories.php')
+        fetch('php/getCategories.php')
         .then(response => response.json())
         .then(categories => {
             categories.forEach(category => {
@@ -130,14 +132,14 @@ function generateItemHTML(categoryName, categoryID) {
 
 async function deleteCategoryItem() {
     try {
-        const response = await fetch('deleteCategory.php', {
+        const response = await fetch('php/deleteCategory.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ ID: currentCategoryID })
         });
-        
+
         if (!response.ok) {
             throw new Error('Fehler beim Löschen der Kategorie');
         }
@@ -159,7 +161,6 @@ function removeCategoryFromHTML(categoryID) {
         categoryViewElement.remove();
     }
 }
-
 
 
 function generateTableHTML(productName, productAmount, productValue, productInfo) {
@@ -185,13 +186,7 @@ function generateTableHTML(productName, productAmount, productValue, productInfo
         </table>`;
 }
 
-function addNewItem() {
-    let productName = document.getElementById('productName').value;
-    let productAmount = document.getElementById('productAmount').value;
-    let productValue = document.getElementById('productValue').value;
-    let productInfo = document.getElementById('productInfo').value;
-
-}      
+    
 
 document.addEventListener('DOMContentLoaded', getCategories);
 
