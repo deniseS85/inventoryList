@@ -1,6 +1,4 @@
-let itemAdded = false;
 let currentCategoryID;
-
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -60,13 +58,12 @@ function validateInput(buttonId, inputElement) {
 
 async function getCategories() {
     try {
-        fetch('php/getCategories.php')
+        await fetch('php/getCategories.php')
         .then(response => response.json())
         .then(categories => {
             categories.forEach(category => {
                 showCategoryItems(category);
             });
-            
         })
     } catch (error) {
         console.error('Error fetching categories:', error);
@@ -91,8 +88,22 @@ function openCategoryItem(item, categoryName, categoryID) {
             removeItem(item, itemContainer, categoryName);
         } else {
             showItem(item, itemContainer, categoryName, categoryID); 
+            getProductsByCategory(categoryID);
         }
     };
+}
+
+async function getProductsByCategory(categoryID) {
+    try {
+        const response = await fetch(`php/getProducts.php?category_id=${categoryID}`);
+        const products = await response.json();
+        
+        products.forEach(product => {
+            showProduct(product, categoryID);
+        });
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
 }
 
 function removeItem(item, itemContainer, category) {
@@ -127,7 +138,7 @@ function generateItemHTML(categoryName, categoryID) {
                 </div>
                 <img onclick="togglePopupNewItem(${categoryID})" class="add-icon" src="./assets/img/add.png">
             </div>
-
+            <div class="productContainer"></div>
         </div>`;
 }
 
@@ -164,7 +175,23 @@ function removeCategoryFromHTML(categoryID) {
 }
 
 
-function generateTableHTML(productName, productAmount, productValue, productInfo) {
+function showProduct(product, categoryID) {
+    let categoryContainer = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
+    
+    if (categoryContainer) {
+        let productContainer = categoryContainer.querySelector('.productContainer');
+        if (productContainer) { 
+            let productHTML = generateTableHTML(product);
+            productContainer.innerHTML += productHTML;
+        } else {
+            console.error('Product container not found.');
+        }
+    } else {
+        console.error('Category container not found for category ID:', categoryID);
+    }
+}
+
+function generateTableHTML(product) {
     return /*html*/`
         <div class="separator"></div>
         <table>
@@ -178,16 +205,17 @@ function generateTableHTML(productName, productAmount, productValue, productInfo
             </thead>
             <tbody>
                 <tr>
-                    <td>${productName}</td>
-                    <td>${productAmount}</td>
-                    <td>${productValue}</td>
-                    <td>${productInfo}</td>
+                    <td>${product.name}</td>
+                    <td>${product.amount}</td>
+                    <td>${product.price}</td>
+                    <td>${product.information}</td>
                 </tr>
             </tbody>
         </table>`;
 }
 
-    
 
-document.addEventListener('DOMContentLoaded', getCategories);
+document.addEventListener('DOMContentLoaded', () => {
+    getCategories();
+});
 
