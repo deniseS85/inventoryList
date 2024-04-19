@@ -208,16 +208,49 @@ input[type=text]:focus {
 
 .separator {
     border-top: 1px solid var(--turquoise);
-    margin: 10px 0;
+    margin: 10px 0 0 0;
 }
 
 table {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 20px;
+    width: 100%;
+    color: var(--font-color);
     background-color: var(--item-bg);
     border-radius: 10px;
+}
+
+
+th, td {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+td:first-child, th:first-child {
+    width: 40%;
+}
+
+td:nth-child(2), th:nth-child(2),
+td:nth-child(3), th:nth-child(3) {
+    width: 10%;
+    text-align: center;
+}
+
+td:nth-child(4), th:nth-child(4) {
+    width: 40%; 
+    text-align: left; 
+    padding-left: 5%;
+}
+
+tr {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+tr:hover {
+    background-color: var(--turquoise);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+thead tr:hover {
+    background-color: transparent;
 }
 
 footer {
