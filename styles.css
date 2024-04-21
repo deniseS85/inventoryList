@@ -245,6 +245,7 @@ td:nth-child(4), th:nth-child(4) {
 
 tr {
     transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
 }
 
 tr:hover {
@@ -270,6 +271,7 @@ tr:last-child:hover td:first-child {
 
 thead tr:hover {
     background-color: transparent;
+    cursor: default;
 }
 
 footer {

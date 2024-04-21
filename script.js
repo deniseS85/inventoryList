@@ -70,25 +70,31 @@ async function getCategories() {
     }
 }
 
-function showCategoryItems(category) {
+async function showCategoryItems(category) {
     let container = document.querySelector('.category-item-container');
     let categoryElement = document.createElement('div');
     categoryElement.classList.add('category-item');
     categoryElement.innerHTML = category.name;
     categoryElement.dataset.categoryId = category.id; 
-    openCategoryItem(categoryElement, category.name, category.id);
+
+    let products = await getProductsByCategory(category.id);
+    let productCount = products.length;
+    openCategoryItem(categoryElement, category.name, category.id, productCount);
     container.appendChild(categoryElement);
 }
 
-function openCategoryItem(item, categoryName, categoryID) {
+function openCategoryItem(item, categoryName, categoryID, productCount) {
     let itemContainer = document.getElementById('itemContainer');
 
-    item.onclick = function() {
+    item.onclick = async function() {
         if (item.classList.contains('active')) {
             removeItem(item, itemContainer, categoryName);
         } else {
-            showItem(item, itemContainer, categoryName, categoryID); 
-            getProductsByCategory(categoryID);
+            showItem(item, itemContainer, categoryName, categoryID, productCount); 
+            let products = await getProductsByCategory(categoryID);
+            products.forEach(product => {
+                showProduct(product, categoryID);
+            })
         }
     };
 }
@@ -105,12 +111,12 @@ function removeItem(item, itemContainer, category) {
     });
 }
 
-function showItem(item, itemContainer, categoryName, categoryID) {
+function showItem(item, itemContainer, categoryName, categoryID, productCount) {
     item.classList.add('active');
-    itemContainer.innerHTML += generateItemHTML(categoryName, categoryID);
+    itemContainer.innerHTML += generateItemHTML(categoryName, categoryID, productCount);
 }
 
-function generateItemHTML(categoryName, categoryID) {
+function generateItemHTML(categoryName, categoryID, productCount) {
     currentCategoryID = categoryID;
 
     return /*html*/`
@@ -122,7 +128,7 @@ function generateItemHTML(categoryName, categoryID) {
                 </div>
                 <div class="item-title">
                     <h4>${categoryName}</h4>
-                    <h6>Artikelmenge</h6>
+                    <h6>${productCount} Produkte</h6>
                 </div>
                 <img onclick="togglePopupNewItem(${categoryID})" class="add-icon" src="./assets/img/add.png">
             </div>
@@ -168,10 +174,8 @@ async function getProductsByCategory(categoryID) {
     try {
         const response = await fetch(`php/getProducts.php?category_id=${categoryID}`);
         const products = await response.json();
-
-        products.forEach(product => {
-            showProduct(product, categoryID);
-        });
+    
+        return products;
     } catch (error) {
         console.error('Error fetching products:', error);
     }
@@ -206,7 +210,7 @@ function generateTableHTML(product) {
                         <th>Produkt</th>
                         <th>Menge</th>
                         <th>Wert</th>
-                        <th>Produktinfo</th>
+                        <th>Beschreibung</th>
                     </tr>
                     <tr colspan="4" class="separator"></tr>
                 </thead>
