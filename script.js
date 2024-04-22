@@ -240,4 +240,27 @@ document.addEventListener('DOMContentLoaded', () => {
     getCategories();
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('addProductForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        let formData = new FormData(this);
+        let response = await fetch('php/addItem.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            let newProduct = await response.json();
+            showProduct(newProduct, newProduct.category_ID);
+            togglePopupNewItem(null);
+            let newItemElement = document.querySelector(`.item-info[data-category-id="${newProduct.category_ID}"]`);
+            if (newItemElement) {
+                newItemElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        } else {
+            console.error('Fehler beim Hinzufügen des Produktes:', response.statusText);
+        }
+    });
+});
 

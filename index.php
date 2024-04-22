@@ -105,8 +105,8 @@
                     <button type="submit" id="addItemButton" disabled>Hinzufügen</button>
                 </div>
             </form>
-           
         </div>
+        <div id="itemContainer" class="itemsContainer open">
     </div>
     
 </body>
