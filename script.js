@@ -94,7 +94,9 @@ function openCategoryItem(item, categoryName, categoryID, productCount) {
             let products = await getProductsByCategory(categoryID);
             products.forEach(product => {
                 showProduct(product, categoryID);
-            })
+            });
+            let itemInfo = itemContainer.querySelector(`.item-info[data-category-id="${categoryID}"]`);
+            itemInfo.classList.add('open');
         }
     };
 }
@@ -102,11 +104,15 @@ function openCategoryItem(item, categoryName, categoryID, productCount) {
 function removeItem(item, itemContainer, category) {
     item.classList.remove('active');
     let items = itemContainer.querySelectorAll('.item-info');
+    let transitionCount = 0;
 
     items.forEach(function(element) {
         let titleElement = element.querySelector('.item-title h4');
         if (titleElement && titleElement.textContent === category) {
-            element.remove();
+            element.classList.remove('open');
+            setTimeout(function() {
+                element.remove();
+            }, 500); 
         }
     });
 }
@@ -174,7 +180,6 @@ async function getProductsByCategory(categoryID) {
     try {
         const response = await fetch(`php/getProducts.php?category_id=${categoryID}`);
         const products = await response.json();
-    
         return products;
     } catch (error) {
         console.error('Error fetching products:', error);

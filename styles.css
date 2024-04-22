@@ -187,10 +187,17 @@ input[type=text]:focus {
 }
 
 .item-info {
-    /* padding: 10px 20px; */
     background-color: var(--item-bg);
     border-radius: 10px;
     cursor: default;
+
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease-out;
+}
+
+.item-info.open {
+    max-height: 300px;
 }
 
 .item-header {
@@ -217,7 +224,6 @@ table {
     background-color: var(--item-bg);
     border-radius: 10px;
 }
-
 
 th, td {
     padding-bottom: 10px;
