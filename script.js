@@ -296,6 +296,7 @@ function addNewItem(event) {
         showProduct(newProduct, newProduct.category_ID);
         togglePopupNewItem(null);
         scrollToNewItem(newProduct.category_ID);
+        updateProductCount(newProduct.category_ID);
     })
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Produktes:', error.message);
@@ -309,6 +310,17 @@ function scrollToNewItem(categoryID) {
         if (tableRows.length > 0) {
             let lastRow = tableRows[tableRows.length - 1];
             lastRow.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }
+}
+
+function updateProductCount(categoryID) {
+    let categoryElement = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
+    if (categoryElement) {
+        let productCountElement = categoryElement.querySelector('.item-title h6');
+        if (productCountElement) {
+            let currentCount = parseInt(productCountElement.textContent.split(' ')[0]);
+            productCountElement.textContent = `${currentCount + 1} Produkte`;
         }
     }
 }
