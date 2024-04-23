@@ -49,7 +49,13 @@ function filterCategories() {
 
     categories.forEach(category => {
         let categoryName = category.innerHTML.toLowerCase();
-        category.style.display = categoryName.substring(0, input.length) === input ? 'flex' : 'none';
+        let categoryID = category.dataset.categoryId;
+        let categoryContainer = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
+
+        category.style.display = categoryName.startsWith(input) ? 'flex' : 'none';
+        if (categoryContainer) {
+            categoryContainer.style.display = categoryName.startsWith(input) ? 'block' : 'none';
+        }
     });
 }
 
@@ -320,7 +326,9 @@ function updateProductCount(categoryID) {
         let productCountElement = categoryElement.querySelector('.item-title h6');
         if (productCountElement) {
             let currentCount = parseInt(productCountElement.textContent.split(' ')[0]);
-            productCountElement.textContent = `${currentCount + 1} Produkte`;
+            let newCount = currentCount + 1;
+            let productLabel = newCount === 1 ? 'Produkt' : 'Produkte';
+            productCountElement.textContent = `${newCount} ${productLabel}`;
         }
     }
 }
