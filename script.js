@@ -1,4 +1,5 @@
 let currentCategoryID;
+let tableSortOrder = {};
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -124,6 +125,7 @@ function showItem(item, itemContainer, categoryName, categoryID, productCount) {
 
 function generateItemHTML(categoryName, categoryID, productCount) {
     currentCategoryID = categoryID;
+    let productLabel = productCount === 1 ? 'Produkt' : 'Produkte';
 
     return /*html*/`
         <div class="item-info" data-category-id="${categoryID}">
@@ -134,7 +136,7 @@ function generateItemHTML(categoryName, categoryID, productCount) {
                 </div>
                 <div class="item-title">
                     <h4>${categoryName}</h4>
-                    <h6>${productCount} Produkte</h6>
+                    <h6>${productCount} ${productLabel}</h6>
                 </div>
                 <img onclick="togglePopupNewItem(${categoryID})" class="add-icon" src="./assets/img/add.png">
             </div>
@@ -194,7 +196,7 @@ function showProduct(product, categoryID) {
         let table = productContainer.querySelector('table');
         
         if (!table) {
-            productContainer.innerHTML += generateTableHTML(product);
+            productContainer.innerHTML += generateTableHTML(product, categoryID);
             table = productContainer.querySelector('table');
         }
 
@@ -205,19 +207,18 @@ function showProduct(product, categoryID) {
     }
 }
 
-function generateTableHTML(product) {
+function generateTableHTML(product, categoryID) {
     if (product) {
+        let tableID = `productTable_${categoryID}`; 
         return /*html*/`
-            <div class="separator"></div>
-            <table>
-                <thead>
+            <table id="${tableID}">
+                <thead class="table-separator">
                     <tr>
-                        <th>Produkt</th>
-                        <th>Menge</th>
-                        <th>Wert</th>
-                        <th>Beschreibung</th>
+                        <th onclick="sortTable('${tableID}', 0)">Produkt</th>
+                        <th onclick="sortTable('${tableID}', 1)">Menge</th>
+                        <th onclick="sortTable('${tableID}', 2)">Wert</th>
+                        <th onclick="sortTable('${tableID}', 3)">Beschreibung</th>
                     </tr>
-                    <tr colspan="4" class="separator"></tr>
                 </thead>
                 <tbody></tbody>
             </table>`;
@@ -236,31 +237,88 @@ function generateTableRow(product) {
         </tr>`;
 }
 
+function sortTable(tableID, columnIndex) {
+    let table = document.getElementById(tableID);
+    if (!table) return; 
+
+    let rows = Array.from(table.rows).slice(1);
+    let sortOrder = tableSortOrder[tableID] || 'asc';
+
+    rows.sort((a, b) => {
+        let xCell = a.cells[columnIndex];
+        let yCell = b.cells[columnIndex];
+        if (!xCell || !yCell) return 0;
+
+        let x, y;
+
+        if (columnIndex === 1 || columnIndex === 2) {
+            x = parseFloat(xCell.textContent.replace(',', '.'));
+            y = parseFloat(yCell.textContent.replace(',', '.'));
+        } else {
+            let xString = xCell.textContent.toLowerCase();
+            let yString = yCell.textContent.toLowerCase();
+
+            if (sortOrder === 'asc') {
+                return xString.localeCompare(yString);
+            } else {
+                return yString.localeCompare(xString);
+            }
+        }
+        if (sortOrder === 'asc') {
+            return x - y;
+        } else {
+            return y - x;
+        }
+    });
+
+    let tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    tableSortOrder[tableID] = sortOrder === 'asc' ? 'desc' : 'asc';
+}
+
+function addNewItem(event) {
+    event.preventDefault();
+    
+    let formData = new FormData(this);
+    fetch('php/addItem.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(response.statusText);
+        }
+    })
+    .then(newProduct => {
+        showProduct(newProduct, newProduct.category_ID);
+        togglePopupNewItem(null);
+        scrollToNewItem(newProduct.category_ID);
+    })
+    .catch(error => {
+        console.error('Fehler beim Hinzufügen des Produktes:', error.message);
+    });
+}
+
+function scrollToNewItem(categoryID) {
+    let container = document.querySelector(`.item-info[data-category-id="${categoryID}"] .productContainer`);
+    if (container) {
+        let tableRows = container.querySelectorAll('tbody tr');
+        if (tableRows.length > 0) {
+            let lastRow = tableRows[tableRows.length - 1];
+            lastRow.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('addProductForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        let formData = new FormData(this);
-        let response = await fetch('php/addItem.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            let newProduct = await response.json();
-            showProduct(newProduct, newProduct.category_ID);
-            togglePopupNewItem(null);
-            let newItemElement = document.querySelector(`.item-info[data-category-id="${newProduct.category_ID}"]`);
-            if (newItemElement) {
-                newItemElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
-        } else {
-            console.error('Fehler beim Hinzufügen des Produktes:', response.statusText);
-        }
-    });
+    document.getElementById('addProductForm').addEventListener('submit', addNewItem);
 });
+
 
