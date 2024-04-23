@@ -1,5 +1,6 @@
 let currentCategoryID;
 let tableSortOrder = {};
+let expanded = false;
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -283,6 +284,33 @@ function sortTable(tableID, columnIndex) {
     tableSortOrder[tableID] = sortOrder === 'asc' ? 'desc' : 'asc';
 }
 
+function toggleDropdown() {
+    let dropDown = document.getElementById("dropdownContent");
+    dropDown.classList.toggle("expanded");
+}
+
+function selectTagNewItem() {
+    let dropDown = document.getElementById("dropdownContent");
+
+    document.addEventListener("click", function(event) {
+        if (!event.target.closest(".selectBox")) {
+            dropDown.classList.remove("expanded");
+        }
+    });
+}
+
+function selectOption(element) {
+    let selectedOption = element.textContent.trim();
+    let selectedCircle = element.querySelector(".circle");
+    let selectedOptionContainer = document.getElementById("selectedOption");
+
+    selectedOptionContainer.innerHTML = "";
+    selectedOptionContainer.appendChild(selectedCircle.cloneNode(true));
+    selectedOptionContainer.appendChild(document.createTextNode(selectedOption));
+
+    document.getElementById("dropdownContent").classList.remove("expanded");
+}
+
 function addNewItem(event) {
     event.preventDefault();
     
@@ -307,6 +335,11 @@ function addNewItem(event) {
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Produktes:', error.message);
     });
+}
+
+function addNewItemAfterLoadDOM() {
+    document.getElementById('addProductForm').addEventListener('submit', addNewItem);
+
 }
 
 function scrollToNewItem(categoryID) {
@@ -335,10 +368,7 @@ function updateProductCount(categoryID) {
 
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
+    addNewItemAfterLoadDOM();
+    selectTagNewItem();
 });
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('addProductForm').addEventListener('submit', addNewItem);
-});
-
 

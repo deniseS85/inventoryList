@@ -120,7 +120,7 @@ main {
     align-items: center;
 }
   
-input {
+input:not(#productImage), select {
     padding: 5px;
     border: 1px transparent;
     border-bottom: 2px solid var(--turquoise);
@@ -128,8 +128,18 @@ input {
     color: var(--font-color);
 }
 
+select {
+    padding: 5px 0 2px 0;
+    width: 100%;
+    border-bottom: none;
+}
+
+select:focus {
+    outline: none;
+}
+
 input[type=text]:focus {
-    outline:none;
+    outline: none;
 }
 
 .search-btn {
@@ -360,6 +370,10 @@ footer {
     height: 220px;
 }
 
+.new-item-container {
+    width: clamp(18.75rem, 16.0714rem + 13.3929vw, 37.5rem);
+}
+
 .delete-category-container {
     width: 500px;
     height: 200px;
@@ -388,6 +402,75 @@ footer {
     margin-bottom: 15px;
 }
 
+.tagImage {
+    display: flex;
+}
+
+.tagImage > div {
+    flex: 1;
+}
+
+.selectBox {
+    position: relative;
+    cursor: pointer;
+}
+
+.label-tags {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+#selectedOption {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px;
+}
+  
+.dropdownContent {
+    overflow-y: hidden;
+    height: auto;
+    max-height: 0;
+    transition: max-height 0.3s ease; 
+}
+
+.dropdownContent.expanded {
+    display: block;
+    max-height: 87px; 
+    overflow-y: auto;
+    border-radius: 6px;
+    border: 1px solid var(--turquoise);
+}
+
+.dropdownContent::-webkit-scrollbar {
+    width: 5px;
+}
+
+.dropdownContent::-webkit-scrollbar-thumb {
+    border-radius: 9px;
+}
+
+.option {
+    padding: 2.5px 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.option:hover {
+    background-color: var(--turquoise);
+}
+
+.circle {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    background-color: rebeccapurple;
+    border: 1px solid var(--font-color);
+}
+ 
 label {
     display: block;
     font-weight: bold;
@@ -396,6 +479,7 @@ label {
 
 .input-new-item {
     width: 100%;
+    padding: 0;
 }
 
 .input-new-category {
@@ -454,9 +538,3 @@ button:hover:not(.search-btn) {
     background: var(--turquoise);
     border-radius: 15px;
 }
-
-
-
-
-  
-
