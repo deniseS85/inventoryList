@@ -315,12 +315,12 @@ function selectTagNewItem() {
     });
 }
 
-function selectOption(element) {
-    let selectedOption = element.textContent.trim();
-    let selectedOptionContainer = document.getElementById("selectedOption");
-    selectedOptionContainer.classList.add("selected-option");
-    selectedOptionContainer.style.border = "1px solid #2BB8EE"
-    selectedOptionContainer.innerHTML = selectedOption;
+function selectOption(tag) {
+    let selectedOption = document.getElementById("selectedOption");
+    selectedOption.classList.add("selected-option");
+    selectedOption.style.border = "1px solid #2BB8EE";
+    selectedOption.style.backgroundColor = tag.color;
+    selectedOption.innerHTML = tag.tag_name;
     document.getElementById("dropdownContent").classList.remove("expanded");
 }
 
@@ -333,13 +333,43 @@ function generateColorOptions() {
         circle.style.backgroundColor = color;
 
         circle.addEventListener('click', function() {
-            const tagInput = document.getElementById('tagInput');
+            let tagColorInput = document.getElementById('tagColorInput');
+            tagColorInput.value = color;
+            let tagInput = document.getElementById('tagInput');
             tagInput.style.backgroundColor = color;
         });
 
         colorContainer.appendChild(circle);
     });
 }
+
+async function showTagsOptions() {
+    try {
+        const response = await fetch('php/getTags.php');
+        const tags = await response.json();
+        let tagOptionsContainer = document.querySelector('.tagOptionsContainer');
+
+        tags.forEach(tag => {
+            let option = document.createElement('div');
+            option.classList.add('option');
+            
+            option.addEventListener('click', function() {
+                selectOption(tag);
+            });
+
+            let span = document.createElement('span');
+            span.classList.add('selected-option');
+            span.textContent = tag.tag_name;
+            span.style.backgroundColor = tag.color; 
+
+            option.appendChild(span);
+            tagOptionsContainer.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error showing tag options:', error);
+    }
+}
+
 
 function addNewItem(event) {
     event.preventDefault();
@@ -401,5 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addNewItemAfterLoadDOM();
     selectTagNewItem();
     generateColorOptions();
+    showTagsOptions();
 });
 
