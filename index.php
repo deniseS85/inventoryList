@@ -103,24 +103,30 @@
                 <div class="tagImage">
                     <div>
                         <div class="selectBox">
-                            <div class="label-tags" onclick="toggleDropdown()">Tags:</div>
+                            <div class="label-header" onclick="toggleDropdown()">
+                                <div class="label-tags">Tags:</div>
+                                <p><i class="arrow-down"></i></p>
+                            </div>
+
                             <div id="selectedOption"></div>
                             <div class="dropdownContent" id="dropdownContent">
+                                <div class="add-tag-container" onclick="togglePopupNewTag()">
+                                    <img src="./assets/img/add.png">
+                                    <p>Neuer Tag</p>
+                                </div>
+
+
                                 <div class="option" onclick="selectOption(this)">
-                                    <span class="circle"></span>
-                                    <span>First</span> 
+                                    <span class="selected-option">First</span> 
                                 </div>
                                 <div class="option" onclick="selectOption(this)">
-                                    <span class="circle"></span>
-                                    <span>Second</span>
+                                    <span class="selected-option">Second</span>
                                 </div>                   
                                 <div class="option" onclick="selectOption(this)">
-                                    <span class="circle"></span>
-                                    <span>Third</span>
+                                    <span class="selected-option">Third</span>
                                 </div>
                                 <div class="option" onclick="selectOption(this)">
-                                    <span class="circle"></span>
-                                    <span>Fourth</span>
+                                    <span class="selected-option">Fourth</span>
                                 </div>
                             </div>
                         </div>
@@ -136,6 +142,21 @@
             </form>
         </div>
         <div id="itemContainer" class="itemsContainer open">
+    </div>
+
+    <!-- New Tag Form -->
+    <div id="newTagPopup" class="new-category-popup-bg" onclick="togglePopupNewTag()">
+        <div class="new-tag-container" onclick="doNotClose(event)">
+            <h4 class="popup-title-new-tag">Neuer Tag</h4>
+            <form id="addTagForm" action="php/addCategory.php" method="post" autocomplete="off">
+                <input id="tagInput" class="input-new-tag" type="text" name="tag-name" placeholder="Tagname" required oninput="validateInput('addTagButton', this)">
+                <div class="select-colors"></div>
+                <div class="btn-container-new-tag">
+                    <button type="reset" onclick="togglePopupNewTag()">Abbrechen</button>
+                    <button type="submit" id="addTagButton" disabled>Hinzufügen</button>
+                </div>
+            </form>
+        </div>
     </div>
     
 </body>

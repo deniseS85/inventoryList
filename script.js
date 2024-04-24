@@ -1,6 +1,7 @@
 let currentCategoryID;
 let tableSortOrder = {};
 let expanded = false;
+const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -30,6 +31,21 @@ function togglePopupNewItem(categoryID) {
 function togglePopup(popupID) {
     let popup = document.getElementById(popupID);
     popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function togglePopupNewTag() {
+    let newTagPopup = document.getElementById('newTagPopup');
+    newTagPopup.style.display = newTagPopup.style.display === 'flex' ? 'none' : 'flex';
+
+    if (newTagPopup.style.display === 'flex') {
+        newTagPopup.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    } else {
+        focusInput('tagInput');
+        clearInputValues('.input-new-tag');
+        validateInput('addTagButton', document.getElementById('tagInput'));
+    }
 }
 
 function focusInput(inputID) {
@@ -301,14 +317,28 @@ function selectTagNewItem() {
 
 function selectOption(element) {
     let selectedOption = element.textContent.trim();
-    let selectedCircle = element.querySelector(".circle");
     let selectedOptionContainer = document.getElementById("selectedOption");
-
-    selectedOptionContainer.innerHTML = "";
-    selectedOptionContainer.appendChild(selectedCircle.cloneNode(true));
-    selectedOptionContainer.appendChild(document.createTextNode(selectedOption));
-
+    selectedOptionContainer.classList.add("selected-option");
+    selectedOptionContainer.style.border = "1px solid #2BB8EE"
+    selectedOptionContainer.innerHTML = selectedOption;
     document.getElementById("dropdownContent").classList.remove("expanded");
+}
+
+function generateColorOptions() {
+    let colorContainer = document.querySelector('.select-colors');
+
+    colors.forEach(color => {
+        let circle = document.createElement('p');
+        circle.classList.add('circle');
+        circle.style.backgroundColor = color;
+
+        circle.addEventListener('click', function() {
+            const tagInput = document.getElementById('tagInput');
+            tagInput.style.backgroundColor = color;
+        });
+
+        colorContainer.appendChild(circle);
+    });
 }
 
 function addNewItem(event) {
@@ -370,5 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
     selectTagNewItem();
+    generateColorOptions();
 });
 
