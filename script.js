@@ -215,7 +215,18 @@ async function getProductsByCategory(categoryID) {
     }
 }
 
-function showProduct(product, categoryID) {
+async function getTagPerProduct(tagID) {
+    try {
+        const response = await fetch(`php/getTags.php`);
+        const tags = await response.json();
+        let tag = tags.find(tag => tag.ID === tagID);
+        return tag;
+    } catch (error) {
+        console.error('Error fetching tag by ID:', error);
+    }
+}
+
+async function showProduct(product, categoryID) {
     let categoryContainer = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
    
     if (categoryContainer) {
@@ -228,7 +239,8 @@ function showProduct(product, categoryID) {
         }
 
         let tbody = table.querySelector('tbody');
-        tbody.innerHTML += generateTableRow(product);
+        let tag = await getTagPerProduct(product.tag_ID);
+        tbody.innerHTML += generateTableRow(product, tag);
     } else {
         console.error('Category container not found for category ID:', categoryID);
     }
@@ -237,6 +249,7 @@ function showProduct(product, categoryID) {
 function generateTableHTML(product, categoryID) {
     if (product) {
         let tableID = `productTable_${categoryID}`; 
+     
         return /*html*/`
             <table id="${tableID}">
                 <thead class="table-separator">
@@ -245,6 +258,7 @@ function generateTableHTML(product, categoryID) {
                         <th onclick="sortTable('${tableID}', 1)">Menge</th>
                         <th onclick="sortTable('${tableID}', 2)">Wert</th>
                         <th onclick="sortTable('${tableID}', 3)">Beschreibung</th>
+                        <th>Tag</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -254,13 +268,15 @@ function generateTableHTML(product, categoryID) {
     }
 }
 
-function generateTableRow(product) {
+function generateTableRow(product, tag) {
+    let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
         <tr>
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${product.price}</td>
             <td>${product.information}</td>
+            <td>${tag ? `<span style="${tagStyle}">${tag.tag_name}</span>` : ''}</td>
         </tr>`;
 }
 

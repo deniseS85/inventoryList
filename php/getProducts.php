@@ -22,7 +22,8 @@ if(isset($_GET['category_id'])) {
             'amount' => $row['amount'],
             'price' => $row['price'],
             'information' => $row['information'],
-            'category_ID' => $row['category_ID']
+            'category_ID' => $row['category_ID'],
+            'tag_ID' => $row['tag_ID']
         );
         $products[] = $product;
     }

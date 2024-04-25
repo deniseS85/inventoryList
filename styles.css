@@ -237,7 +237,7 @@ input[type=text]:focus {
 }
 
 table {
-    width: 100%;
+    width: calc(100% - 8px);
     color: var(--font-color);
     background-color: var(--item-bg);
     border-radius: 10px;
@@ -247,6 +247,7 @@ tbody {
     max-height: 264px;
     overflow-y: auto;
     display: block;
+    width: calc(100% + 8px);
 }
 
 thead, tbody tr {
@@ -277,7 +278,6 @@ th, td {
 th {
     cursor: pointer;
     transition: color 0.3s ease;
-    
 }
 
 th:hover {
@@ -285,21 +285,26 @@ th:hover {
 } 
 
 td:first-child, th:first-child {
-    width: 40%;
+    width: 30%;
     padding-left: 20px;
 }
 
+
 td:nth-child(2), th:nth-child(2),
 td:nth-child(3), th:nth-child(3) {
-    width: 10%;
+    width: 8%;
     text-align: center;
 }
 
 td:nth-child(4), th:nth-child(4) {
-    width: 40%; 
-    text-align: left; 
-    padding-left: 5%;
-    padding-right: 20px;
+    width: 35%;
+    padding-left: 2%;
+}
+
+td:nth-child(5), th:nth-child(5) {
+    width: 8%;
+    text-align: center;
+    padding: 0; 
 }
 
 tr {
@@ -503,7 +508,6 @@ p {
 }
 
 .selected-option {
-    background-color: rebeccapurple;
     width: 100%;
     text-align: center;
     border-radius: 5px;
