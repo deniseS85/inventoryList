@@ -10,8 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $product_value = !empty($_POST['product-value']) ? $_POST['product-value'] : 0;
         $product_info = !empty($_POST['product-info']) ? $_POST['product-info'] : '';
         $category_id = $_POST['category-id'];
+        $tag_id = $_POST['tag-id'];
 
-        $sql = "INSERT INTO Products (product_name, amount, price, information, category_ID) VALUES ('$product_name', '$product_amount', '$product_value', '$product_info', '$category_id')";
+        $sql = "INSERT INTO Products (product_name, amount, price, information, category_ID, tag_ID) VALUES ('$product_name', '$product_amount', '$product_value', '$product_info', '$category_id', '$tag_id')";
 
         if (mysqli_query($conn, $sql)) {
             $new_product_id = mysqli_insert_id($conn);
@@ -21,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'amount' => $product_amount,
                 'price' => $product_value,
                 'information' => $product_info,
-                'category_ID' => $category_id 
+                'category_ID' => $category_id,
+                'tag_ID' => $tag_id
             );
             echo json_encode($new_product);
         } else {

@@ -21,11 +21,14 @@ function togglePopupEditCategory(categoryName, categoryID) {
 }
 
 function togglePopupNewItem(categoryID) {
+    let selectedOption = document.getElementById('selectedOption');
     document.getElementById('categoryId').value = categoryID;
     togglePopup('newItemPopup');
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
+    selectedOption.innerHTML = '';
+    selectedOption.style.border = "none";
 }
 
 function togglePopup(popupID) {
@@ -45,6 +48,7 @@ function togglePopupNewTag() {
         focusInput('tagInput');
         clearInputValues('.input-new-tag');
         validateInput('addTagButton', document.getElementById('tagInput'));
+        document.getElementById('tagInput').style.backgroundColor = '';
     }
 }
 
@@ -315,15 +319,6 @@ function selectTagNewItem() {
     });
 }
 
-function selectOption(tag) {
-    let selectedOption = document.getElementById("selectedOption");
-    selectedOption.classList.add("selected-option");
-    selectedOption.style.border = "1px solid #2BB8EE";
-    selectedOption.style.backgroundColor = tag.color;
-    selectedOption.innerHTML = tag.tag_name;
-    document.getElementById("dropdownContent").classList.remove("expanded");
-}
-
 function generateColorOptions() {
     let colorContainer = document.querySelector('.select-colors');
 
@@ -343,6 +338,16 @@ function generateColorOptions() {
     });
 }
 
+function selectTag(tag) {
+    let selectedOption = document.getElementById("selectedOption");
+    selectedOption.classList.add("selected-option");
+    selectedOption.style.border = "1px solid #2BB8EE";
+    selectedOption.style.backgroundColor = tag.color;
+    selectedOption.innerHTML = tag.tag_name;
+    document.getElementById("dropdownContent").classList.remove("expanded");
+    document.getElementById("tagId").value = tag.ID;
+}
+
 async function showTagsOptions() {
     try {
         const response = await fetch('php/getTags.php');
@@ -354,7 +359,7 @@ async function showTagsOptions() {
             option.classList.add('option');
             
             option.addEventListener('click', function() {
-                selectOption(tag);
+                selectTag(tag);
             });
 
             let span = document.createElement('span');
@@ -370,10 +375,9 @@ async function showTagsOptions() {
     }
 }
 
-
 function addNewItem(event) {
     event.preventDefault();
-    
+
     let formData = new FormData(this);
     fetch('php/addItem.php', {
         method: 'POST',

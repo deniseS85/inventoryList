@@ -121,8 +121,9 @@
                     </div>
                     <div></div>
                 </div>
-
                 <input type="hidden" id="categoryId" name="category-id" value="">
+                <input type="hidden" id="tagId" name="tag-id" value="">
+                
                 <div class="btn-container">
                     <button type="reset" onclick="togglePopupNewItem(null)">Abbrechen</button>
                     <button type="submit" id="addItemButton" disabled>Hinzufügen</button>
