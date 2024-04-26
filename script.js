@@ -446,11 +446,46 @@ function updateProductCount(categoryID) {
     }
 }
 
+function uploadImage() {
+    document.getElementById('uploadImage').addEventListener('change', function(event) {
+        let file = event.target.files[0];
+        if (file) {
+            let formData = new FormData();
+            formData.append('fileToUpload', file);
+
+            fetch('http://localhost/inventoryList/image_uploader.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(fileName => {
+                if (fileName.includes('Error:')) {
+                    alert(fileName);
+                } else {
+                    showUploadedImage(fileName);
+                }
+            })
+            .catch(error => {
+                console.error('Upload failed', error);
+            });
+        }
+    });
+}
+
+function showUploadedImage(fileName) {
+    let uploadedImageElement = document.getElementById('uploadedImage');
+    if (uploadedImageElement) {
+        let imageUrl = 'http://localhost/inventoryList/uploads/' + fileName;
+        uploadedImageElement.src = imageUrl;
+        uploadedImageElement.style.display = 'block'; 
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
     selectTagNewItem();
     generateColorOptions();
     showTagsOptions();
+    uploadImage();
 });
-
