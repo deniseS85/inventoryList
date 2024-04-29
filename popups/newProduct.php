@@ -1,7 +1,7 @@
 <div id="newItemPopup" class="new-category-popup-bg" onclick="togglePopupNewItem(null)">
     <div class="new-item-container" onclick="doNotClose(event)">
         <h4 class="popup-title">Neues Produkt</h4>
-        <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off">
+        <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="productName">Name:</label>
                 <input id="productName" class="input-new-item" type="text" name="product-name" required oninput="validateInput('addItemButton', this)">
@@ -43,11 +43,11 @@
                         <input type="file" id="uploadImage" name="uploadImage" style="display:none;">
                         <img id="uploadedImage" class="uploaded-image" style="display:none;">
                     </div>
-                    
                 </div>
             </div>
             <input type="hidden" id="categoryId" name="category-id" value="">
             <input type="hidden" id="tagId" name="tag-id" value="">
+            <input type="hidden" id="uploadedImageId" name="uploadImageId">
             
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupNewItem(null)">Abbrechen</button>

@@ -395,10 +395,12 @@ function addNewItem(event) {
     event.preventDefault();
 
     let formData = new FormData(this);
+    let uploadedImageId = document.getElementById('uploadedImageId').value;
+    formData.append('uploadedImageId', uploadedImageId);
     fetch('php/addItem.php', {
         method: 'POST',
         body: formData
-    })
+    }) 
     .then(response => {
         if (response.ok) {
             return response.json();
@@ -450,19 +452,21 @@ function uploadImage() {
     document.getElementById('uploadImage').addEventListener('change', function(event) {
         let file = event.target.files[0];
         if (file) {
+            showUploadedImage(file);
             let formData = new FormData();
-            formData.append('fileToUpload', file);
+            formData.append('uploadImage', file);
 
-            fetch('http://localhost/inventoryList/image_uploader.php', {
+            fetch('php/addImage.php', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.text())
-            .then(fileName => {
-                if (fileName.includes('Error:')) {
-                    alert(fileName);
+            .then(uploadedImageId => {
+                if (uploadedImageId.includes('Error:')) {
+                    alert(uploadedImageId);
                 } else {
-                    showUploadedImage(fileName);
+                    document.getElementById('uploadedImageId').value = uploadedImageId;
+                    console.log(uploadedImageId);
                 }
             })
             .catch(error => {
@@ -472,12 +476,15 @@ function uploadImage() {
     });
 }
 
-function showUploadedImage(fileName) {
+function showUploadedImage(file) {
     let uploadedImageElement = document.getElementById('uploadedImage');
     if (uploadedImageElement) {
-        let imageUrl = 'http://localhost/inventoryList/uploads/' + fileName;
-        uploadedImageElement.src = imageUrl;
-        uploadedImageElement.style.display = 'block'; 
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageElement.src = e.target.result;
+            uploadedImageElement.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
     }
 }
 
