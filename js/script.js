@@ -34,6 +34,7 @@ function togglePopupNewItem(categoryID) {
     resetTagInput();
 }
 
+
 function resetTagInput() {
     let tagIdInput = document.getElementById('tagId');
     if (tagIdInput) {
@@ -107,20 +108,6 @@ function validateInput(buttonId, inputElement) {
     document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
 }
 
-async function getCategories() {
-    try {
-        await fetch('php/getCategories.php')
-        .then(response => response.json())
-        .then(categories => {
-            categories.forEach(category => {
-                showCategoryItems(category);
-            });
-        })
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-    }
-}
-
 async function showCategoryItems(category) {
     let container = document.querySelector('.category-item-container');
     let categoryElement = document.createElement('div');
@@ -155,7 +142,6 @@ function openCategoryItem(item, categoryName, categoryID, productCount) {
 function removeItem(item, itemContainer, category) {
     item.classList.remove('active');
     let items = itemContainer.querySelectorAll('.item-info');
-    let transitionCount = 0;
 
     items.forEach(function(element) {
         let titleElement = element.querySelector('.item-title h4');
@@ -173,49 +159,6 @@ function showItem(item, itemContainer, categoryName, categoryID, productCount) {
     itemContainer.innerHTML += generateItemHTML(categoryName, categoryID, productCount);
 }
 
-function generateItemHTML(categoryName, categoryID, productCount) {
-    currentCategoryID = categoryID;
-    let productLabel = productCount === 1 ? 'Produkt' : 'Produkte';
-
-    return /*html*/`
-        <div class="item-info" data-category-id="${categoryID}">
-            <div class="item-header">
-                <div>
-                    <img onclick="togglePopupDeleteCategory()" class="delete-icon" src="./assets/img/delete.png">
-                    <img onclick="togglePopupEditCategory('${categoryName}', ${categoryID})" class="edit-icon" src="./assets/img/edit.png">
-                </div>
-                <div class="item-title">
-                    <h4>${categoryName}</h4>
-                    <h6>${productCount} ${productLabel}</h6>
-                </div>
-                <img onclick="togglePopupNewItem(${categoryID})" class="add-icon" src="./assets/img/add.png">
-            </div>
-            <div class="productContainer">
-                ${generateTableHTML(null)}
-            </div>
-        </div>`;
-}
-
-async function deleteCategoryItem() {
-    try {
-        const response = await fetch('php/deleteCategory.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ ID: currentCategoryID })
-        });
-
-        if (!response.ok) {
-            throw new Error('Fehler beim Löschen der Kategorie');
-        }
-        removeCategoryFromHTML(currentCategoryID);
-        togglePopupDeleteCategory();
-    } catch (error) {
-        console.error('Fehler beim Löschen der Kategorie:', error.message);
-    }
-}
-
 function removeCategoryFromHTML(categoryID) {
     let categoryElement = document.querySelector(`.category-item[data-category-id="${categoryID}"]`);
     let categoryViewElement = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
@@ -225,27 +168,6 @@ function removeCategoryFromHTML(categoryID) {
     }
     if (categoryViewElement) {
         categoryViewElement.remove();
-    }
-}
-
-async function getProductsByCategory(categoryID) {
-    try {
-        const response = await fetch(`php/getProducts.php?category_id=${categoryID}`);
-        const products = await response.json();
-        return products;
-    } catch (error) {
-        console.error('Error fetching products:', error);
-    }
-}
-
-async function getTagPerProduct(tagID) {
-    try {
-        const response = await fetch(`php/getTags.php`);
-        const tags = await response.json();
-        let tag = tags.find(tag => tag.ID === tagID);
-        return tag;
-    } catch (error) {
-        console.error('Error fetching tag by ID:', error);
     }
 }
 
@@ -263,44 +185,11 @@ async function showProduct(product, categoryID) {
 
         let tbody = table.querySelector('tbody');
         let tag = await getTagPerProduct(product.tag_ID);
-        tbody.innerHTML += generateTableRow(product, tag);
+        let image = await getImagePerProduct(product.image_ID);
+        tbody.innerHTML += generateTableRow(product, tag, image);
     } else {
         console.error('Category container not found for category ID:', categoryID);
     }
-}
-
-function generateTableHTML(product, categoryID) {
-    if (product) {
-        let tableID = `productTable_${categoryID}`; 
-     
-        return /*html*/`
-            <table id="${tableID}">
-                <thead class="table-separator">
-                    <tr>
-                        <th onclick="sortTable('${tableID}', 0)">Produkt</th>
-                        <th onclick="sortTable('${tableID}', 1)">Menge</th>
-                        <th onclick="sortTable('${tableID}', 2)">Wert</th>
-                        <th onclick="sortTable('${tableID}', 3)">Beschreibung</th>
-                        <th>Tag</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>`;
-    } else {
-        return '';
-    }
-}
-
-function generateTableRow(product, tag) {
-    let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
-    return /*html*/`
-        <tr>
-            <td>${product.name}</td>
-            <td>${product.amount}</td>
-            <td>${product.price}</td>
-            <td>${product.information}</td>
-            <td>${tag ? `<span style="${tagStyle}">${tag.tag_name}</span>` : ''}</td>
-        </tr>`;
 }
 
 function sortTable(tableID, columnIndex) {
@@ -348,30 +237,6 @@ function toggleDropdown() {
     dropDown.classList.toggle("expanded");
 }
 
-function addNewTag() {
-    let tagName = document.getElementById('tagInput').value;
-    let tagColor = document.getElementById('tagColorInput').value;
-
-    fetch('php/addTag.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({tagName, tagColor })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        togglePopupNewTag();
-        showTagsOptions();
-        setTimeout(() => scrollToLastElement('.tagOptionsContainer', '.option'), 100);
-    })
-    .catch(error => {
-        console.error('Fehler beim Hinzufügen des Tags:', error);
-    });
-}
-
 function selectTagNewItem() {
     let dropDown = document.getElementById("dropdownContent");
 
@@ -411,35 +276,6 @@ function selectTag(tag) {
     document.getElementById("tagId").value = tag.ID;
 }
 
-async function showTagsOptions() {
-    try {
-        const response = await fetch('php/getTags.php');
-        const tags = await response.json();
-        let tagOptionsContainer = document.querySelector('.tagOptionsContainer');
-
-        tagOptionsContainer.innerHTML = '';
-
-        tags.forEach(tag => {
-            let option = document.createElement('div');
-            option.classList.add('option');
-            
-            option.addEventListener('click', function() {
-                selectTag(tag);
-            });
-
-            let span = document.createElement('span');
-            span.classList.add('selected-option');
-            span.textContent = tag.tag_name;
-            span.style.backgroundColor = tag.color; 
-
-            option.appendChild(span);
-            tagOptionsContainer.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error showing tag options:', error);
-    }
-}
-
 function uploadImage() {
     document.getElementById('uploadImage').addEventListener('change', function(event) {
         let file = event.target.files[0];
@@ -474,51 +310,6 @@ function addNewItem(event) {
         formData.append('uploadedImageId', '');
         saveProductInDatabase(formData);
     }
-}
-
-function saveUploadImageInDatabase(file, formData) {
-    let formDataImage = new FormData();
-    formDataImage.append('uploadImage', file);
-
-    fetch('php/addImage.php', {
-        method: 'POST',
-        body: formDataImage
-    })
-    .then(response => response.text())
-    .then(uploadedImageId => {
-        if (uploadedImageId.includes('Error:')) {
-            alert(uploadedImageId);
-        } else {
-            formData.append('uploadedImageId', uploadedImageId);
-            saveProductInDatabase(formData);
-        }
-    })
-    .catch(error => {
-        console.error('Upload failed', error);
-    });
-}
-
-function saveProductInDatabase(formData) {
-    fetch('php/addItem.php', {
-        method: 'POST',
-        body: formData
-    }) 
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error(response.statusText);
-        }
-    })
-    .then(newProduct => {
-        showProduct(newProduct, newProduct.category_ID);
-        togglePopupNewItem(null);
-        setTimeout(() => scrollToLastElement(`.item-info[data-category-id="${newProduct.category_ID}"] .productContainer`, 'tbody tr'), 100);
-        updateProductCount(newProduct.category_ID);
-    })
-    .catch(error => {
-        console.error('Fehler beim Hinzufügen des Produktes:', error.message);
-    });
 }
 
 function addNewItemAfterLoadDOM() {
