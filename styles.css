@@ -512,7 +512,9 @@ p {
     overflow-y: hidden;
     height: auto;
     max-height: 0;
-    transition: max-height 0.4s ease; 
+    transition: max-height 0.4s ease;
+    scroll-padding-bottom: 5px;
+    scroll-behavior: smooth;
 }
 
 .dropdownContent.expanded {

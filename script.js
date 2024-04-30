@@ -348,6 +348,30 @@ function toggleDropdown() {
     dropDown.classList.toggle("expanded");
 }
 
+function addNewTag() {
+    let tagName = document.getElementById('tagInput').value;
+    let tagColor = document.getElementById('tagColorInput').value;
+
+    fetch('php/addTag.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({tagName, tagColor })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        togglePopupNewTag();
+        showTagsOptions();
+        setTimeout(() => scrollToLastElement('.tagOptionsContainer', '.option'), 100);
+    })
+    .catch(error => {
+        console.error('Fehler beim Hinzufügen des Tags:', error);
+    });
+}
+
 function selectTagNewItem() {
     let dropDown = document.getElementById("dropdownContent");
 
@@ -392,6 +416,8 @@ async function showTagsOptions() {
         const response = await fetch('php/getTags.php');
         const tags = await response.json();
         let tagOptionsContainer = document.querySelector('.tagOptionsContainer');
+
+        tagOptionsContainer.innerHTML = '';
 
         tags.forEach(tag => {
             let option = document.createElement('div');
@@ -442,7 +468,6 @@ function addNewItem(event) {
     let file = document.getElementById('uploadImage').files[0];
     let uploadedImageId = document.getElementById('uploadedImageId').value;
     if (file) {
-        console.log(file)
         formData.append('uploadedImageId', uploadedImageId);    
         saveUploadImageInDatabase(file, formData);
     } else {
@@ -488,7 +513,7 @@ function saveProductInDatabase(formData) {
     .then(newProduct => {
         showProduct(newProduct, newProduct.category_ID);
         togglePopupNewItem(null);
-        scrollToNewItem(newProduct.category_ID);
+        setTimeout(() => scrollToLastElement(`.item-info[data-category-id="${newProduct.category_ID}"] .productContainer`, 'tbody tr'), 100);
         updateProductCount(newProduct.category_ID);
     })
     .catch(error => {
@@ -498,16 +523,15 @@ function saveProductInDatabase(formData) {
 
 function addNewItemAfterLoadDOM() {
     document.getElementById('addProductForm').addEventListener('submit', addNewItem);
-
 }
 
-function scrollToNewItem(categoryID) {
-    let container = document.querySelector(`.item-info[data-category-id="${categoryID}"] .productContainer`);
+function scrollToLastElement(containerPath, itemSelector) {
+    let container = document.querySelector(containerPath);
     if (container) {
-        let tableRows = container.querySelectorAll('tbody tr');
-        if (tableRows.length > 0) {
-            let lastRow = tableRows[tableRows.length - 1];
-            lastRow.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        let items = container.querySelectorAll(itemSelector);
+        if (items.length > 0) {
+            let lastItem = items[items.length - 1];
+            lastItem.scrollIntoView({ behavior: 'smooth', block: 'end'});
         }
     }
 }
