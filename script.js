@@ -22,13 +22,36 @@ function togglePopupEditCategory(categoryName, categoryID) {
 
 function togglePopupNewItem(categoryID) {
     let selectedOption = document.getElementById('selectedOption');
+    selectedOption.innerHTML = '';
+    selectedOption.style.border = "none";
+    selectedOption.style.backgroundColor = '';
     document.getElementById('categoryId').value = categoryID;
     togglePopup('newItemPopup');
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
-    selectedOption.innerHTML = '';
-    selectedOption.style.border = "none";
+    resetUploadImageSrc();
+    resetTagInput();
+}
+
+function resetTagInput() {
+    let tagIdInput = document.getElementById('tagId');
+    if (tagIdInput) {
+        tagIdInput.value = ''; 
+    }
+}
+
+function resetUploadImageSrc() {
+    let uploadedImageElement = document.getElementById('uploadedImage');
+    if (uploadedImageElement) {
+        uploadedImageElement.src = '';
+        uploadedImageElement.style.display = 'none';
+    }
+    let uploadedImageIdInput = document.getElementById('uploadedImageId');
+    if (uploadedImageIdInput) {
+        uploadedImageIdInput.value = ''; 
+    }
+    document.getElementById('uploadImage').value = null;
 }
 
 function togglePopup(popupID) {
@@ -391,12 +414,66 @@ async function showTagsOptions() {
     }
 }
 
+function uploadImage() {
+    document.getElementById('uploadImage').addEventListener('change', function(event) {
+        let file = event.target.files[0];
+        if (file) {
+            showUploadedImage(file);
+        }
+    });
+}
+
+function showUploadedImage(file) {
+    let uploadedImageElement = document.getElementById('uploadedImage');
+    if (uploadedImageElement) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageElement.src = e.target.result;
+            uploadedImageElement.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 function addNewItem(event) {
     event.preventDefault();
 
     let formData = new FormData(this);
+    let file = document.getElementById('uploadImage').files[0];
     let uploadedImageId = document.getElementById('uploadedImageId').value;
-    formData.append('uploadedImageId', uploadedImageId);
+    if (file) {
+        console.log(file)
+        formData.append('uploadedImageId', uploadedImageId);    
+        saveUploadImageInDatabase(file, formData);
+    } else {
+        formData.append('uploadedImageId', '');
+        saveProductInDatabase(formData);
+    }
+}
+
+function saveUploadImageInDatabase(file, formData) {
+    let formDataImage = new FormData();
+    formDataImage.append('uploadImage', file);
+
+    fetch('php/addImage.php', {
+        method: 'POST',
+        body: formDataImage
+    })
+    .then(response => response.text())
+    .then(uploadedImageId => {
+        if (uploadedImageId.includes('Error:')) {
+            alert(uploadedImageId);
+        } else {
+            formData.append('uploadedImageId', uploadedImageId);
+            saveProductInDatabase(formData);
+        }
+    })
+    .catch(error => {
+        console.error('Upload failed', error);
+    });
+}
+
+function saveProductInDatabase(formData) {
     fetch('php/addItem.php', {
         method: 'POST',
         body: formData
@@ -445,46 +522,6 @@ function updateProductCount(categoryID) {
             let productLabel = newCount === 1 ? 'Produkt' : 'Produkte';
             productCountElement.textContent = `${newCount} ${productLabel}`;
         }
-    }
-}
-
-function uploadImage() {
-    document.getElementById('uploadImage').addEventListener('change', function(event) {
-        let file = event.target.files[0];
-        if (file) {
-            showUploadedImage(file);
-            let formData = new FormData();
-            formData.append('uploadImage', file);
-
-            fetch('php/addImage.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(uploadedImageId => {
-                if (uploadedImageId.includes('Error:')) {
-                    alert(uploadedImageId);
-                } else {
-                    document.getElementById('uploadedImageId').value = uploadedImageId;
-                    console.log(uploadedImageId);
-                }
-            })
-            .catch(error => {
-                console.error('Upload failed', error);
-            });
-        }
-    });
-}
-
-function showUploadedImage(file) {
-    let uploadedImageElement = document.getElementById('uploadedImage');
-    if (uploadedImageElement) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            uploadedImageElement.src = e.target.result;
-            uploadedImageElement.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
     }
 }
 

@@ -47,7 +47,7 @@
             </div>
             <input type="hidden" id="categoryId" name="category-id" value="">
             <input type="hidden" id="tagId" name="tag-id" value="">
-            <input type="hidden" id="uploadedImageId" name="uploadImageId">
+            <input type="hidden" id="uploadedImageId" name="uploadImageId" value="">
             
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupNewItem(null)">Abbrechen</button>
