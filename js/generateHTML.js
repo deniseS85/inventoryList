@@ -47,7 +47,7 @@ function generateTableHTML(product, categoryID) {
 function generateTableRow(product, tag,  image) {
     let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
-        <tr onclick="openProductDetail('${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${image ? image.url : ''}')">
+        <tr onclick="openProductDetail('${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${product.price}</td>
@@ -57,13 +57,26 @@ function generateTableRow(product, tag,  image) {
         </tr>`;
 }
 
-function openProductDetail(name, amount, price, information, tagName, imageUrl) {
-    console.log(name);
-    console.log(amount);
-    console.log(price);
-    console.log(information);
-    console.log(tagName);
-    console.log(imageUrl);
-    
-    
+
+function openProductDetail(name, amount, price, information, tagName, tagStyle, imageUrl) {
+    togglePopup('productDetailPopup');
+    let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
+    let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
+
+    document.getElementById('productDetailContent').innerHTML = /*html*/`
+        <div class="left">
+            <img src="php/uploads/${imageUrl}">
+        </div>
+        <div class="right">
+            <div class="product-header">
+            <span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>
+                <h5>${name}</h5>
+            </div>
+           
+            
+            <p>Menge: ${amount}</p>
+            <p>Preis: ${price}</p>
+            <p>Information: ${information}</p>
+        </div>`;
 }
+

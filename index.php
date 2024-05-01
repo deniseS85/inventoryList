@@ -38,13 +38,14 @@
     <footer>
 
     </footer>
-
+    
+    <?php include 'popups/productDetail.php'; ?>
     <?php include 'popups/newCategory.php'; ?>
     <?php include 'popups/editCategory.php'; ?>
     <?php include 'popups/deleteCategory.php'; ?>
     <?php include 'popups/newProduct.php'; ?>
     <?php include 'popups/newTag.php'; ?>   
-    <?php include 'popups/productDetail.php'; ?>   
+       
 </body>
 
 

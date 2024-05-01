@@ -34,6 +34,9 @@ function togglePopupNewItem(categoryID) {
     resetTagInput();
 }
 
+function togglePopupProductDetail() {
+    togglePopup('productDetailPopup');
+}
 
 function resetTagInput() {
     let tagIdInput = document.getElementById('tagId');
