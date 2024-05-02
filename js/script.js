@@ -343,6 +343,29 @@ function updateProductCount(categoryID) {
     }
 }
 
+function openProductDetailPopup(name, amount, price, information, tagName, tagStyle, imageUrl) {
+    togglePopup('productDetailPopup');
+    
+    let tagHtml = '';
+    if (tagName && tagStyle) {
+        let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
+        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
+        tagHtml = `<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
+    }
+
+    let infoItems = [
+        { label: 'Name', value: name },
+        { label: 'Menge', value: amount },
+        { label: 'Preis', value: price },
+        { label: 'Tag', value: tagHtml },
+        { label: 'Information', value: information }
+    ];
+    
+    let infoHtml = generateItemInfoHTML(infoItems, imageUrl);
+
+    document.getElementById('productDetailContent').innerHTML = infoHtml;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();

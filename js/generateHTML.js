@@ -58,29 +58,6 @@ function generateTableRow(product, tag,  image) {
 }
 
 
-function openProductDetailPopup(name, amount, price, information, tagName, tagStyle, imageUrl) {
-    togglePopup('productDetailPopup');
-    
-    let tagHtml = '';
-    if (tagName && tagStyle) {
-        let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
-        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
-        tagHtml = `<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
-    }
-
-    let infoItems = [
-        { label: 'Name', value: name },
-        { label: 'Menge', value: amount },
-        { label: 'Preis', value: price },
-        { label: 'Tag', value: tagHtml },
-        { label: 'Information', value: information }
-    ];
-    
-    let infoHtml = generateItemInfoHTML(infoItems, imageUrl);
-
-    document.getElementById('productDetailContent').innerHTML = infoHtml;
-}
-
 function generateItemInfoHTML(infoItems, imageUrl) {
     let infoHtml = '';
 
@@ -92,9 +69,11 @@ function generateItemInfoHTML(infoItems, imageUrl) {
             </div>`;
     });
 
+    let isUploadedImage = imageUrl ? `<img src="php/uploads/${imageUrl}">` : generateImageUploadHtml();
+
     return /*html*/`
         <div class="left">
-            <img src="php/uploads/${imageUrl}">
+            ${isUploadedImage}
         </div>
         <div class="right">
             <div class="product-detail-info">
@@ -102,4 +81,14 @@ function generateItemInfoHTML(infoItems, imageUrl) {
             </div>
         </div>`;
 }
+
+function generateImageUploadHtml() {
+    return /*html*/`
+        <div class="edit-img-upload">
+            <label for="uploadImage" class="edit-file-upload">Bild hinzufügen</label>
+            <input type="file" id="uploadImage" name="uploadImage" style="display:none;">
+            <img id="uploadedImage" class="uploaded-image" style="display:none;">
+        </div>`;
+}
+
 
