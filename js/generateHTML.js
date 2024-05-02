@@ -47,7 +47,7 @@ function generateTableHTML(product, categoryID) {
 function generateTableRow(product, tag,  image) {
     let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
-        <tr onclick="openProductDetail('${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
+        <tr onclick="openProductDetailPopup('${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${product.price}</td>
@@ -58,25 +58,48 @@ function generateTableRow(product, tag,  image) {
 }
 
 
-function openProductDetail(name, amount, price, information, tagName, tagStyle, imageUrl) {
+function openProductDetailPopup(name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
-    let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
-    let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
+    
+    let tagHtml = '';
+    if (tagName && tagStyle) {
+        let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
+        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
+        tagHtml = `<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
+    }
 
-    document.getElementById('productDetailContent').innerHTML = /*html*/`
+    let infoItems = [
+        { label: 'Name', value: name },
+        { label: 'Menge', value: amount },
+        { label: 'Preis', value: price },
+        { label: 'Tag', value: tagHtml },
+        { label: 'Information', value: information }
+    ];
+    
+    let infoHtml = generateItemInfoHTML(infoItems, imageUrl);
+
+    document.getElementById('productDetailContent').innerHTML = infoHtml;
+}
+
+function generateItemInfoHTML(infoItems, imageUrl) {
+    let infoHtml = '';
+
+    infoItems.forEach(item => {
+        infoHtml += /*html*/`
+            <div class="product">
+                <div class="label">${item.label}:</div>
+                <div class="value">${item.value}</div>
+            </div>`;
+    });
+
+    return /*html*/`
         <div class="left">
             <img src="php/uploads/${imageUrl}">
         </div>
         <div class="right">
-            <div class="product-header">
-            <span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>
-                <h5>${name}</h5>
+            <div class="product-detail-info">
+                ${infoHtml}
             </div>
-           
-            
-            <p>Menge: ${amount}</p>
-            <p>Preis: ${price}</p>
-            <p>Information: ${information}</p>
         </div>`;
 }
 
