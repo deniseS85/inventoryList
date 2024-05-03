@@ -30,12 +30,13 @@ function togglePopupNewItem(categoryID) {
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
-    resetUploadImageSrc();
+    resetUploadImageSrc('uploadImage', 'uploadedImage', 'uploadedImageId');
     resetTagInput();
 }
 
 function togglePopupProductDetail() {
     togglePopup('productDetailPopup');
+    resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId');
 }
 
 function resetTagInput() {
@@ -45,17 +46,17 @@ function resetTagInput() {
     }
 }
 
-function resetUploadImageSrc() {
-    let uploadedImageElement = document.getElementById('uploadedImage');
+function resetUploadImageSrc(uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId) {
+    let uploadedImageElement = document.getElementById(uploadedImageElementId);
     if (uploadedImageElement) {
         uploadedImageElement.src = '';
         uploadedImageElement.style.display = 'none';
     }
-    let uploadedImageIdInput = document.getElementById('uploadedImageId');
+    let uploadedImageIdInput = document.getElementById(uploadedImageIdInputId);
     if (uploadedImageIdInput) {
         uploadedImageIdInput.value = ''; 
     }
-    document.getElementById('uploadImage').value = null;
+    document.getElementById(uploadInputElementId).value = null;
 }
 
 function togglePopup(popupID) {
@@ -279,27 +280,6 @@ function selectTag(tag) {
     document.getElementById("tagId").value = tag.ID;
 }
 
-function uploadImage() {
-    document.getElementById('uploadImage').addEventListener('change', function(event) {
-        let file = event.target.files[0];
-        if (file) {
-            showUploadedImage(file);
-        }
-    });
-}
-
-function showUploadedImage(file) {
-    let uploadedImageElement = document.getElementById('uploadedImage');
-    if (uploadedImageElement) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            uploadedImageElement.src = e.target.result;
-            uploadedImageElement.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
 function addNewItem(event) {
     event.preventDefault();
 
@@ -343,9 +323,9 @@ function updateProductCount(categoryID) {
     }
 }
 
-function openProductDetailPopup(name, amount, price, information, tagName, tagStyle, imageUrl) {
+function openProductDetailPopup(productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
-    
+    console.log(productID)
     let tagHtml = '';
     if (tagName && tagStyle) {
         let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
@@ -366,11 +346,37 @@ function openProductDetailPopup(name, amount, price, information, tagName, tagSt
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 
+function showImage(file, imageElementId) {
+    let uploadedImageElement = document.getElementById(imageElementId);
+    if (uploadedImageElement) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageElement.src = e.target.result;
+            uploadedImageElement.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+document.addEventListener('change', function(event) {
+    if (event.target && (event.target.id === 'uploadImage' || event.target.id === 'editUploadImage')) {
+        let file = event.target.files[0];
+        if (file) {
+            if (event.target.id === 'uploadImage') {
+                showImage(file, 'uploadedImage');
+            } else if (event.target.id === 'editUploadImage') {
+                showImage(file, 'editUploadedImage');
+            }
+        }
+    }
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
     selectTagNewItem();
     generateColorOptions();
     showTagsOptions();
-    uploadImage();
+    /* uploadImage(); */
 });

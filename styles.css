@@ -439,7 +439,7 @@ footer {
     min-width: clamp(9.375rem, 8.2143rem + 5.8036vw, 17.5rem);
     height: clamp(9.375rem, 8.2143rem + 5.8036vw, 17.5rem);
     object-fit: cover;
-    border-radius: 100%;
+    border-radius: 50%;
     border: 2px solid var(--turquoise);
 }
 
@@ -449,6 +449,16 @@ footer {
     align-items: center;
     border: none;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='none' rx='100' ry='100' stroke='%2305FBFBFF' stroke-width='3' stroke-dasharray='3 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    box-sizing: border-box;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 225ms linear;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
 }
 
 
@@ -472,6 +482,7 @@ footer {
 }
 
 .product {
+    font-size: 16px;
     display: flex;
     justify-content: space-between;
 }

@@ -47,7 +47,7 @@ function generateTableHTML(product, categoryID) {
 function generateTableRow(product, tag,  image) {
     let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
-        <tr onclick="openProductDetailPopup('${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
+        <tr onclick="openProductDetailPopup('${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${product.price}</td>
@@ -85,10 +85,15 @@ function generateItemInfoHTML(infoItems, imageUrl) {
 function generateImageUploadHtml() {
     return /*html*/`
         <div class="edit-img-upload">
-            <label for="uploadImage" class="edit-file-upload">Bild hinzufügen</label>
-            <input type="file" id="uploadImage" name="uploadImage" style="display:none;">
-            <img id="uploadedImage" class="uploaded-image" style="display:none;">
-        </div>`;
+            <label for="editUploadImage" class="edit-file-upload">Bild hinzufügen</label>
+            <input type="file" id="editUploadImage" name="editUploadImage" style="display:none;">
+            <img id="editUploadedImage" class="uploaded-image" style="display:none;">
+        </div>
+        <input type="hidden" id="editUploadedImageId" name="editUploadImageId" value="">`;
 }
+
+
+
+
 
 
