@@ -30,15 +30,15 @@ function togglePopupNewItem(categoryID) {
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
-    resetUploadImageSrc('uploadImage', 'uploadedImage', 'uploadedImageId');
+    resetUploadImageSrc('uploadImage', 'uploadedImage', 'uploadedImageId', 'removeImgUpload');
     resetTagInput();
 }
 
-function togglePopupProductDetail() {
+/* function togglePopupProductDetail() {
     togglePopup('productDetailPopup');
-    resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId');
-}
-
+    /* resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload'); */
+/* } */
+ 
 function resetTagInput() {
     let tagIdInput = document.getElementById('tagId');
     if (tagIdInput) {
@@ -46,7 +46,7 @@ function resetTagInput() {
     }
 }
 
-function resetUploadImageSrc(uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId) {
+function resetUploadImageSrc(uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId, removeImgElementID) {
     let uploadedImageElement = document.getElementById(uploadedImageElementId);
     if (uploadedImageElement) {
         uploadedImageElement.src = '';
@@ -56,7 +56,14 @@ function resetUploadImageSrc(uploadInputElementId, uploadedImageElementId, uploa
     if (uploadedImageIdInput) {
         uploadedImageIdInput.value = ''; 
     }
-    document.getElementById(uploadInputElementId).value = null;
+    let uploadInputElement = document.getElementById(uploadInputElementId);
+    if (uploadInputElement) {
+        uploadInputElement.value = null;
+    }
+    let removeImgElement = document.getElementById(removeImgElementID);
+    if (removeImgElement) {
+        removeImgElement.style.display = 'none';
+    }
 }
 
 function togglePopup(popupID) {
@@ -190,7 +197,7 @@ async function showProduct(product, categoryID) {
         let tbody = table.querySelector('tbody');
         let tag = await getTagPerProduct(product.tag_ID);
         let image = await getImagePerProduct(product.image_ID);
-        tbody.innerHTML += generateTableRow(product, tag, image);
+        tbody.innerHTML += generateTableRow(product, categoryID, tag, image);
     } else {
         console.error('Category container not found for category ID:', categoryID);
     }
@@ -203,6 +210,57 @@ function sortTable(tableID, columnIndex) {
     let rows = Array.from(table.rows).slice(1);
     let sortOrder = tableSortOrder[tableID] || 'asc';
 
+    if (columnIndex === 3) {
+        sortByDescription(columnIndex, rows, sortOrder);
+    } else if (columnIndex === 4) {
+        sortByTag(columnIndex, rows, sortOrder);
+    } else {
+        sortByNameAmountValue(columnIndex, rows, sortOrder);
+    }
+
+    let tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+    tableSortOrder[tableID] = sortOrder === 'asc' ? 'desc' : 'asc';
+}
+
+function sortByDescription(columnIndex, rows, sortOrder) {
+    rows.sort((a, b) => {
+        let descriptionA = a.cells[columnIndex].textContent.toLowerCase().trim();
+        let descriptionB = b.cells[columnIndex].textContent.toLowerCase().trim();
+        if (descriptionA === '' && descriptionB === '') {
+            return 0;
+        } else if (descriptionA === '') {
+            return 1;
+        } else if (descriptionB === '') {
+            return -1;
+        } else if (sortOrder === 'asc') {
+            return descriptionA.localeCompare(descriptionB);
+        } else {
+            return descriptionB.localeCompare(descriptionA);
+        }
+    });
+}
+
+function sortByTag(columnIndex, rows, sortOrder) {
+    rows.sort((a, b) => {
+        let tagA = a.cells[columnIndex].textContent.toLowerCase().trim();
+        let tagB = b.cells[columnIndex].textContent.toLowerCase().trim();
+        if (tagA === '' && tagB === '') {
+            return 0;
+        } else if (tagA === '') {
+            return 1;
+        } else if (tagB === '') {
+            return -1;
+        } else if (sortOrder === 'asc') {
+            return tagA.localeCompare(tagB);
+        } else {
+            return tagB.localeCompare(tagA);
+        }
+    });
+}
+
+function sortByNameAmountValue(columnIndex, rows, sortOrder) {
     rows.sort((a, b) => {
         let xCell = a.cells[columnIndex];
         let yCell = b.cells[columnIndex];
@@ -229,12 +287,8 @@ function sortTable(tableID, columnIndex) {
             return y - x;
         }
     });
-
-    let tbody = table.querySelector('tbody');
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
-    tableSortOrder[tableID] = sortOrder === 'asc' ? 'desc' : 'asc';
 }
+
 
 function toggleDropdown() {
     let dropDown = document.getElementById("dropdownContent");
@@ -323,53 +377,94 @@ function updateProductCount(categoryID) {
     }
 }
 
+function formatPrice(price) {
+    let parsedPrice = parseFloat(price.replace(',', '.'));
+
+    if (!isNaN(parsedPrice)) {
+        let roundedPrice = parsedPrice.toFixed(2);
+        let formattedPrice = new Intl.NumberFormat('de-DE', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(roundedPrice);
+        return formattedPrice;
+    } else {
+        return '';
+    }
+}
+
 function openProductDetailPopup(productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
-    console.log(productID)
+    let formattedPrice = formatPrice(price);
     let tagHtml = '';
+    
     if (tagName && tagStyle) {
         let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
         let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
-        tagHtml = `<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
+        tagHtml = /*html*/`<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
     }
 
     let infoItems = [
         { label: 'Name', value: name },
         { label: 'Menge', value: amount },
-        { label: 'Preis', value: price },
+        { label: 'Preis', value: formattedPrice},
         { label: 'Tag', value: tagHtml },
         { label: 'Information', value: information }
     ];
     
-    let infoHtml = generateItemInfoHTML(infoItems, imageUrl);
-
+    let infoHtml = generateItemInfoHTML(infoItems, imageUrl, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 
-function showImage(file, imageElementId) {
+function showImage(file, imageElementId, removeImgElementID) {
     let uploadedImageElement = document.getElementById(imageElementId);
     if (uploadedImageElement) {
         let reader = new FileReader();
         reader.onload = function(e) {
             uploadedImageElement.src = e.target.result;
             uploadedImageElement.style.display = 'block';
+            let removeImgElement = document.getElementById(removeImgElementID);
+            if (removeImgElement) {
+                removeImgElement.style.display = 'inline';
+            }
         };
         reader.readAsDataURL(file);
     }
 }
 
-document.addEventListener('change', function(event) {
+document.addEventListener('change', async function(event) {
     if (event.target && (event.target.id === 'uploadImage' || event.target.id === 'editUploadImage')) {
         let file = event.target.files[0];
         if (file) {
             if (event.target.id === 'uploadImage') {
-                showImage(file, 'uploadedImage');
+                showImage(file, 'uploadedImage', 'removeImgUpload');
             } else if (event.target.id === 'editUploadImage') {
-                showImage(file, 'editUploadedImage');
+                showImage(file, 'editUploadedImage', 'removeEditImgUpload');
+                let productID = document.getElementById('editUploadedImageId').value; 
+            
+                if (productID) {
+                    let formData = new FormData();
+                    formData.append('editUploadImage', file); 
+                    formData.append('productID', productID); 
+                    await saveUploadImageInDatabase(file, formData);
+                }
             }
         }
     }
 });
+
+async function updateProductImage(updatedProduct, productID) {
+    try {
+        let imageCell = document.getElementById(`imageColumn_${productID}_${updatedProduct.categoryID}`);
+
+        if (imageCell) {
+            imageCell.innerHTML = updatedProduct.imageURL ? `<img src="php/uploads/${updatedProduct.imageURL}">` : '';
+        } else {
+            console.error('Bildzelle nicht gefunden.');
+        }
+    } catch (error) {
+        console.error('Fehler beim Aktualisieren des Produktbilds:', error.message);
+    }
+}
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -378,5 +473,4 @@ document.addEventListener('DOMContentLoaded', () => {
     selectTagNewItem();
     generateColorOptions();
     showTagsOptions();
-    /* uploadImage(); */
 });

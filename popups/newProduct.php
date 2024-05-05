@@ -37,12 +37,13 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="upload-container">
                     <div class="img-upload">
                         <label for="uploadImage" class="custom-file-upload">Bild hinzufügen</label>
                         <input type="file" id="uploadImage" name="uploadImage" style="display:none;">
                         <img id="uploadedImage" class="uploaded-image" style="display:none;">
                     </div>
+                    <img onclick="resetUploadImageSrc('uploadImage', 'uploadedImage', 'uploadedImageId', 'removeImgUpload')" src="./assets/img/remove-img.png" id="removeImgUpload" class="remove-img-upload" style="display:none;">
                 </div>
             </div>
             <input type="hidden" id="categoryId" name="category-id" value="">

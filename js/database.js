@@ -117,29 +117,33 @@ async function showTagsOptions() {
     }
 }
 
-function saveUploadImageInDatabase(file, formData) {
+async function saveUploadImageInDatabase(file, formData) {
     let formDataImage = new FormData();
     formDataImage.append('uploadImage', file);
 
-    fetch('php/addImage.php', {
-        method: 'POST',
-        body: formDataImage
-    })
-    .then(response => response.text())
-    .then(uploadedImageId => {
+    try {
+        let response = await fetch('php/addImage.php', {
+            method: 'POST',
+            body: formDataImage
+        });
+        let uploadedImageId = await response.text();
         if (uploadedImageId.includes('Error:')) {
             alert(uploadedImageId);
         } else {
-            formData.append('uploadedImageId', uploadedImageId);
-            saveProductInDatabase(formData);
+            if (formData.has('productID')) {
+                formData.append('imageID', uploadedImageId);
+                await updateProductImageInDatabase(formData);
+            } else {
+                formData.append('uploadedImageId', uploadedImageId);
+                await saveProductInDatabase(formData);
+            }
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Upload failed', error);
-    });
+    }
 }
 
-function saveProductInDatabase(formData) {
+async function saveProductInDatabase(formData) {
     fetch('php/addItem.php', {
         method: 'POST',
         body: formData
@@ -160,4 +164,21 @@ function saveProductInDatabase(formData) {
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Produktes:', error.message);
     });
+}
+
+async function updateProductImageInDatabase(formData) {
+    try {
+        let response = await fetch('php/updateProductImage.php', {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        let updatedProduct = await response.json();
+        const productID = document.getElementById('editUploadedImageId').value;
+        updateProductImage(updatedProduct, productID);
+    } catch (error) {
+        console.error('Fehler beim Aktualisieren des Produktbilds:', error.message);
+    }
 }
