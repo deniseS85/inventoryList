@@ -1,5 +1,6 @@
 let currentCategoryID;
 let tableSortOrder = {};
+let currentImageUrls = {}; 
 let expanded = false;
 const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
 
@@ -392,11 +393,11 @@ function formatPrice(price) {
     }
 }
 
-function openProductDetailPopup(productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
+async function openProductDetailPopup(productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
     let formattedPrice = formatPrice(price);
     let tagHtml = '';
-    
+
     if (tagName && tagStyle) {
         let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
         let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
@@ -410,8 +411,8 @@ function openProductDetailPopup(productID, name, amount, price, information, tag
         { label: 'Tag', value: tagHtml },
         { label: 'Information', value: information }
     ];
-    
-    let infoHtml = generateItemInfoHTML(infoItems, imageUrl, productID);
+    let editUploadedImage = currentImageUrls[productID] ? currentImageUrls[productID] : imageUrl;
+    let infoHtml = generateItemInfoHTML(infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 
@@ -439,27 +440,34 @@ document.addEventListener('change', async function(event) {
                 showImage(file, 'uploadedImage', 'removeImgUpload');
             } else if (event.target.id === 'editUploadImage') {
                 showImage(file, 'editUploadedImage', 'removeEditImgUpload');
-                let productID = document.getElementById('editUploadedImageId').value; 
-            
-                if (productID) {
-                    let formData = new FormData();
-                    formData.append('editUploadImage', file); 
-                    formData.append('productID', productID); 
-                    await saveUploadImageInDatabase(file, formData);
-                }
+                await productAlreadyExist(file);
             }
         }
     }
 });
 
+async function productAlreadyExist(file) {
+    let productID = document.getElementById('editUploadedImageId').value; 
+            
+    if (productID) {
+        let formData = new FormData();
+        formData.append('editUploadImage', file); 
+        formData.append('productID', productID); 
+        await saveUploadImageInDatabase(file, formData);
+    }
+}
+
 async function updateProductImage(updatedProduct, productID) {
     try {
         let imageCell = document.getElementById(`imageColumn_${productID}_${updatedProduct.categoryID}`);
+        let previewImage = document.getElementById(`previewImage_${productID}`);
 
-        if (imageCell) {
-            imageCell.innerHTML = updatedProduct.imageURL ? `<img src="php/uploads/${updatedProduct.imageURL}">` : '';
+        if (imageCell && previewImage) {
+            let imageHTML = updatedProduct.imageURL ? `<img src="php/uploads/${updatedProduct.imageURL}">` : '';
+            imageCell.innerHTML = imageHTML;
+            previewImage.innerHTML = imageHTML;
         } else {
-            console.error('Bildzelle nicht gefunden.');
+            console.error('Bildzelle oder Vorschau-Bild nicht gefunden.');
         }
     } catch (error) {
         console.error('Fehler beim Aktualisieren des Produktbilds:', error.message);

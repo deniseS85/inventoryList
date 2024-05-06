@@ -176,7 +176,10 @@ async function updateProductImageInDatabase(formData) {
             throw new Error(response.statusText);
         }
         let updatedProduct = await response.json();
-        const productID = document.getElementById('editUploadedImageId').value;
+        let productID = document.getElementById('editUploadedImageId').value;
+        if (updatedProduct.imageURL) {
+            currentImageUrls[productID] = updatedProduct.imageURL;
+        } 
         updateProductImage(updatedProduct, productID);
     } catch (error) {
         console.error('Fehler beim Aktualisieren des Produktbilds:', error.message);

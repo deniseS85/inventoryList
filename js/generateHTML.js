@@ -44,7 +44,7 @@ function generateTableHTML(product, categoryID) {
     }
 }
 
-function generateTableRow(product, categoryID, tag,  image) {
+function generateTableRow(product, categoryID, tag, image) { 
     let formattedPrice = formatPrice(product.price);
     let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
@@ -68,17 +68,13 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
                 <div class="value">${item.value}</div>
             </div>`;
     });
-
+    
     let isUploadedImage = imageUrl ? `<img src="php/uploads/${imageUrl}">` : generateImageUploadHtml(productID);
-
+    
     return /*html*/`
-        <div class="left">
-            ${isUploadedImage}
-        </div>
+        <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
-            <div class="product-detail-info">
-                ${infoHtml}
-            </div>
+            <div class="product-detail-info">${infoHtml}</div>
         </div>`;
 }
 
