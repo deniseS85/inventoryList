@@ -1,6 +1,6 @@
 let currentCategoryID;
 let tableSortOrder = {};
-let currentImageUrls = {}; 
+let currentImageUrl = {}; 
 let expanded = false;
 const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
 
@@ -411,7 +411,7 @@ async function openProductDetailPopup(productID, name, amount, price, informatio
         { label: 'Tag', value: tagHtml },
         { label: 'Information', value: information }
     ];
-    let editUploadedImage = currentImageUrls[productID] ? currentImageUrls[productID] : imageUrl;
+    let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
     let infoHtml = generateItemInfoHTML(infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
@@ -436,15 +436,37 @@ document.addEventListener('change', async function(event) {
     if (event.target && (event.target.id === 'uploadImage' || event.target.id === 'editUploadImage')) {
         let file = event.target.files[0];
         if (file) {
-            if (event.target.id === 'uploadImage') {
-                showImage(file, 'uploadedImage', 'removeImgUpload');
-            } else if (event.target.id === 'editUploadImage') {
-                showImage(file, 'editUploadedImage', 'removeEditImgUpload');
-                await productAlreadyExist(file);
+            if (isImageValid(file)) {
+                if (event.target.id === 'uploadImage') {
+                    showImage(file, 'uploadedImage', 'removeImgUpload');
+                } else if (event.target.id === 'editUploadImage') {
+                    showImage(file, 'editUploadedImage', 'removeEditImgUpload');
+                    await productAlreadyExist(file);
+                }
+            } else {
+                console.error('Error: Invalid image file.');
             }
+            
         }
     }
 });
+
+function isImageValid(file) {
+    let imageFileType = file.type.toLowerCase();
+    let validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (!validTypes.includes(imageFileType)) {
+        console.error('Error: Invalid file type.');
+        return false;
+    }
+
+    if (file.size > 500000) {
+        console.error('Error: File is too large.');
+        return false;
+    }
+    return true;
+}
+
 
 async function productAlreadyExist(file) {
     let productID = document.getElementById('editUploadedImageId').value; 

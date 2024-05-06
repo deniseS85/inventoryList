@@ -70,7 +70,6 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
     });
     
     let isUploadedImage = imageUrl ? `<img src="php/uploads/${imageUrl}">` : generateImageUploadHtml(productID);
-    
     return /*html*/`
         <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
@@ -87,7 +86,6 @@ function generateImageUploadHtml(productID) {
                 <img id="editUploadedImage" class="uploaded-image" style="display:none;">
             </div>
             <input type="hidden" id="editUploadedImageId" name="editUploadImageId" value="${productID}">
-            <!-- <img onclick="resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')" src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" style="display:none;"> -->
         </form>`;
 }
 

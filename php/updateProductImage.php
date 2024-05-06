@@ -21,13 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Bild-ID in die Tabelle "Products" aktualisieren
-        $sql_update_product = "UPDATE products SET image_ID = ? WHERE ID = ?";
+        $sql_update_product = "UPDATE Products SET image_ID = ? WHERE ID = ?";
         $stmt_update_product = $conn->prepare($sql_update_product);
         $stmt_update_product->bind_param("ii", $inserted_image_id, $productID);
 
         if ($stmt_update_product->execute()) {
             // Jetzt die category_ID abrufen
-            $sql_get_category = "SELECT category_ID FROM products WHERE ID = ?";
+            $sql_get_category = "SELECT category_ID FROM Products WHERE ID = ?";
             $stmt_get_category = $conn->prepare($sql_get_category);
             $stmt_get_category->bind_param("i", $productID);
             $stmt_get_category->execute();

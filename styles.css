@@ -309,6 +309,7 @@ td:nth-child(6), th:nth-child(6) {
 }
 
 td:nth-child(6) img {
+    width: 40px;
     max-width: 40px;
     height: 40px;
     object-fit: cover;
@@ -434,7 +435,7 @@ footer {
     position: relative;
 }
 
-#productDetailContent .left img,
+.left img,
 #productDetailContent .left .edit-img-upload {
     width: clamp(9.375rem, 8.2143rem + 5.8036vw, 17.5rem);
     min-width: clamp(9.375rem, 8.2143rem + 5.8036vw, 17.5rem);
@@ -468,10 +469,14 @@ footer {
 }
 
 #productDetailContent .left .edit-file-upload {
-    text-align: center;
     cursor: pointer;
     font-size: 14px;
+    width: 100%;
+    height: 100%;
     margin-top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #productDetailContent .right {
@@ -601,10 +606,14 @@ footer {
 }
 
 .custom-file-upload {
-    text-align: center;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     font-size: 12px;
     margin-top: 0;
+    text-align: center;
 }
 
 .uploaded-image {

@@ -178,7 +178,7 @@ async function updateProductImageInDatabase(formData) {
         let updatedProduct = await response.json();
         let productID = document.getElementById('editUploadedImageId').value;
         if (updatedProduct.imageURL) {
-            currentImageUrls[productID] = updatedProduct.imageURL;
+            currentImageUrl[productID] = updatedProduct.imageURL;
         } 
         updateProductImage(updatedProduct, productID);
     } catch (error) {
