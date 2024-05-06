@@ -120,17 +120,21 @@ function validateInput(buttonId, inputElement) {
     document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
 }
 
-async function showCategoryItems(category) {
+async function showCategoryItems(categories) {
     let container = document.querySelector('.category-item-container');
-    let categoryElement = document.createElement('div');
-    categoryElement.classList.add('category-item');
-    categoryElement.innerHTML = category.name;
-    categoryElement.dataset.categoryId = category.id; 
+    container.innerHTML = '';
 
-    let products = await getProductsByCategory(category.id);
-    let productCount = products.length;
-    openCategoryItem(categoryElement, category.name, category.id, productCount);
-    container.appendChild(categoryElement);
+    for (let i = 0; i < categories.length; i++) {
+        let category = categories[i];
+        let categoryElement = document.createElement('div');
+        categoryElement.classList.add('category-item');
+        categoryElement.innerHTML = category.name;
+        categoryElement.dataset.categoryId = category.id; 
+        let products = await getProductsByCategory(category.id);
+        let productCount = products.length;
+        openCategoryItem(categoryElement, category.name, category.id, productCount);
+        container.appendChild(categoryElement);
+    }
 }
 
 function openCategoryItem(item, categoryName, categoryID, productCount) {

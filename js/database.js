@@ -1,12 +1,9 @@
 async function getCategories() {
     try {
-        await fetch('php/getCategories.php')
-        .then(response => response.json())
-        .then(categories => {
-            categories.forEach(category => {
-                showCategoryItems(category);
-            });
-        })
+        const response = await fetch('php/getCategories.php');
+        let categories = await response.json();
+        categories.sort((a, b) => a.name.localeCompare(b.name));
+        showCategoryItems(categories);
     } catch (error) {
         console.error('Error fetching categories:', error);
     }
