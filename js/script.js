@@ -120,6 +120,12 @@ function validateInput(buttonId, inputElement) {
     document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
 }
 
+function validateInputDecimal(input) {
+    if (!/^(\d{1,6}([,.]?\d{0,2})?)?$/.test(input.value)) {
+        input.value = input.value.slice(0, -1);
+    }
+}
+
 async function showCategoryItems(categories) {
     let container = document.querySelector('.category-item-container');
     container.innerHTML = '';
