@@ -4,7 +4,7 @@
         <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="productName">Name:</label>
-                <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\s.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'" oninput="validateInput('addItemButton', this)">
+                <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'" oninput="validateInput('addItemButton', this)">
             </div>
             <div class="form-group">
                 <label for="amount">Menge:</label>
@@ -16,7 +16,7 @@
             </div>
             <div class="form-group">
                 <label for="productInfo">Beschreibung:</label>
-                <input id="productInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\s.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="productInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
             </div>
 
             <div class="tagImage">

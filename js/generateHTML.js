@@ -6,7 +6,7 @@ function generateItemHTML(categoryName, categoryID, productCount) {
         <div class="item-info" data-category-id="${categoryID}">
             <div class="item-header">
                 <div>
-                    <img onclick="togglePopupDeleteCategory()" class="delete-icon" src="./assets/img/delete.png">
+                    <img onclick="togglePopupDeleteCategory('${categoryName}', '${productCount} ${productLabel}')" class="delete-icon" src="./assets/img/delete.png">
                     <img onclick="togglePopupEditCategory('${categoryName}', ${categoryID})" class="edit-icon" src="./assets/img/edit.png">
                 </div>
                 <div class="item-title">

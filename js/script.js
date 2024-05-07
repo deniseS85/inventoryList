@@ -11,8 +11,11 @@ function togglePopupNewCategory() {
     validateInput('addCategoryButton', document.getElementById('categoryInput'));
 }
 
-function togglePopupDeleteCategory() {
-    togglePopup('deleteCategoryConfirmation');
+function togglePopupDeleteCategory(categoryName, amountProducts) {
+    let confirmationText = document.getElementById('confirmationText');
+    confirmationText.innerHTML = /*html*/`
+        Bist du sicher, dass du <b>${categoryName}</b><br> und die <b>${amountProducts}</b> löschen möchtest?`;
+    togglePopup('deleteCategoryConfirmation'); 
 }
 
 function togglePopupEditCategory(categoryName, categoryID) {
@@ -389,17 +392,21 @@ function updateProductCount(categoryID) {
 }
 
 function formatPrice(price) {
-    let parsedPrice = parseFloat(price.replace(',', '.'));
+    if (price && price.trim() !== '') {
+        let parsedPrice = parseFloat(price.replace(',', '.'));
 
-    if (!isNaN(parsedPrice)) {
-        let roundedPrice = parsedPrice.toFixed(2);
-        let formattedPrice = new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'EUR'
-        }).format(roundedPrice);
-        return formattedPrice;
+        if (!isNaN(parsedPrice)) {
+            let roundedPrice = parsedPrice.toFixed(2);
+            let formattedPrice = new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(roundedPrice);
+            return formattedPrice;
+        } else {
+            return '';
+        }
     } else {
-        return '';
+        return '0,00 €';
     }
 }
 
