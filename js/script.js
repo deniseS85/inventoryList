@@ -42,32 +42,33 @@ function togglePopupNewItem(categoryID) {
     togglePopup('productDetailPopup');
     /* resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload'); */
 /* } */
- 
-function resetTagInput() {
-    let tagIdInput = document.getElementById('tagId');
-    if (tagIdInput) {
-        tagIdInput.value = ''; 
+
+function resetElements(elementID, properties) {
+    let element = document.getElementById(elementID);
+    if (element) {
+        properties.forEach(property => {
+            if (property.name === 'value') {
+                element.value = property.value;
+            } else if (property.name.startsWith('style.')) {
+                let styleProperty = property.name.split('.')[1];
+                element.style[styleProperty] = property.value;
+            }
+        });
     }
 }
 
+function resetTagInput() {
+    resetElements('tagId', [{ name: 'value', value: '' }]);
+}
+
 function resetUploadImageSrc(uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId, removeImgElementID) {
-    let uploadedImageElement = document.getElementById(uploadedImageElementId);
-    if (uploadedImageElement) {
-        uploadedImageElement.src = '';
-        uploadedImageElement.style.display = 'none';
-    }
-    let uploadedImageIdInput = document.getElementById(uploadedImageIdInputId);
-    if (uploadedImageIdInput) {
-        uploadedImageIdInput.value = ''; 
-    }
-    let uploadInputElement = document.getElementById(uploadInputElementId);
-    if (uploadInputElement) {
-        uploadInputElement.value = null;
-    }
-    let removeImgElement = document.getElementById(removeImgElementID);
-    if (removeImgElement) {
-        removeImgElement.style.display = 'none';
-    }
+    resetElements(uploadedImageElementId, [
+        { name: 'src', value: '' },
+        { name: 'style.display', value: 'none' }
+    ]);
+    resetElements(uploadedImageIdInputId, [{ name: 'value', value: '' }]);
+    resetElements(uploadInputElementId, [{ name: 'value', value: null }]);
+    resetElements(removeImgElementID, [{ name: 'style.display', value: 'none' }]);
 }
 
 function togglePopup(popupID) {

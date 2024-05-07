@@ -69,7 +69,8 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
             </div>`;
     });
     
-    let isUploadedImage = imageUrl ? `<img src="php/uploads/${imageUrl}">` : generateImageUploadHtml(productID);
+    let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(productID);
+
     return /*html*/`
         <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
@@ -77,7 +78,15 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
         </div>`;
 }
 
-function generateImageUploadHtml(productID) {
+function generateImagePreviewUploadHTML(imageUrl) {
+    return /*html*/`
+        <div class="image-upload-container">
+            <img src="php/uploads/${imageUrl}" class="uploaded-image-preview">
+            <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')">
+        </div>`;
+}
+
+function generateImageFormUploadHTML(productID) {
     return /*html*/`
         <form id="editUploadImageForm" enctype="multipart/form-data">
             <div class="edit-img-upload">
