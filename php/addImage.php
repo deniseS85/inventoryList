@@ -1,5 +1,4 @@
 <?php
-
 include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -35,15 +34,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($uploadOk == 1) {
             if (move_uploaded_file($_FILES["uploadImage"]["tmp_name"], $target_file)) {
                 $image_url = $file_name;
+                $stmt = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
+                $stmt->bind_param("s", $image_url);
 
-                $sql = "INSERT INTO Images (url) VALUES ('$image_url')";
-
-                if (mysqli_query($conn, $sql)) {
-                    $image_id = mysqli_insert_id($conn);
+                if ($stmt->execute()) {
+                    $image_id = $stmt->insert_id;
                     echo $image_id;
                 } else {
-                    echo "Error: " . mysqli_error($conn);
+                    echo "Error: " . $stmt->error;
                 }
+                $stmt->close();
             } else {
                 echo "Error: Sorry, there was an error uploading your file.";
             }
@@ -57,5 +57,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "Error: Invalid request method.";
 }
 
-mysqli_close($conn);
+$conn->close();
 ?>

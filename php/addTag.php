@@ -1,5 +1,4 @@
 <?php
-
 include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -8,14 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($data['tagName']) && isset($data['tagColor']) && !empty($data['tagName'])) {
         $tag_name = $data['tagName'];
         $tag_color = $data['tagColor'];
+        $stmt = $conn->prepare("INSERT INTO Tags (tag_name, color) VALUES (?, ?)");
+        $stmt->bind_param("ss", $tag_name, $tag_color);
 
-        $sql = "INSERT INTO Tags (tag_name, color) VALUES ('$tag_name', '$tag_color')";
-
-        if (mysqli_query($conn, $sql)) {
+        if ($stmt->execute()) {
             echo "Tag erfolgreich hinzugefügt";
         } else {
-            echo "Fehler beim Hinzufügen des Tags: " . mysqli_error($conn);
+            echo "Fehler beim Hinzufügen des Tags: " . $stmt->error;
         }
+        $stmt->close();
     } else {
         echo "Tagnamenfeld nicht gesetzt";
     }
@@ -23,5 +23,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "Das Formular wurde nicht gesendet";
 }
 
-mysqli_close($conn);
+$conn->close();
 ?>

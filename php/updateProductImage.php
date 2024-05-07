@@ -9,8 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Überprüfen, ob es sich um ein neues Bild handelt
         if (isset($_POST['uploadedImageId'])) {
             // Neues Bild: Einfügen in die Tabelle "Images"
-            $sql_insert_image = "INSERT INTO Images (url) VALUES (?)";
-            $stmt_insert_image = $conn->prepare($sql_insert_image);
+            $stmt_insert_image = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
             $stmt_insert_image->bind_param("s", $imageID);
             $stmt_insert_image->execute();
             $inserted_image_id = $stmt_insert_image->insert_id;
@@ -21,14 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Bild-ID in die Tabelle "Products" aktualisieren
-        $sql_update_product = "UPDATE Products SET image_ID = ? WHERE ID = ?";
-        $stmt_update_product = $conn->prepare($sql_update_product);
+        $stmt_update_product = $conn->prepare("UPDATE Products SET image_ID = ? WHERE ID = ?");
         $stmt_update_product->bind_param("ii", $inserted_image_id, $productID);
 
         if ($stmt_update_product->execute()) {
             // Jetzt die category_ID abrufen
-            $sql_get_category = "SELECT category_ID FROM Products WHERE ID = ?";
-            $stmt_get_category = $conn->prepare($sql_get_category);
+            $stmt_get_category = $conn->prepare("SELECT category_ID FROM Products WHERE ID = ?");
             $stmt_get_category->bind_param("i", $productID);
             $stmt_get_category->execute();
             $stmt_get_category->bind_result($categoryID);
@@ -36,15 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_get_category->close();
 
             // URL des hochgeladenen Bildes abrufen
-            $sql_get_image_url = "SELECT url FROM Images WHERE ID = ?";
-            $stmt_get_image_url = $conn->prepare($sql_get_image_url);
+            $stmt_get_image_url = $conn->prepare("SELECT url FROM Images WHERE ID = ?");
             $stmt_get_image_url->bind_param("i", $inserted_image_id);
             $stmt_get_image_url->execute();
             $stmt_get_image_url->bind_result($imageUrl);
             $stmt_get_image_url->fetch();
             $stmt_get_image_url->close();
-
-            // Hier haben Sie die category_ID und die URL des Bildes, die Sie verwenden können
 
             $response = array('success' => true, 'message' => 'Bild erfolgreich aktualisiert', 'categoryID' => $categoryID, 'imageURL' => $imageUrl);
             echo json_encode($response);

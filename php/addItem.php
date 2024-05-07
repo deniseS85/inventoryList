@@ -1,9 +1,7 @@
 <?php
-
 include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   
     if (isset($_POST['product-name']) && !empty($_POST['product-name'])) {
         $product_name = $_POST['product-name'];
         $product_amount = !empty($_POST['product-amount']) ? $_POST['product-amount'] : 0;
@@ -12,15 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tag_id = isset($_POST['tag-id']) && !empty($_POST['tag-id']) ? $_POST['tag-id'] : null;
         $image_id = isset($_POST['uploadedImageId']) && !empty($_POST['uploadedImageId']) ? $_POST['uploadedImageId'] : null;
         $category_id = $_POST['category-id'];
+        $stmt = $conn->prepare("INSERT INTO Products (product_name, amount, price, information, category_ID, tag_ID, image_ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sdssiii", $product_name, $product_amount, $product_value, $product_info, $category_id, $tag_id, $image_id);
 
-        // prepared statement mit Platzhalter für Spaltenvalues
-        $sql = "INSERT INTO Products (product_name, amount, price, information, category_ID, tag_ID, image_ID) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sdssiii", $product_name, $product_amount, $product_value, $product_info, $category_id, $tag_id, $image_id);
-                        //s-string, d-double(float), i-integer
-        if (mysqli_stmt_execute($stmt)) {
-            $new_product_id = mysqli_insert_id($conn);
+        if ($stmt->execute()) {
+            $new_product_id = $stmt->insert_id;
             $new_product = array(
                 'id' => $new_product_id,
                 'name' => $product_name,
@@ -33,14 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
             echo json_encode($new_product);
         } else {
-            echo "Fehler beim Hinzufügen des Produktes: " . mysqli_error($conn);
+            echo "Fehler beim Hinzufügen des Produktes: " . $stmt->error;
         }
-        
-        mysqli_stmt_close($stmt);
-    } 
+        $stmt->close();
+    } else {
+        echo "Das Formular wurde nicht gesendet";
+    }
 } else {
-    echo "Das Formular wurde nicht gesendet";
+    echo "Ungültige Anfragemethode.";
 }
 
-mysqli_close($conn);
+$conn->close();
 ?>
