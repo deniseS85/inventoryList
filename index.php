@@ -43,6 +43,7 @@
     <?php include 'popups/newCategory.php'; ?>
     <?php include 'popups/editCategory.php'; ?>
     <?php include 'popups/deleteCategory.php'; ?>
+    <?php include 'popups/deleteProduct.php'; ?>
     <?php include 'popups/newProduct.php'; ?>
     <?php include 'popups/newTag.php'; ?>   
        

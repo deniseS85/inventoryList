@@ -400,6 +400,7 @@ footer {
 }
 
 .product-detail-container {
+    position: relative;
     background-color: var(--bg-color);
     width: clamp(19.375rem, 13.2143rem + 30.8036vw, 62.5rem);
     height: auto;
@@ -427,6 +428,11 @@ footer {
     #productDetailContent .right {
         width: 90% !important;
     }
+}
+
+.icon-container-edit-product {
+    position: absolute;
+    right: 30px;
 }
 
 #productDetailContent .left {

@@ -408,24 +408,32 @@ function formatPrice(price) {
 async function openProductDetailPopup(categoryID, productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
     let formattedPrice = formatPrice(price);
-    let tagHtml = '';
-
-    if (tagName && tagStyle) {
-        let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
-        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
-        tagHtml = /*html*/`<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
-    }
-
-    let infoItems = [
-        { label: 'Name', value: name },
-        { label: 'Menge', value: amount },
-        { label: 'Preis', value: formattedPrice},
-        { label: 'Tag', value: tagHtml },
-        { label: 'Information', value: information }
-    ];
+    let tagHtml = getTagHTML(tagName, tagStyle);
+    let infoItems = getInfoItems(name, amount, formattedPrice, information, tagHtml);
     let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
     let infoHtml = generateItemInfoHTML(categoryID, infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
+    let productDetailPopup = document.getElementById('productDetailPopup');
+    productDetailPopup.dataset.productId = productID;
+}
+
+function getTagHTML(tagName, tagStyle) {
+    if (tagName && tagStyle) {
+        let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
+        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
+        return /*html*/`<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
+    }
+    return '';
+}
+
+function getInfoItems(name, amount, formattedPrice, information, tagHtml) {
+    return [
+        { label: 'Name', value: name },
+        { label: 'Menge', value: amount },
+        { label: 'Preis', value: formattedPrice },
+        { label: 'Tag', value: tagHtml },
+        { label: 'Information', value: information }
+    ];
 }
 
 function showImage(file, imageElementId, removeImgElementID) {
@@ -530,6 +538,27 @@ function resetUploadImage(categoryID, productID, uploadedImageElementId, uploade
     currentImageUrl[productID] = '';
     let imageCell = document.getElementById(`imageColumn_${productID}_${categoryID}`);
     imageCell && (imageCell.innerHTML = '');
+}
+
+function togglePopupDeleteProduct(el) {
+    let productDetailPopup = el.closest('#productDetailPopup');
+    let productID = productDetailPopup.dataset.productId;
+
+    console.log(productID)
+    let confirmationText = document.getElementById('confirmationTextProduct');
+    confirmationText.innerHTML = /*html*/`
+        Bist du sicher, dass du dieses Produkt löschen möchtest?`;
+
+    let deleteConfirmationPopup = document.getElementById('deleteProductConfirmation');
+    deleteConfirmationPopup.dataset.productId = productID;
+    togglePopup('deleteProductConfirmation'); 
+}
+
+function removeProductFromHTML(productID) {
+    let productRowElement = document.getElementById(`productRow_${productID}`);
+    if (productRowElement) {
+        productRowElement.remove();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

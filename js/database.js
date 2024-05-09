@@ -200,3 +200,26 @@ async function deleteImageFromDatabase(formData) {
         console.error('Fehler beim Löschen des Bildes:', error.message)
     }
 }
+
+async function deleteProductItem() {
+    try {
+        let productID = document.getElementById('deleteProductConfirmation').dataset.productId;
+
+        const response = await fetch('php/deleteProduct.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ID: productID })
+        });
+
+        if (!response.ok) {
+            throw new Error('Fehler beim Löschen des Produkts');
+        }
+        removeProductFromHTML(productID);
+        togglePopup('deleteProductConfirmation');
+        togglePopup('productDetailPopup');
+    } catch (error) {
+        console.error('Fehler beim Löschen des Produkts:', error.message);
+    }
+}
