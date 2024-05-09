@@ -2,7 +2,7 @@
     <div class="new-category-container" onclick="doNotClose(event)">
         <h4 class="popup-title">Kategorie ändern</h4>
         <form id="updateCategoryForm" action="php/updateCategory.php" method="post" autocomplete="off">
-            <input onkeydown="return /[a-z]/i.test(event.key)" id="categoryCurrentInput" class="input-new-category" type="text" name="newCategoryName" placeholder="Kategoriename">
+            <input onkeydown="return /[a-zäöüß]/i.test(event.key)" id="categoryCurrentInput" class="input-new-category" type="text" name="newCategoryName" placeholder="Kategoriename">
             <input type="hidden" id="categoryIdInput" name="categoryId" value="">
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupEditCategory(null)">Abbrechen</button>

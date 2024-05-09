@@ -60,7 +60,7 @@ function generateTableRow(product, categoryID, tag, image) {
 
 function generateItemInfoHTML(infoItems, imageUrl, productID) {
     let infoHtml = '';
-   
+
     infoItems.forEach(item => {
         infoHtml += /*html*/`
             <div class="product">
@@ -70,7 +70,6 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
     });
     
     let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(productID);
-
     return /*html*/`
         <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
@@ -80,10 +79,7 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
 
 function generateImagePreviewUploadHTML(imageUrl) {
     return /*html*/`
-        <div class="image-upload-container">
-            <img src="php/uploads/${imageUrl}" class="uploaded-image-preview">
-            <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')">
-        </div>`;
+        <img src="php/uploads/${imageUrl}">`;
 }
 
 function generateImageFormUploadHTML(productID) {
@@ -95,6 +91,7 @@ function generateImageFormUploadHTML(productID) {
                 <img id="editUploadedImage" class="uploaded-image" style="display:none;">
             </div>
             <input type="hidden" id="editUploadedImageId" name="editUploadImageId" value="${productID}">
+            <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="deleteUploadedImage('${productID}', 'editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')" style="display:none;">
         </form>`;
 }
 

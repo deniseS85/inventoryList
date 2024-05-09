@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_get_image_url->fetch();
             $stmt_get_image_url->close();
 
-            $response = array('success' => true, 'message' => 'Bild erfolgreich aktualisiert', 'categoryID' => $categoryID, 'imageURL' => $imageUrl);
+            $response = array('success' => true, 'message' => 'Bild erfolgreich aktualisiert', 'categoryID' => $categoryID, 'imageURL' => $imageUrl, 'imageID' => $inserted_image_id);
             echo json_encode($response);
         } else {
             $response = array('success' => false, 'message' => 'Fehler beim Aktualisieren des Bildes');

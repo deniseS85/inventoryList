@@ -38,11 +38,6 @@ function togglePopupNewItem(categoryID) {
     resetTagInput();
 }
 
-/* function togglePopupProductDetail() {
-    togglePopup('productDetailPopup');
-    /* resetUploadImageSrc('editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload'); */
-/* } */
-
 function resetElements(elementID, properties) {
     let element = document.getElementById(elementID);
     if (element) {
@@ -304,7 +299,6 @@ function sortByNameAmountValue(columnIndex, rows, sortOrder) {
     });
 }
 
-
 function toggleDropdown() {
     let dropDown = document.getElementById("dropdownContent");
     dropDown.classList.toggle("expanded");
@@ -459,6 +453,7 @@ document.addEventListener('change', async function(event) {
                     showImage(file, 'uploadedImage', 'removeImgUpload');
                 } else if (event.target.id === 'editUploadImage') {
                     showImage(file, 'editUploadedImage', 'removeEditImgUpload');
+                    document.querySelector('#editUploadImageForm .edit-img-upload').style.backgroundImage = 'none';
                     await productAlreadyExist(file);
                 }
             } else {
@@ -497,15 +492,12 @@ async function productAlreadyExist(file) {
     }
 }
 
-async function updateProductImage(updatedProduct, productID) {
+async function addImageToProduct(updatedProduct, productID) {
     try {
         let imageCell = document.getElementById(`imageColumn_${productID}_${updatedProduct.categoryID}`);
-        let previewImage = document.getElementById(`previewImage_${productID}`);
-
-        if (imageCell && previewImage) {
+        if (imageCell) {
             let imageHTML = updatedProduct.imageURL ? `<img src="php/uploads/${updatedProduct.imageURL}">` : '';
             imageCell.innerHTML = imageHTML;
-            previewImage.innerHTML = imageHTML;
         } else {
             console.error('Bildzelle oder Vorschau-Bild nicht gefunden.');
         }
@@ -514,6 +506,27 @@ async function updateProductImage(updatedProduct, productID) {
     }
 }
 
+async function deleteUploadedImage(productID, uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId, removeImgElementID) {
+    let inputValueUpload = document.getElementById('editUploadedImageId').value;
+    let imageID = inputValueUpload.split(',')[1].trim();
+    const formData = new FormData();
+    
+    formData.append('productID', productID);
+    formData.append('imageID', imageID);
+    await deleteImageFromDatabase(formData);
+    resetUploadImage(uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID)
+}
+
+function resetUploadImage(uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID) {
+    resetElements(uploadedImageElementId, [
+        { name: 'src', value: '' },
+        { name: 'style.display', value: 'none' }
+    ]);
+    resetElements(uploadedImageIdInputId, [{ name: 'value', value: '' }]);
+    resetElements(uploadInputElementId, [{ name: 'value', value: null }]);
+    resetElements(removeImgElementID, [{ name: 'style.display', value: 'none' }]);
+    document.querySelector('#editUploadImageForm .edit-img-upload').style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='none' rx='100' ry='100' stroke='%2305FBFBFF' stroke-width='3' stroke-dasharray='3 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();

@@ -129,7 +129,7 @@ async function saveUploadImageInDatabase(file, formData) {
         } else {
             if (formData.has('productID')) {
                 formData.append('imageID', uploadedImageId);
-                await updateProductImageInDatabase(formData);
+                await addImageToDatabase(formData);
             } else {
                 formData.append('uploadedImageId', uploadedImageId);
                 await saveProductInDatabase(formData);
@@ -163,9 +163,9 @@ async function saveProductInDatabase(formData) {
     });
 }
 
-async function updateProductImageInDatabase(formData) {
+async function addImageToDatabase(formData) {
     try {
-        let response = await fetch('php/updateProductImage.php', {
+        let response = await fetch('php/addImageToProduct.php', {
             method: 'POST',
             body: formData
         });
@@ -174,11 +174,30 @@ async function updateProductImageInDatabase(formData) {
         }
         let updatedProduct = await response.json();
         let productID = document.getElementById('editUploadedImageId').value;
+        let imageID = updatedProduct.imageID;
+        document.getElementById('editUploadedImageId').value = `${productID}, ${imageID}`;
+
         if (updatedProduct.imageURL) {
             currentImageUrl[productID] = updatedProduct.imageURL;
         } 
-        updateProductImage(updatedProduct, productID);
+        addImageToProduct(updatedProduct, productID);
     } catch (error) {
         console.error('Fehler beim Aktualisieren des Produktbilds:', error.message);
+    }
+}
+
+async function deleteImageFromDatabase(formData) {
+    try {
+        const response = await fetch('php/deleteImageFromProduct.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+       /*  let deleteImageText = await response.text(); */
+    } catch (error) {
+        console.error('Fehler beim Löschen des Bildes:', error.message)
     }
 }
