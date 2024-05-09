@@ -270,6 +270,11 @@ thead, tbody tr {
     width: 100%;
 }
 
+.separator {
+    width: 100%;
+    border-bottom: 1px solid var(--turquoise);
+}
+
 th, td {
     padding-bottom: 10px;
     padding-top: 10px; 
@@ -405,6 +410,7 @@ footer {
     width: clamp(19.375rem, 13.2143rem + 30.8036vw, 62.5rem);
     height: auto;
     gap: 20px;
+    padding: 20px 0;
 }
 
 #productDetailContent {
@@ -769,6 +775,12 @@ label {
     width: 100%;
     justify-content: space-evenly;
     margin-top: 30px;
+}
+
+.btn-container-product-detail {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .btn-container-new-tag {
