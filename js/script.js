@@ -405,7 +405,7 @@ function formatPrice(price) {
     }
 }
 
-async function openProductDetailPopup(productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
+async function openProductDetailPopup(categoryID, productID, name, amount, price, information, tagName, tagStyle, imageUrl) {
     togglePopup('productDetailPopup');
     let formattedPrice = formatPrice(price);
     let tagHtml = '';
@@ -424,7 +424,7 @@ async function openProductDetailPopup(productID, name, amount, price, informatio
         { label: 'Information', value: information }
     ];
     let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
-    let infoHtml = generateItemInfoHTML(infoItems, editUploadedImage, productID);
+    let infoHtml = generateItemInfoHTML(categoryID, infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 
@@ -506,18 +506,19 @@ async function addImageToProduct(updatedProduct, productID) {
     }
 }
 
-async function deleteUploadedImage(productID, uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId, removeImgElementID) {
+async function deleteUploadedImage(categoryID, productID, uploadInputElementId, uploadedImageElementId, uploadedImageIdInputId, removeImgElementID) {
     let inputValueUpload = document.getElementById('editUploadedImageId').value;
     let imageID = inputValueUpload.split(',')[1].trim();
+
     const formData = new FormData();
-    
     formData.append('productID', productID);
     formData.append('imageID', imageID);
+
     await deleteImageFromDatabase(formData);
-    resetUploadImage(uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID)
+    resetUploadImage(categoryID, productID, uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID);    
 }
 
-function resetUploadImage(uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID) {
+function resetUploadImage(categoryID, productID, uploadedImageElementId, uploadedImageIdInputId, uploadInputElementId, removeImgElementID) {
     resetElements(uploadedImageElementId, [
         { name: 'src', value: '' },
         { name: 'style.display', value: 'none' }
@@ -526,6 +527,9 @@ function resetUploadImage(uploadedImageElementId, uploadedImageIdInputId, upload
     resetElements(uploadInputElementId, [{ name: 'value', value: null }]);
     resetElements(removeImgElementID, [{ name: 'style.display', value: 'none' }]);
     document.querySelector('#editUploadImageForm .edit-img-upload').style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='none' rx='100' ry='100' stroke='%2305FBFBFF' stroke-width='3' stroke-dasharray='3 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`;
+    currentImageUrl[productID] = '';
+    let imageCell = document.getElementById(`imageColumn_${productID}_${categoryID}`);
+    imageCell && (imageCell.innerHTML = '');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

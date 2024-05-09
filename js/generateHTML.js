@@ -48,7 +48,7 @@ function generateTableRow(product, categoryID, tag, image) {
     let formattedPrice = formatPrice(product.price);
     let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
-        <tr onclick="openProductDetailPopup('${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
+        <tr onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${formattedPrice}</td>
@@ -58,7 +58,7 @@ function generateTableRow(product, categoryID, tag, image) {
         </tr>`;
 }
 
-function generateItemInfoHTML(infoItems, imageUrl, productID) {
+function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     let infoHtml = '';
 
     infoItems.forEach(item => {
@@ -69,7 +69,8 @@ function generateItemInfoHTML(infoItems, imageUrl, productID) {
             </div>`;
     });
     
-    let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(productID);
+    let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(categoryID, productID);
+    
     return /*html*/`
         <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
@@ -82,7 +83,7 @@ function generateImagePreviewUploadHTML(imageUrl) {
         <img src="php/uploads/${imageUrl}">`;
 }
 
-function generateImageFormUploadHTML(productID) {
+function generateImageFormUploadHTML(categoryID, productID) {
     return /*html*/`
         <form id="editUploadImageForm" enctype="multipart/form-data">
             <div class="edit-img-upload">
@@ -91,7 +92,7 @@ function generateImageFormUploadHTML(productID) {
                 <img id="editUploadedImage" class="uploaded-image" style="display:none;">
             </div>
             <input type="hidden" id="editUploadedImageId" name="editUploadImageId" value="${productID}">
-            <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="deleteUploadedImage('${productID}', 'editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')" style="display:none;">
+            <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="deleteUploadedImage('${categoryID}', '${productID}', 'editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')" style="display:none;">
         </form>`;
 }
 

@@ -196,7 +196,6 @@ async function deleteImageFromDatabase(formData) {
         if (!response.ok) {
             throw new Error(response.statusText);
         }
-       /*  let deleteImageText = await response.text(); */
     } catch (error) {
         console.error('Fehler beim Löschen des Bildes:', error.message)
     }
