@@ -39,13 +39,16 @@
 
     </footer>
     
-    <?php include 'popups/productDetail.php'; ?>
-    <?php include 'popups/newCategory.php'; ?>
-    <?php include 'popups/editCategory.php'; ?>
-    <?php include 'popups/deleteCategory.php'; ?>
-    <?php include 'popups/deleteProduct.php'; ?>
-    <?php include 'popups/newProduct.php'; ?>
-    <?php include 'popups/newTag.php'; ?>   
+    <?php 
+        include 'popups/newCategory.php'; 
+        include 'popups/editCategory.php'; 
+        include 'popups/deleteCategory.php';
+        include 'popups/productDetail.php'; 
+        include 'popups/deleteProduct.php';
+        include 'popups/newProduct.php'; 
+        include 'popups/newTag.php';
+        include 'popups/editProduct.php'; 
+    ?>
        
 </body>
 

@@ -360,6 +360,7 @@ function addNewItem(event) {
 
 function addNewItemAfterLoadDOM() {
     document.getElementById('addProductForm').addEventListener('submit', addNewItem);
+    
 }
 
 function scrollToLastElement(containerPath, itemSelector) {
@@ -410,11 +411,13 @@ async function openProductDetailPopup(categoryID, productID, name, amount, price
     let formattedPrice = formatPrice(price);
     let tagHtml = getTagHTML(tagName, tagStyle);
     let infoItems = getInfoItems(name, amount, formattedPrice, information, tagHtml);
+    console.log(infoItems)
     let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
     let infoHtml = generateItemInfoHTML(categoryID, infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
     let productDetailPopup = document.getElementById('productDetailPopup');
     productDetailPopup.dataset.productId = productID;
+    productDetailPopup.dataset.categoryId = categoryID;
 }
 
 function getTagHTML(tagName, tagStyle) {
@@ -466,8 +469,7 @@ document.addEventListener('change', async function(event) {
                 }
             } else {
                 console.error('Error: Invalid image file.');
-            }
-            
+            } 
         }
     }
 });
@@ -543,8 +545,6 @@ function resetUploadImage(categoryID, productID, uploadedImageElementId, uploade
 function togglePopupDeleteProduct(el) {
     let productDetailPopup = el.closest('#productDetailPopup');
     let productID = productDetailPopup.dataset.productId;
-
-    console.log(productID)
     let confirmationText = document.getElementById('confirmationTextProduct');
     confirmationText.innerHTML = /*html*/`
         Bist du sicher, dass du dieses Produkt löschen möchtest?`;
@@ -561,10 +561,78 @@ function removeProductFromHTML(productID) {
     }
 }
 
+async function togglePopupEditProduct() {
+    let productId = document.getElementById('productDetailPopup').getAttribute('data-product-id');
+    let categoryId = document.getElementById('productDetailPopup').getAttribute('data-category-id');
+
+    try {
+        let product = await getProductById(productId);
+        
+        if (product) {
+            let formattedPrice = formatPrice(product.price).replace('€', '').trim();
+            let fieldValues = getFieldValues(product, formattedPrice, productId, categoryId);
+            setFieldValues(fieldValues);
+            togglePopup('editProductPopup');
+        } else {
+            console.error('Product not found');
+        }
+    } catch (error) {
+        console.error('Error fetching product:', error);
+    }
+}
+
+function setFieldValues(fieldValues) {
+    fieldValues.forEach(({ id, value }) => {
+        document.getElementById(id).value = value;
+    });
+}
+
+function getFieldValues(product, formattedPrice, productId, categoryId) {
+    return [
+        { id: 'productCurrentName', value: product.product_name },
+        { id: 'currentAmount', value: product.amount },
+        { id: 'currentProductValue', value: formattedPrice },
+        { id: 'currentProductInfo', value: product.information },
+        { id: 'productID', value: productId },
+        { id: 'categoryID', value: categoryId }
+    ];
+}
+
+function editProduct(event) {
+    event.preventDefault();
+    let formData = new FormData(this);
+    saveEditProductInDatabase(formData);
+}
+
+async function updateProductTable(updatedProduct, categoryID) {
+    let productRow = document.getElementById(`productRow_${updatedProduct.id}`);
+    if (productRow) {
+        let tag = await getTagPerProduct(updatedProduct.tag_ID);
+        let image = await getImagePerProduct(updatedProduct.image_ID);
+        let newRowHTML = generateTableRow(updatedProduct, categoryID, tag, image);
+        productRow.outerHTML = newRowHTML;
+    } else {
+        console.error('Product row not found for product ID:', updatedProduct.id);
+    }
+}
+
+function updateProductDetail(updatedProduct) {
+    let infoItems = [
+        { label: 'Name', value: updatedProduct.name },
+        { label: 'Menge', value: updatedProduct.amount },
+        { label: 'Preis', value: formatPrice(updatedProduct.price) },
+        { label: 'Tag', value: '' }, // Hier müssen Sie den Tag-Wert einfügen
+        { label: 'Information', value: updatedProduct.information }
+    ];
+    let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, null, updatedProduct.id);
+    document.getElementById('productDetailContent').innerHTML = infoHtml;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
     selectTagNewItem();
     generateColorOptions();
     showTagsOptions();
+    document.getElementById('editProductForm').addEventListener('submit', editProduct);
 });

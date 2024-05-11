@@ -7,11 +7,11 @@
                 <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'" oninput="validateInput('addItemButton', this)">
             </div>
             <div class="form-group">
-                <label for="amount">Menge:</label>
+                <label for="productAmount">Menge:</label>
                 <input id="productAmount" class="input-new-item" type="text" name="product-amount" onkeydown="return /[0-9]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
             </div>
             <div class="form-group">
-                <label for="value">Wert:</label>
+                <label for="productValue">Wert:</label>
                 <input id="productValue" class="input-new-item" type="text" name="product-value" oninput="validateInputDecimal(this)">
             </div>
             <div class="form-group">
@@ -56,5 +56,5 @@
             </div>
         </form>
     </div>
-    <div id="itemContainer" class="itemsContainer open">
+    <div id="itemContainer" class="itemsContainer open"></div>
 </div>

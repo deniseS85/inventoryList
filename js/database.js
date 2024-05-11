@@ -31,11 +31,21 @@ async function deleteCategoryItem() {
 
 async function getProductsByCategory(categoryID) {
     try {
-        const response = await fetch(`php/getProducts.php?category_id=${categoryID}`);
+        const response = await fetch(`php/getProductsByCategory.php?category_id=${categoryID}`);
         const products = await response.json();
         return products;
     } catch (error) {
         console.error('Error fetching products:', error);
+    }
+}
+
+async function getProductById(productId) {
+    try {
+        const response = await fetch(`php/getProductByID.php?product_id=${productId}`);
+        const product = await response.json();
+        return product;
+    } catch (error) {
+        console.error('Error fetching product:', error);
     }
 }
 
@@ -222,4 +232,27 @@ async function deleteProductItem() {
     } catch (error) {
         console.error('Fehler beim Löschen des Produkts:', error.message);
     }
+}
+
+async function saveEditProductInDatabase(formData) {
+    fetch('php/editProduct.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(response.statusText);
+        }
+    })
+    .then(updatedProduct => {
+        console.log(updatedProduct)
+        togglePopupEditProduct(null);
+        updateProductTable(updatedProduct, updatedProduct.categoryId);
+        updateProductDetail(updatedProduct); 
+    })
+    .catch(error => {
+        console.error('Fehler beim Ändern des Produktes:', error.message);
+    });
 }

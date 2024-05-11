@@ -60,7 +60,6 @@ function generateTableRow(product, categoryID, tag, image) {
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     let infoHtml = '';
-
     infoItems.forEach(item => {
         infoHtml += /*html*/`
             <div class="product">
