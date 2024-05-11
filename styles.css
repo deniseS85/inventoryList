@@ -554,6 +554,18 @@ footer {
     cursor: pointer;
 }
 
+.selectBox-edit {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.current-tag {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
 .label-header {
     display: flex;
     margin-top: 5px;

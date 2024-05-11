@@ -411,7 +411,6 @@ async function openProductDetailPopup(categoryID, productID, name, amount, price
     let formattedPrice = formatPrice(price);
     let tagHtml = getTagHTML(tagName, tagStyle);
     let infoItems = getInfoItems(name, amount, formattedPrice, information, tagHtml);
-    console.log(infoItems)
     let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
     let infoHtml = generateItemInfoHTML(categoryID, infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
@@ -569,8 +568,10 @@ async function togglePopupEditProduct() {
         let product = await getProductById(productId);
         
         if (product) {
+            let tag = product.tag_ID ? await getTagPerProduct(product.tag_ID) : null;
+            let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
             let formattedPrice = formatPrice(product.price).replace('€', '').trim();
-            let fieldValues = getFieldValues(product, formattedPrice, productId, categoryId);
+            let fieldValues = getFieldValues(product, tagHtml, formattedPrice, productId, categoryId);
             setFieldValues(fieldValues);
             togglePopup('editProductPopup');
         } else {
@@ -583,18 +584,23 @@ async function togglePopupEditProduct() {
 
 function setFieldValues(fieldValues) {
     fieldValues.forEach(({ id, value }) => {
-        document.getElementById(id).value = value;
+        if (id === 'currentTag') {
+            document.getElementById(id).innerHTML = value;
+        } else {
+            document.getElementById(id).value = value;
+        }
     });
 }
 
-function getFieldValues(product, formattedPrice, productId, categoryId) {
+function getFieldValues(product, tagHtml, formattedPrice, productId, categoryId) {
     return [
         { id: 'productCurrentName', value: product.product_name },
         { id: 'currentAmount', value: product.amount },
         { id: 'currentProductValue', value: formattedPrice },
         { id: 'currentProductInfo', value: product.information },
-        { id: 'productID', value: productId },
-        { id: 'categoryID', value: categoryId }
+        { id: 'currentTag', value: tagHtml },
+        { id: 'currentProductID', value: productId },
+        { id: 'currentCategoryID', value: categoryId }
     ];
 }
 
@@ -621,7 +627,7 @@ function updateProductDetail(updatedProduct) {
         { label: 'Name', value: updatedProduct.name },
         { label: 'Menge', value: updatedProduct.amount },
         { label: 'Preis', value: formatPrice(updatedProduct.price) },
-        { label: 'Tag', value: '' }, // Hier müssen Sie den Tag-Wert einfügen
+        { label: 'Tag', value: '' },
         { label: 'Information', value: updatedProduct.information }
     ];
     let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, null, updatedProduct.id);
