@@ -19,9 +19,8 @@
                 <input id="currentProductInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
             </div>
 
-            <!-- +++++++ -->
             <div class="selectBox-edit">
-                <div class="label-header" onclick="toggleDropdown()">
+                <div class="label-header" style="margin-bottom:10px" onclick="toggleDropdown('dropdownContentEdit')">
                     <div class="current-tag">
                         <div class="label-tags">Tag:</div>
                         <div id="currentTag"></div>
@@ -29,19 +28,19 @@
                     <p><i class="arrow-down"></i></p>
                 </div>
 
-                <!-- <div id="selectedOption"></div>
-                <div class="dropdownContent" id="dropdownContent">
+                <div id="selectedOptionEdit"></div>
+                <div class="dropdownContent" id="dropdownContentEdit">
                     <div class="add-tag-container" onclick="togglePopupNewTag()">
                         <img src="./assets/img/add.png">
                         <p>Neuer Tag</p>
                     </div>
-                    <div class="tagOptionsContainer"></div>
-                </div> -->
+                    <div id="tagOptionsEditContainer"></div>
+                </div>
             </div>
 
             <input type="hidden" id="currentProductID" name="product-id" value="">
             <input type="hidden" id="currentCategoryID" name="category-id" value="">
-            <input type="hidden" id="tagId" name="tag-id" value="">
+            <input type="hidden" id="currentTagId" name="tag-id" value="">
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupEditProduct(null)">Abbrechen</button>
                 <button type="submit">Speichern</button>

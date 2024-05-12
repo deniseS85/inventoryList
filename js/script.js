@@ -299,13 +299,13 @@ function sortByNameAmountValue(columnIndex, rows, sortOrder) {
     });
 }
 
-function toggleDropdown() {
-    let dropDown = document.getElementById("dropdownContent");
+function toggleDropdown(dropDownID) {
+    let dropDown = document.getElementById(dropDownID);
     dropDown.classList.toggle("expanded");
 }
 
-function selectTagNewItem() {
-    let dropDown = document.getElementById("dropdownContent");
+function selectTagNewItem(dropDownID) {
+    let dropDown = document.getElementById(dropDownID);
 
     document.addEventListener("click", function(event) {
         if (!event.target.closest(".selectBox")) {
@@ -333,14 +333,28 @@ function generateColorOptions() {
     });
 }
 
-function selectTag(tag) {
-    let selectedOption = document.getElementById("selectedOption");
+function selectTag(tag, dropDownID) {
+    let selectedOption = document.getElementById('selectedOption');
     selectedOption.classList.add("selected-option");
     selectedOption.style.border = "1px solid #2BB8EE";
     selectedOption.style.backgroundColor = tag.color;
     selectedOption.innerHTML = tag.tag_name;
-    document.getElementById("dropdownContent").classList.remove("expanded");
+    document.getElementById(`dropdownContent${dropDownID}`).classList.remove("expanded");
+
+    if (dropDownID === 'Edit') {
+        selectTagEditProduct(tag);
+    }
     document.getElementById("tagId").value = tag.ID;
+}
+
+function selectTagEditProduct(tag) {
+    let currentTag = document.getElementById('currentTag');
+    let additionalStyles = `height: unset; padding: 1px 10px; border-radius: 5px; font-size: 17px`;
+    currentTag.style.cssText += additionalStyles;
+    currentTag.innerHTML = tag.tag_name;
+    currentTag.style.backgroundColor = tag.color;
+    let selectedOptionEdit = document.getElementById('selectedOptionEdit');
+    selectedOptionEdit.innerHTML = '';
 }
 
 function addNewItem(event) {
@@ -561,6 +575,7 @@ function removeProductFromHTML(productID) {
 }
 
 async function togglePopupEditProduct() {
+    resetTagStyle();
     let productId = document.getElementById('productDetailPopup').getAttribute('data-product-id');
     let categoryId = document.getElementById('productDetailPopup').getAttribute('data-category-id');
 
@@ -580,6 +595,15 @@ async function togglePopupEditProduct() {
     } catch (error) {
         console.error('Error fetching product:', error);
     }
+}
+
+function resetTagStyle() {
+    let currentTag = document.getElementById('currentTag');
+    let styleProperties = ['height', 'padding', 'border-radius', 'font-size', 'background-color'];
+
+    styleProperties.forEach(property => {
+        currentTag.style.removeProperty(property);
+    });
 }
 
 function setFieldValues(fieldValues) {
@@ -637,8 +661,10 @@ function updateProductDetail(updatedProduct) {
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
-    selectTagNewItem();
+    selectTagNewItem('dropdownContent');
+    selectTagNewItem('dropdownContentEdit');
     generateColorOptions();
-    showTagsOptions();
+    showTagsOptions('tagOptionsContainer', '');
+    showTagsOptions('tagOptionsEditContainer', 'Edit');
     document.getElementById('editProductForm').addEventListener('submit', editProduct);
 });

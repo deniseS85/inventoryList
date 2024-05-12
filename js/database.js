@@ -87,19 +87,23 @@ function addNewTag() {
             throw new Error('Network response was not ok');
         }
         togglePopupNewTag();
-        showTagsOptions();
-        setTimeout(() => scrollToLastElement('.tagOptionsContainer', '.option'), 100);
+        showTagsOptions('tagOptionsContainer');
+        showTagsOptions('tagOptionsEditContainer');
+        setTimeout(() => {
+            scrollToLastElement('#tagOptionsContainer', '.option');
+            scrollToLastElement('#tagOptionsEditContainer', '.option');
+        }, 100);
     })
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Tags:', error);
     });
 }
 
-async function showTagsOptions() {
+async function showTagsOptions(tagOptionsContainerID, dropDownID) {
     try {
         const response = await fetch('php/getTags.php');
         const tags = await response.json();
-        let tagOptionsContainer = document.querySelector('.tagOptionsContainer');
+        let tagOptionsContainer = document.getElementById(tagOptionsContainerID);
 
         tagOptionsContainer.innerHTML = '';
 
@@ -108,7 +112,7 @@ async function showTagsOptions() {
             option.classList.add('option');
             
             option.addEventListener('click', function() {
-                selectTag(tag);
+                selectTag(tag, dropDownID);
             });
 
             let span = document.createElement('span');

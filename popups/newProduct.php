@@ -22,7 +22,7 @@
             <div class="tagImage">
                 <div>
                     <div class="selectBox">
-                        <div class="label-header" onclick="toggleDropdown()">
+                        <div class="label-header" onclick="toggleDropdown('dropdownContent')">
                             <div class="label-tags">Tags:</div>
                             <p><i class="arrow-down"></i></p>
                         </div>
@@ -33,7 +33,7 @@
                                 <img src="./assets/img/add.png">
                                 <p>Neuer Tag</p>
                             </div>
-                            <div class="tagOptionsContainer"></div>
+                            <div id="tagOptionsContainer"></div>
                         </div>
                     </div>
                 </div>

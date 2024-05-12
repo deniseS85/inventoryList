@@ -563,8 +563,8 @@ footer {
 .current-tag {
     display: flex;
     gap: 20px;
-    align-items: center;
 }
+
 
 .label-header {
     display: flex;
