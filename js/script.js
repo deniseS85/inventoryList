@@ -470,21 +470,25 @@ function showImage(file, imageElementId, removeImgElementID) {
 }
 
 document.addEventListener('change', async function(event) {
-    if (event.target && (event.target.id === 'uploadImage' || event.target.id === 'editUploadImage')) {
-        let file = event.target.files[0];
-        if (file) {
-            if (isImageValid(file)) {
-                if (event.target.id === 'uploadImage') {
-                    showImage(file, 'uploadedImage', 'removeImgUpload');
-                } else if (event.target.id === 'editUploadImage') {
-                    showImage(file, 'editUploadedImage', 'removeEditImgUpload');
-                    document.querySelector('#editUploadImageForm .edit-img-upload').style.backgroundImage = 'none';
-                    await productAlreadyExist(file);
-                }
-            } else {
-                console.error('Error: Invalid image file.');
-            } 
-        }
+    let targetID = event.target.id;
+    let file = event.target.files[0];
+    let editImageElement = document.querySelector('#editUploadImageForm .edit-img-upload');
+
+    if (!targetID || !file) return;
+    event.preventDefault();
+    if (!isImageValid(file)) {
+        console.error('Error: Invalid image file.');
+        return;
+    }
+
+    if (targetID === 'uploadImage') {
+        showImage(file, 'uploadedImage', 'removeImgUpload');
+    } else if (targetID === 'editUploadImage') {
+        showImage(file, 'editUploadedImage', 'removeEditImgUpload');
+        editImageElement.style.backgroundImage = 'none';
+        await productAlreadyExist(file);
+    } else if (targetID === 'currentImage') {
+        showNewImage(file);
     }
 });
 
@@ -642,6 +646,18 @@ async function getCurrentImage(product) {
         document.getElementById('currentImage').click();
     });
     document.getElementById('currentImageUrl').value = imageUrl;
+}
+
+function showNewImage(file) {
+    let newImageElement = document.getElementById('newImage');
+    if (newImageElement) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            newImageElement.src = e.target.result;
+            newImageElement.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
 }
 
 function editProduct(event) {
