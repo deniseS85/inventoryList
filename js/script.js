@@ -343,6 +343,7 @@ function selectTag(tag, dropDownID) {
 
     if (dropDownID === 'Edit') {
         selectTagEditProduct(tag);
+        document.getElementById("currentTagId").value = tag.ID;
     }
     document.getElementById("tagId").value = tag.ID;
 }
@@ -588,6 +589,9 @@ async function togglePopupEditProduct() {
             let formattedPrice = formatPrice(product.price).replace('€', '').trim();
             let fieldValues = getFieldValues(product, tagHtml, formattedPrice, productId, categoryId);
             setFieldValues(fieldValues);
+            document.getElementById('currentImageId').value = product.image_ID || '';
+            document.getElementById('currentTagId').value = product.tag_ID || '';
+            await getCurrentImage(product);
             togglePopup('editProductPopup');
         } else {
             console.error('Product not found');
@@ -628,17 +632,34 @@ function getFieldValues(product, tagHtml, formattedPrice, productId, categoryId)
     ];
 }
 
+async function getCurrentImage(product) {
+    let image = product.image_ID ? await getImagePerProduct(product.image_ID) : null;
+    let imageUrl = image ? image.url : '';
+    let newImageElement = document.getElementById('newImage');
+    newImageElement.src = imageUrl ? `php/uploads/${imageUrl}` : '';
+    newImageElement.style.display = imageUrl ? 'block' : 'none'; 
+    newImageElement.addEventListener('click', function() {
+        document.getElementById('currentImage').click();
+    });
+    document.getElementById('currentImageUrl').value = imageUrl;
+}
+
 function editProduct(event) {
     event.preventDefault();
     let formData = new FormData(this);
+    let currentImageUrl = document.getElementById('currentImageUrl').value;
+
+    if (currentImageUrl) {
+        formData.append('current-image-url', currentImageUrl);
+    }
     saveEditProductInDatabase(formData);
 }
 
 async function updateProductTable(updatedProduct, categoryID) {
     let productRow = document.getElementById(`productRow_${updatedProduct.id}`);
     if (productRow) {
-        let tag = await getTagPerProduct(updatedProduct.tag_ID);
-        let image = await getImagePerProduct(updatedProduct.image_ID);
+        let tag = await getTagPerProduct(updatedProduct.tagID);
+        let image = await getImagePerProduct(updatedProduct.imageID);
         let newRowHTML = generateTableRow(updatedProduct, categoryID, tag, image);
         productRow.outerHTML = newRowHTML;
     } else {
@@ -646,12 +667,14 @@ async function updateProductTable(updatedProduct, categoryID) {
     }
 }
 
-function updateProductDetail(updatedProduct) {
+async function updateProductDetail(updatedProduct) {
+    let tag = await getTagPerProduct(updatedProduct.tagID);
+    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
     let infoItems = [
         { label: 'Name', value: updatedProduct.name },
         { label: 'Menge', value: updatedProduct.amount },
         { label: 'Preis', value: formatPrice(updatedProduct.price) },
-        { label: 'Tag', value: '' },
+        { label: 'Tag', value: tagHtml },
         { label: 'Information', value: updatedProduct.information }
     ];
     let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, null, updatedProduct.id);

@@ -38,9 +38,20 @@
                 </div>
             </div>
 
+            <div class="upload-container">
+                <div class="img-upload">
+                    <label for="currentImage" class="custom-file-upload">Bild hinzufügen</label>
+                    <input type="file" id="currentImage" name="uploadImage" style="display:none;">
+                    <img id="newImage" class="uploaded-image" style="display:none;">
+                </div>
+            </div>
+
             <input type="hidden" id="currentProductID" name="product-id" value="">
             <input type="hidden" id="currentCategoryID" name="category-id" value="">
             <input type="hidden" id="currentTagId" name="tag-id" value="">
+            <input type="hidden" id="currentImageId" name="image-id" value="">
+            <input type="hidden" id="currentImageUrl" name="current-image-url">
+
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupEditProduct(null)">Abbrechen</button>
                 <button type="submit">Speichern</button>
