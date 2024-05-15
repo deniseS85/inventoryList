@@ -471,11 +471,12 @@ function showImage(file, imageElementId, removeImgElementID) {
 
 document.addEventListener('change', async function(event) {
     let targetID = event.target.id;
-    let file = event.target.files[0];
+    let files = event.target.files;
+    let file = files && files.length > 0 ? files[0] : null;
     let editImageElement = document.querySelector('#editUploadImageForm .edit-img-upload');
 
     if (!targetID || !file) return;
-    event.preventDefault();
+
     if (!isImageValid(file)) {
         console.error('Error: Invalid image file.');
         return;
@@ -491,6 +492,7 @@ document.addEventListener('change', async function(event) {
         showNewImage(file);
     }
 });
+
 
 function isImageValid(file) {
     let imageFileType = file.type.toLowerCase();
@@ -650,6 +652,7 @@ async function getCurrentImage(product) {
 
 function showNewImage(file) {
     let newImageElement = document.getElementById('newImage');
+
     if (newImageElement) {
         let reader = new FileReader();
         reader.onload = function(e) {
@@ -660,7 +663,7 @@ function showNewImage(file) {
     }
 }
 
-function editProduct(event) {
+async function editProduct(event) {
     event.preventDefault();
     let formData = new FormData(this);
     let currentImageUrl = document.getElementById('currentImageUrl').value;
@@ -668,7 +671,8 @@ function editProduct(event) {
     if (currentImageUrl) {
         formData.append('current-image-url', currentImageUrl);
     }
-    saveEditProductInDatabase(formData);
+    await saveEditProductInDatabase(formData);
+    resetUploadImageSrc('currentImage', 'newImage', 'currentImageId', null);
 }
 
 async function updateProductTable(updatedProduct, categoryID) {
@@ -686,6 +690,7 @@ async function updateProductTable(updatedProduct, categoryID) {
 async function updateProductDetail(updatedProduct) {
     let tag = await getTagPerProduct(updatedProduct.tagID);
     let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
+    let imageUrl = updatedProduct.imageUrl || null;
     let infoItems = [
         { label: 'Name', value: updatedProduct.name },
         { label: 'Menge', value: updatedProduct.amount },
@@ -693,7 +698,8 @@ async function updateProductDetail(updatedProduct) {
         { label: 'Tag', value: tagHtml },
         { label: 'Information', value: updatedProduct.information }
     ];
-    let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, null, updatedProduct.id);
+   
+    let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, imageUrl, updatedProduct.id);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 

@@ -59,6 +59,7 @@ function generateTableRow(product, categoryID, tag, image) {
 }
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
+
     let infoHtml = '';
     infoItems.forEach(item => {
         infoHtml += /*html*/`
@@ -69,7 +70,7 @@ function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     });
     
     let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(categoryID, productID);
-    
+
     return /*html*/`
         <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
         <div class="right">
