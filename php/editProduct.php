@@ -12,6 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $categoryId = $_POST['category-id'];
     $currentImageURL = isset($_POST['current-image-url']) && !empty($_POST['current-image-url']) ? $_POST['current-image-url'] : null;
     
+    // Initialize $newImageURL
+    $newImageURL = null;
+
     // Überprüfen, ob ein neues Bild hochgeladen wurde
     if (isset($_FILES['uploadImage']) && $_FILES['uploadImage']['size'] > 0) {
         if ($currentImageURL) {
@@ -37,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
             $stmt->bind_param("s", $newImageFileName);
             $stmt->execute();
-            $imageId = (string)$stmt->insert_id;
+            $imageId = $stmt->insert_id;
             $stmt->close();
         }
     } else {
@@ -59,6 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sdssiii", $productName, $productAmount, $productValue, $productInfo, $tagId, $imageId, $productId);
 
     if ($stmt->execute()) {
+        // Setze die imageUrl basierend auf dem aktuellen Bild
+        $imageUrl = $newImageURL ? $newImageURL : $currentImageURL;
+        $imageId = strval($imageId);
+        
         $updatedProduct = array(
             'id' => $productId,
             'categoryId' => $categoryId,
@@ -68,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'information' => $productInfo,
             'tagID' => $tagId,
             'imageID' => $imageId,
-            'imageUrl' => $newImageURL
+            'imageUrl' => $imageUrl
         );
         echo json_encode($updatedProduct);
     }
