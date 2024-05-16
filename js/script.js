@@ -36,6 +36,7 @@ function togglePopupNewItem(categoryID) {
     validateInput('addItemButton', document.getElementById('productName'));
     resetUploadImageSrc('uploadImage', 'uploadedImage', 'uploadedImageId', 'removeImgUpload');
     resetTagInput();
+    closeAllDropdowns();
 }
 
 function resetElements(elementID, properties) {
@@ -304,11 +305,18 @@ function toggleDropdown(dropDownID) {
     dropDown.classList.toggle("expanded");
 }
 
+function closeAllDropdowns() {
+    let dropdowns = document.querySelectorAll('.dropdownContent');
+    dropdowns.forEach(dropdown => {
+        dropdown.classList.remove("expanded");
+    });
+}
+
 function selectTagNewItem(dropDownID) {
     let dropDown = document.getElementById(dropDownID);
 
     document.addEventListener("click", function(event) {
-        if (!event.target.closest(".selectBox")) {
+        if (!event.target.closest(".selectBox") || !event.target.closest(".selectBox-edit")) {
             dropDown.classList.remove("expanded");
         }
     });
@@ -493,7 +501,6 @@ document.addEventListener('change', async function(event) {
     }
 });
 
-
 function isImageValid(file) {
     let imageFileType = file.type.toLowerCase();
     let validTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -605,6 +612,7 @@ async function togglePopupEditProduct() {
     } catch (error) {
         console.error('Error fetching product:', error);
     }
+    closeAllDropdowns();
 }
 
 function resetTagStyle() {

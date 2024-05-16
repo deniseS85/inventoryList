@@ -46,8 +46,8 @@
         include 'popups/productDetail.php'; 
         include 'popups/deleteProduct.php';
         include 'popups/newProduct.php'; 
-        include 'popups/newTag.php';
         include 'popups/editProduct.php'; 
+        include 'popups/newTag.php';
     ?>
        
 </body>
