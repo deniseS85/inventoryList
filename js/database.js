@@ -170,7 +170,7 @@ async function saveProductInDatabase(formData) {
         showProduct(newProduct, newProduct.category_ID);
         togglePopupNewItem(null);
         setTimeout(() => scrollToLastElement(`.item-info[data-category-id="${newProduct.category_ID}"] .productContainer`, 'tbody tr'), 100);
-        updateProductCount(newProduct.category_ID);
+        updateProductCount(newProduct.category_ID, 'add');
     })
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Produktes:', error.message);
@@ -218,6 +218,7 @@ async function deleteImageFromDatabase(formData) {
 async function deleteProductItem() {
     try {
         let productID = document.getElementById('deleteProductConfirmation').dataset.productId;
+        let categoryID = document.getElementById('deleteProductConfirmation').dataset.categoryId;
 
         const response = await fetch('php/deleteProduct.php', {
             method: 'POST',
@@ -226,13 +227,14 @@ async function deleteProductItem() {
             },
             body: JSON.stringify({ ID: productID })
         });
-
+        
         if (!response.ok) {
             throw new Error('Fehler beim Löschen des Produkts');
         }
         removeProductFromHTML(productID);
         togglePopup('deleteProductConfirmation');
         togglePopup('productDetailPopup');
+        updateProductCount(categoryID, 'remove');
     } catch (error) {
         console.error('Fehler beim Löschen des Produkts:', error.message);
     }

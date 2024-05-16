@@ -397,13 +397,13 @@ function scrollToLastElement(containerPath, itemSelector) {
     }
 }
 
-function updateProductCount(categoryID) {
+function updateProductCount(categoryID, operator) {
     let categoryElement = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
     if (categoryElement) {
         let productCountElement = categoryElement.querySelector('.item-title h6');
         if (productCountElement) {
             let currentCount = parseInt(productCountElement.textContent.split(' ')[0]);
-            let newCount = currentCount + 1;
+            let newCount = operator === 'add' ? currentCount + 1 : currentCount - 1;
             let productLabel = newCount === 1 ? 'Produkt' : 'Produkte';
             productCountElement.textContent = `${newCount} ${productLabel}`;
         }
@@ -572,12 +572,14 @@ function resetUploadImage(categoryID, productID, uploadedImageElementId, uploade
 function togglePopupDeleteProduct(el) {
     let productDetailPopup = el.closest('#productDetailPopup');
     let productID = productDetailPopup.dataset.productId;
+    let categoryID = productDetailPopup.dataset.categoryId;
     let confirmationText = document.getElementById('confirmationTextProduct');
     confirmationText.innerHTML = /*html*/`
         Bist du sicher, dass du dieses Produkt löschen möchtest?`;
 
     let deleteConfirmationPopup = document.getElementById('deleteProductConfirmation');
     deleteConfirmationPopup.dataset.productId = productID;
+    deleteConfirmationPopup.dataset.categoryId = categoryID;
     togglePopup('deleteProductConfirmation'); 
 }
 
