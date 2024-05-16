@@ -4,19 +4,19 @@
         <form id="editProductForm" action="php/editProduct.php" method="post" autocomplete="off">
             <div class="form-group">
                 <label for="productCurrentName">Name:</label>
-                <input id="productCurrentName" class="input-new-item" type="text" name="product-name" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="productCurrentName" class="input-new-item" type="text" name="product-name" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="20">
             </div>
             <div class="form-group">
                 <label for="currentAmount">Menge:</label>
-                <input id="currentAmount" class="input-new-item" type="text" name="product-amount" onkeydown="return /[0-9]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="currentAmount" class="input-new-item" type="text" name="product-amount" onkeydown="if (event.key !== 'Tab' && event.key !== 'Backspace' && !/[0-9]/.test(event.key)) { event.preventDefault(); return false; }" maxlength="3">
             </div>
             <div class="form-group">
                 <label for="currentProductValue">Wert:</label>
-                <input id="currentProductValue" class="input-new-item" type="text" name="product-value" oninput="validateInputDecimal(this)">
+                <input id="currentProductValue" class="input-new-item" type="text" name="product-value" oninput="validateInputDecimal(this)" maxlength="6">
             </div>
             <div class="form-group">
                 <label for="currentProductInfo">Beschreibung:</label>
-                <input id="currentProductInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="currentProductInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="35">
             </div>
 
             <div class="selectBox-edit">

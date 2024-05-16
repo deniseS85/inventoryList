@@ -304,6 +304,7 @@ th:nth-child(3), td:nth-child(3) {
 td:nth-child(4), th:nth-child(4) {
     width: 35%;
     padding-left: 2%;
+    word-wrap: break-word;
 }
 
 td:nth-child(5), th:nth-child(5),

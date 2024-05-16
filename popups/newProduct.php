@@ -4,19 +4,19 @@
         <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="productName">Name:</label>
-                <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'" oninput="validateInput('addItemButton', this)">
+                <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" oninput="validateInput('addItemButton', this)" maxlength="20">
             </div>
             <div class="form-group">
                 <label for="productAmount">Menge:</label>
-                <input id="productAmount" class="input-new-item" type="text" name="product-amount" onkeydown="return /[0-9]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="productAmount" class="input-new-item" type="text" name="product-amount" onkeydown="if (event.key !== 'Tab' && event.key !== 'Backspace' && !/[0-9]/.test(event.key)) { event.preventDefault(); return false; }" maxlength="3">
             </div>
             <div class="form-group">
                 <label for="productValue">Wert:</label>
-                <input id="productValue" class="input-new-item" type="text" name="product-value" oninput="validateInputDecimal(this)">
+                <input id="productValue" class="input-new-item" type="text" name="product-value" oninput="validateInputDecimal(this)" maxlength="6">
             </div>
             <div class="form-group">
                 <label for="productInfo">Beschreibung:</label>
-                <input id="productInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key) || event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'">
+                <input id="productInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="35">
             </div>
 
             <div class="tagImage">
