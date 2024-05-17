@@ -1,6 +1,10 @@
 <?php
 include 'db_connection.php';
 
+header('Content-Type: application/json');
+$response = array();
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = json_decode(file_get_contents("php://input"), true);
    
@@ -11,17 +15,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ss", $tag_name, $tag_color);
 
         if ($stmt->execute()) {
-            echo "Tag erfolgreich hinzugefügt";
+            $newTagID = $stmt->insert_id; 
+            $response['success'] = true;
+            $response['id'] = $newTagID;
+            $response['message'] = "Tag erfolgreich hinzugefügt";
         } else {
-            echo "Fehler beim Hinzufügen des Tags: " . $stmt->error;
+            $response['success'] = false;
+            $response['message'] = "Fehler beim Hinzufügen des Tags: " . $stmt->error;
         }
         $stmt->close();
     } else {
-        echo "Tagnamenfeld nicht gesetzt";
+        $response['success'] = false;
+        $response['message'] = "Tagnamenfeld nicht gesetzt";
     }
 } else {
-    echo "Das Formular wurde nicht gesendet";
+    $response['success'] = false;
+    $response['message'] = "Das Formular wurde nicht gesendet";
 }
 
 $conn->close();
+echo json_encode($response);
 ?>

@@ -80,19 +80,21 @@ function addNewTag() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({tagName, tagColor })
+        body: JSON.stringify({ tagName, tagColor })
     })
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        togglePopupNewTag();
-        showTagsOptions('tagOptionsContainer');
-        showTagsOptions('tagOptionsEditContainer');
-        setTimeout(() => {
-            scrollToLastElement('#tagOptionsContainer', '.option');
-            scrollToLastElement('#tagOptionsEditContainer', '.option');
-        }, 100);
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            togglePopupNewTag();
+            updateNewTag(data.id, tagName, tagColor);
+        } else {
+            console.error('Fehler beim Hinzufügen des Tags:', data.message);
+        }
     })
     .catch(error => {
         console.error('Fehler beim Hinzufügen des Tags:', error);

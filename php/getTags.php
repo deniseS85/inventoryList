@@ -2,12 +2,15 @@
 
 include 'db_connection.php';
 
+header('Content-Type: application/json');
 
 $sql = "SELECT * FROM Tags";
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
-    die('Fehler beim Abrufen der Tags: ' . mysqli_error($conn));
+    http_response_code(500);
+    echo json_encode(['error' => 'Fehler beim Abrufen der Tags: ' . mysqli_error($conn)]);
+    exit;
 }
 
 $tags = array();

@@ -343,6 +343,11 @@ function generateColorOptions() {
 
 function selectTag(tag, dropDownID) {
     let selectedOption = document.getElementById('selectedOption');
+
+    if (!selectedOption) {
+        console.error('Fehler: Das Element mit der ID "selectedOption" wurde nicht gefunden.');
+        return;
+    }
     selectedOption.classList.add("selected-option");
     selectedOption.style.border = "1px solid #2BB8EE";
     selectedOption.style.backgroundColor = tag.color;
@@ -364,6 +369,24 @@ function selectTagEditProduct(tag) {
     currentTag.style.backgroundColor = tag.color;
     let selectedOptionEdit = document.getElementById('selectedOptionEdit');
     selectedOptionEdit.innerHTML = '';
+}
+
+function updateNewTag(newTagID, tagName, tagColor) {
+    showTagsOptions('tagOptionsContainer', '')
+    .then(() => {
+        return showTagsOptions('tagOptionsEditContainer', 'Edit');
+    })
+    .then(() => {
+        setTimeout(() => {
+            scrollToLastElement('#tagOptionsContainer', '.option');
+            scrollToLastElement('#tagOptionsEditContainer', '.option');
+            let newTag = { ID: newTagID, tag_name: tagName, color: tagColor };
+            selectTag(newTag, '');
+        }, 100);
+    })
+    .catch(error => {
+        console.error('Fehler beim Aktualisieren und Auswählen des neuen Tags:', error);
+    });
 }
 
 function addNewItem(event) {
