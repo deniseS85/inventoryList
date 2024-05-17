@@ -4,7 +4,7 @@
         <form id="editProductForm" action="php/editProduct.php" method="post" autocomplete="off">
             <div class="form-group">
                 <label for="productCurrentName">Name:</label>
-                <input id="productCurrentName" class="input-new-item" type="text" name="product-name" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="20">
+                <input id="productCurrentName" class="input-new-item" type="text" name="product-name" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" oninput="validateInput('editItemButton', this)" maxlength="20">
             </div>
             <div class="form-group">
                 <label for="currentAmount">Menge:</label>
@@ -54,7 +54,7 @@
 
             <div class="btn-container">
                 <button type="reset" onclick="togglePopupEditProduct(null)">Abbrechen</button>
-                <button type="submit">Speichern</button>
+                <button type="submit" id="editItemButton">Speichern</button>
             </div>
         </form>
     </div>

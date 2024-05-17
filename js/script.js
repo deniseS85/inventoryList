@@ -19,9 +19,9 @@ function togglePopupDeleteCategory(categoryName, amountProducts) {
 }
 
 function togglePopupEditCategory(categoryName, categoryID) {
-    const categoryInput = document.getElementById('categoryCurrentInput');
-    const categoryIdInput = document.getElementById('categoryIdInput');
-    const editCategoryButton = document.getElementById('editCategoryButton');
+    let categoryInput = document.getElementById('categoryCurrentInput');
+    let categoryIdInput = document.getElementById('categoryIdInput');
+    let editCategoryButton = document.getElementById('editCategoryButton');
 
     if (!categoryInput.hasAttribute('data-original-value')) {
         categoryInput.setAttribute('data-original-value', categoryName);
@@ -639,15 +639,10 @@ async function togglePopupEditProduct() {
         let product = await getProductById(productId);
         
         if (product) {
-            let tag = product.tag_ID ? await getTagPerProduct(product.tag_ID) : null;
-            let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
-            let formattedPrice = formatPrice(product.price).replace('€', '').trim();
-            let fieldValues = getFieldValues(product, tagHtml, formattedPrice, productId, categoryId);
-            setFieldValues(fieldValues);
-            document.getElementById('currentImageId').value = product.image_ID || '';
-            document.getElementById('currentTagId').value = product.tag_ID || '';
+            await prepareProductData(product, productId, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
+            isEditInputValid();
         } else {
             console.error('Product not found');
         }
@@ -655,6 +650,27 @@ async function togglePopupEditProduct() {
         console.error('Error fetching product:', error);
     }
     closeAllDropdowns();
+}
+
+async function prepareProductData(product, productId, categoryId) {
+    let tag = product.tag_ID ? await getTagPerProduct(product.tag_ID) : null;
+    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
+    let formattedPrice = formatPrice(product.price).replace('€', '').trim();
+    let fieldValues = getFieldValues(product, tagHtml, formattedPrice, productId, categoryId);
+    setFieldValues(fieldValues);
+    document.getElementById('currentImageId').value = product.image_ID || '';
+    document.getElementById('currentTagId').value = product.tag_ID || '';
+}
+
+function isEditInputValid() {
+    let productNameInput = document.getElementById('productCurrentName');
+    let editItemButton = document.getElementById('editItemButton');
+
+    if (!productNameInput.hasAttribute('data-original-value')) {
+        productNameInput.setAttribute('data-original-value', productNameInput.value.trim());
+    }
+
+    editItemButton.disabled = productNameInput.value.trim() === '';
 }
 
 function resetTagStyle() {
