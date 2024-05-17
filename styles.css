@@ -816,7 +816,7 @@ button:hover:not(.search-btn) {
     color: var(--bg-color);
 }
 
-#addItemButton[disabled], #addCategoryButton[disabled], #addTagButton[disabled] {
+#addItemButton[disabled], #addCategoryButton[disabled], #addTagButton[disabled], #editCategoryButton[disabled] {
     opacity: 0.5;
     pointer-events: none;
 }

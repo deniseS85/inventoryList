@@ -19,8 +19,17 @@ function togglePopupDeleteCategory(categoryName, amountProducts) {
 }
 
 function togglePopupEditCategory(categoryName, categoryID) {
-    document.getElementById('categoryCurrentInput').value = categoryName;
-    document.getElementById('categoryIdInput').value = categoryID;
+    const categoryInput = document.getElementById('categoryCurrentInput');
+    const categoryIdInput = document.getElementById('categoryIdInput');
+    const editCategoryButton = document.getElementById('editCategoryButton');
+
+    if (!categoryInput.hasAttribute('data-original-value')) {
+        categoryInput.setAttribute('data-original-value', categoryName);
+    }
+    
+    categoryInput.value = categoryName;
+    categoryIdInput.value = categoryID;
+    editCategoryButton.disabled = false;
     togglePopup('editCategoryPopup');
 }
 
@@ -117,7 +126,15 @@ function filterCategories() {
 }
 
 function validateInput(buttonId, inputElement) {
-    document.getElementById(buttonId).disabled = inputElement.value.trim() === '';
+    const button = document.getElementById(buttonId);
+    const currentValue = inputElement.value.trim();
+    const originalValue = inputElement.getAttribute('data-original-value');
+
+    if (currentValue === '' && currentValue !== originalValue) {
+        button.disabled = true;
+    } else {
+        button.disabled = false;
+    }
 }
 
 function validateInputDecimal(input) {
