@@ -1,6 +1,25 @@
 <?php
 include 'db_connection.php';
 
+function getGUID(){
+    if (function_exists('com_create_guid')){
+        return com_create_guid();
+    }
+    else {
+        mt_srand((double)microtime()*10000);
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);
+        $uuid = chr(123)
+            .substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12)
+            .chr(125);
+        return $uuid;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productId = $_POST['product-id'];
     $productName = $_POST['product-name'];
@@ -24,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     
-        // Neues Bild hochladen
-        $newImageFileName = $_FILES['uploadImage']['name'];
+        // Neuen Bildnamen generieren
+        $newImageFileName = getGUID() . '.jpg'; // Hier wird die GUID als Dateiname verwendet
         $newImageURL = $newImageFileName;
         move_uploaded_file($_FILES['uploadImage']['tmp_name'], "uploads/" . $newImageURL);
         

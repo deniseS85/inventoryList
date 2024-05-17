@@ -1,6 +1,25 @@
 <?php
 include 'db_connection.php';
 
+function getGUID(){
+    if (function_exists('com_create_guid')){
+        return com_create_guid();
+    }
+    else {
+        mt_srand((double)microtime()*10000);
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);
+        $uuid = chr(123)
+            .substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12)
+            .chr(125);
+        return $uuid;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['productID']) && isset($_POST['imageID'])) {
         $productID = $_POST['productID'];
@@ -8,9 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Überprüfen, ob es sich um ein neues Bild handelt
         if (isset($_POST['uploadedImageId'])) {
-            // Neues Bild: Einfügen in die Tabelle "Images"
+            // Neues Bild: Generieren Sie einen eindeutigen Namen und fügen Sie es in die Tabelle "Images" ein
+            $new_image_name = getGUID() . '.jpg'; // Sie können die Dateierweiterung entsprechend anpassen
             $stmt_insert_image = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
-            $stmt_insert_image->bind_param("s", $imageID);
+            $stmt_insert_image->bind_param("s", $new_image_name);
             $stmt_insert_image->execute();
             $inserted_image_id = $stmt_insert_image->insert_id;
             $stmt_insert_image->close();

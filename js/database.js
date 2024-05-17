@@ -255,7 +255,6 @@ async function saveEditProductInDatabase(formData) {
         }
     })
     .then(updatedProduct => {
-        console.log(updatedProduct)
         togglePopupEditProduct(null);
         updateProductTable(updatedProduct, updatedProduct.categoryId);
         updateProductDetail(updatedProduct); 
