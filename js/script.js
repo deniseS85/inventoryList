@@ -769,6 +769,50 @@ async function updateProductDetail(updatedProduct) {
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
 
+function openSettings() {
+    togglePopup('settingsPopup');
+}
+
+function showImages(images) {
+    let gallery = document.getElementById('gallery');
+
+    gallery.innerHTML = '';
+    
+    images.forEach(image => {
+        let imgElement = document.createElement('img');
+        imgElement.src = `php/uploads/${image.url}`;
+        imgElement.id = image.ID;
+
+        let imageContainer = document.createElement('div');
+        imageContainer.classList.add('image-container');
+
+        let checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('image-checkbox');
+        checkbox.dataset.imageId = image.id; 
+
+        imageContainer.appendChild(imgElement);
+        imageContainer.appendChild(checkbox);
+
+        gallery.appendChild(imageContainer);
+    });
+
+    document.getElementById('galleryContainer').style.display = 'flex';
+    togglePopup('settingsPopup');
+    document.querySelector('.category-item-container').style.display = 'none';
+    document.getElementById('itemContainer').style.display = 'none';
+}
+
+function goBackToMain() {
+    let categoryItemContainer = document.querySelector('.category-item-container');
+    let itemContainer = document.getElementById('itemContainer');
+    let galleryContainer = document.getElementById('galleryContainer');
+
+    categoryItemContainer.style.display = 'flex';
+    itemContainer.style.display = 'flex';
+    galleryContainer.style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();

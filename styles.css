@@ -120,7 +120,7 @@ main {
     align-items: center;
 }
   
-input:not(#productImage), select {
+input:not(#productImage):not(.image-checkbox), select {
     padding: 5px;
     border: 1px transparent;
     border-bottom: 2px solid var(--turquoise);
@@ -362,6 +362,22 @@ footer {
     left: 0;
     right: 0;
     border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px clamp(1.125rem, -0.0093rem + 5.6716vw, 3.5rem);
+}
+
+footer img {
+    width: clamp(1.875rem, 1.7857rem + 0.4464vw, 2.5rem);
+    height: clamp(1.875rem, 1.7857rem + 0.4464vw, 2.5rem);
+    cursor: pointer;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+footer img:hover {
+    filter: brightness(120%);
+    transform: scale(1.2);
 }
 
 .new-category-popup-bg {
@@ -374,7 +390,7 @@ footer {
     align-items: center;
 }
 
-.new-category-container, .new-item-container, .delete-category-container, .new-tag-container, .product-detail-container {
+.new-category-container, .new-item-container, .delete-category-container, .new-tag-container, .product-detail-container, .setting-container {
     width: clamp(18.75rem, 17.8571rem + 4.4643vw, 25rem);
     background-color: rgb(7,67,91);
     border: 2px solid var(--turquoise);
@@ -582,7 +598,7 @@ footer {
 
 .upload-container {
     position: relative;
-    max-width: 153px;
+   /*  max-width: 153px; */
     min-width: 153px;
 }
 
@@ -651,6 +667,24 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     border: 2px solid var(--turquoise);
+}
+
+.uploaded-new-image {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 85px;
+    height: 85px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--turquoise);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.uploaded-new-image:hover {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
 }
 
 p {
@@ -819,6 +853,107 @@ button:hover:not(.search-btn) {
 #addItemButton[disabled], #addCategoryButton[disabled], #addTagButton[disabled], #editCategoryButton[disabled], #editItemButton[disabled] {
     opacity: 0.5;
     pointer-events: none;
+}
+
+.setting-items {
+    margin-top: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-items div {
+    border-radius: 10px;
+    border: 2px solid var(--turquoise);
+    color: var(--font-color);
+    background-color: #0B252B;
+    padding: 5px 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.setting-items div:hover {
+    border: 2px solid var(--turquoise);
+    box-shadow: 0px 0px 8px var(--turquoise);
+    background-color: #174954;
+    transition: border 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+}
+
+.gallery-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.gallery img {
+    width: clamp(6.25rem, 4.4643rem + 8.9286vw, 18.75rem);
+    height: clamp(6.25rem, 4.4643rem + 8.9286vw, 18.75rem);
+    object-fit: cover;
+    border: 2px solid var(--turquoise);
+    border-radius: 10px;
+}
+
+.image-container {
+    position: relative;
+}
+
+.image-checkbox {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+    height: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid var(--turquoise);
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    background-color: var(--font-color);
+    transition: transform 0.5s ease;
+}
+
+.image-checkbox:hover {
+    transform: scale(1.2);
+}
+
+.image-checkbox:checked {
+    background-color: var(--bg-color);
+    background-image: url('./assets/img/check.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.go-back {
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    background-color: var(--bg-color);
+    border: 1px solid var(--turquoise);
+    border-radius: 10px;
+    padding: 5px 10px;
+    text-align: center;
+    width: 100px;
+}
+
+.go-back:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 @media only screen and (max-height: 800px) {

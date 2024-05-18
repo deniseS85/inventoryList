@@ -42,7 +42,7 @@
                 <div class="img-upload">
                     <label for="currentImage" class="custom-file-upload">Bild hinzufügen</label>
                     <input type="file" id="currentImage" name="uploadImage" style="display:none;">
-                    <img id="newImage" class="uploaded-image" style="display:none;">
+                    <img id="newImage" class="uploaded-new-image" style="display:none;">
                 </div>
             </div>
 

@@ -263,3 +263,18 @@ async function saveEditProductInDatabase(formData) {
         console.error('Fehler beim Ändern des Produktes:', error.message);
     });
 }
+
+async function getAllImages() {
+    try {
+        const response = await fetch('php/getImages.php');
+        if (!response.ok){
+            throw new Error('Fehler beim Laden der Bilder');
+        }
+        const images = await response.json();
+        showImages(images);
+    } catch (error) {
+        console.error('Error fetching all images:', error);
+    }
+}
+
+

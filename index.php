@@ -30,13 +30,18 @@
         </div>
 
         <div class="main-content">
+            <div class="gallery-container" id="galleryContainer">
+                <div onclick="goBackToMain()" class="go-back">Zurück</div>
+                <div class="gallery" id="gallery"></div>
+            </div>
             <div class="category-item-container"></div>
             <div id="itemContainer" class="itemsContainer"></div>
         </div>
     </main>
 
     <footer>
-
+        <div></div>
+        <img onclick="openSettings()" src="./assets/img/setting.png">
     </footer>
     
     <?php 
@@ -48,6 +53,7 @@
         include 'popups/newProduct.php'; 
         include 'popups/editProduct.php'; 
         include 'popups/newTag.php';
+        include 'popups/settings.php';
     ?>
        
 </body>
