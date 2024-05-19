@@ -3,6 +3,8 @@ let tableSortOrder = {};
 let currentImageUrl = {}; 
 let expanded = false;
 const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
+let selectedImageIDs = [];
+let imageSelectionListenerAdded = false;
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -710,10 +712,19 @@ async function getCurrentImage(product) {
     let newImageElement = document.getElementById('newImage');
     newImageElement.src = imageUrl ? `php/uploads/${imageUrl}` : '';
     newImageElement.style.display = imageUrl ? 'block' : 'none'; 
-    newImageElement.addEventListener('click', function() {
-        document.getElementById('currentImage').click();
-    });
+    toggleEventListenerUploadImg(newImageElement);
     document.getElementById('currentImageUrl').value = imageUrl;
+}
+
+function toggleEventListenerUploadImg(newImageElement) {
+    function openImageSelection() {
+        document.getElementById('currentImage').click();
+    }
+    if (!imageSelectionListenerAdded) {
+        newImageElement.removeEventListener('click', openImageSelection);
+        newImageElement.addEventListener('click', openImageSelection);
+        imageSelectionListenerAdded = true;
+    }
 }
 
 function showNewImage(file) {
@@ -773,30 +784,17 @@ function openSettings() {
     togglePopup('settingsPopup');
 }
 
-function showImages(images) {
+async function showImages(images) {
     let gallery = document.getElementById('gallery');
 
     gallery.innerHTML = '';
+    gallery.addEventListener('change', selectImageForDelete);
     
-    images.forEach(image => {
-        let imgElement = document.createElement('img');
-        imgElement.src = `php/uploads/${image.url}`;
-        imgElement.id = image.ID;
-
-        let imageContainer = document.createElement('div');
-        imageContainer.classList.add('image-container');
-
-        let checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.classList.add('image-checkbox');
-        checkbox.dataset.imageId = image.id; 
-
-        imageContainer.appendChild(imgElement);
-        imageContainer.appendChild(checkbox);
-
-        gallery.appendChild(imageContainer);
+    images.forEach(async image => {
+        const imageHtml = generateImageView(image);
+        gallery.insertAdjacentHTML('beforeend', imageHtml);
+        let productID = await getProductsByImage(image.ID);
     });
-
     document.getElementById('galleryContainer').style.display = 'flex';
     togglePopup('settingsPopup');
     document.querySelector('.category-item-container').style.display = 'none';
@@ -804,13 +802,65 @@ function showImages(images) {
 }
 
 function goBackToMain() {
-    let categoryItemContainer = document.querySelector('.category-item-container');
-    let itemContainer = document.getElementById('itemContainer');
-    let galleryContainer = document.getElementById('galleryContainer');
+    document.querySelector('.category-item-container').style.display = 'flex';
+    document.getElementById('itemContainer').style.display = 'flex';
+    document.getElementById('galleryContainer').style.display = 'none';
+    document.getElementById('select-btn').style.backgroundColor = "#051C25";
+    document.getElementById('select-btn').style.color = "white";
+    selectedImageIDs = [];
+}
 
-    categoryItemContainer.style.display = 'flex';
-    itemContainer.style.display = 'flex';
-    galleryContainer.style.display = 'none';
+function toggleSelect() {
+    const selectContainers = document.querySelectorAll('.image-checkbox');
+    selectContainers.forEach(container => {
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+            document.getElementById('select-btn').style.backgroundColor = "#2BB8EE";
+            document.getElementById('select-btn').style.color = "#051C25";
+        } else {
+            container.style.display = 'none';
+            document.getElementById('select-btn').style.backgroundColor = "#051C25";
+            document.getElementById('select-btn').style.color = "white";
+        }
+    });
+}
+
+async function selectImageForDelete(event) {
+    let imgElement = event.target.closest('.image-container').querySelector('img');
+    let checkbox = event.target;
+    if (checkbox.matches('.image-checkbox')) {
+        let imageID = checkbox.dataset.imageId;
+        
+        if (checkbox.checked) {
+            if (!selectedImageIDs.some(item => item.imageID === imageID)) {
+                let { imageID: fetchedImageId, productID } = await getProductsByImage(imageID);
+                if (!Array.isArray(productID)) {
+                    productID = [productID];
+                }
+                productID.forEach(productID => {
+                    selectedImageIDs.push({ imageId: fetchedImageId, productId: productID });
+                });
+                imgElement.style.opacity = "0.5";
+                document.getElementById('deleteImage').style.display = 'flex';
+            }
+        } else {
+            selectedImageIDs = selectedImageIDs.filter(item => item.imageId !== imageID);
+            imgElement.style.opacity = "1";
+            if (selectedImageIDs.length === 0) {
+                document.getElementById('deleteImage').style.display = 'none';
+            }
+        }
+    }
+}
+
+function deleteImageConfirmation() {
+    let confirmationText = document.getElementById('confirmationTextImage');
+    let imageLabel = selectedImageIDs.length === 1 ? 'Bild' : 'Bilder';
+    let quantityText = selectedImageIDs.length === 1 ? 'das eine' : `die ${selectedImageIDs.length}`;
+    confirmationText.innerHTML = /*html*/`
+        Bist du sicher, dass du ${quantityText} ${imageLabel} löschen möchtest?`;
+
+    togglePopup('deleteImageConfirmation');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

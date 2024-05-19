@@ -54,12 +54,11 @@ function generateTableRow(product, categoryID, tag, image) {
             <td>${formattedPrice}</td>
             <td>${product.information}</td>
             <td>${tag ? `<span style="${tagStyle}">${tag.tag_name}</span>` : ''}</td>
-            <td id="imageColumn_${product.id}_${categoryID}" >${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
+            <td id="imageColumn_${product.id}_${categoryID}">${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
         </tr>`;
 }
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
-
     let infoHtml = '';
     infoItems.forEach(item => {
         infoHtml += /*html*/`
@@ -94,6 +93,14 @@ function generateImageFormUploadHTML(categoryID, productID) {
             <input type="hidden" id="editUploadedImageId" name="editUploadImageId" value="${productID}">
             <img src="./assets/img/remove-img.png" id="removeEditImgUpload" class="remove-edit-img-upload" onclick="deleteUploadedImage('${categoryID}', '${productID}', 'editUploadImage', 'editUploadedImage', 'editUploadedImageId', 'removeEditImgUpload')" style="display:none;">
         </form>`;
+}
+
+function generateImageView(image) {
+    return /*html*/`
+        <div class="image-container">
+            <img src="php/uploads/${image.url}" id="${image.ID}">
+            <input type="checkbox" class="image-checkbox" data-image-id="${image.ID}" style="display:none;">
+        </div>`;
 }
 
 

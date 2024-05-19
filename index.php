@@ -31,7 +31,11 @@
 
         <div class="main-content">
             <div class="gallery-container" id="galleryContainer">
-                <div onclick="goBackToMain()" class="go-back">Zurück</div>
+                <div class="gallery-header">
+                    <div onclick="goBackToMain()" class="gallery-button">Zurück</div>
+                    <div onclick="toggleSelect()" class="gallery-button" id="select-btn">Auswählen</div>
+                    <img onclick="deleteImageConfirmation()" class="delete-icon-images" id="deleteImage" src="./assets/img/delete.png" style="display:none;">
+                </div>
                 <div class="gallery" id="gallery"></div>
             </div>
             <div class="category-item-container"></div>
@@ -54,6 +58,7 @@
         include 'popups/editProduct.php'; 
         include 'popups/newTag.php';
         include 'popups/settings.php';
+        include 'popups/deleteImage.php';
     ?>
        
 </body>

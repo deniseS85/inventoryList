@@ -60,7 +60,7 @@ header {
     transform: scale(1.2);
 }
 
-.delete-icon {
+.delete-icon, .delete-icon-images {
     filter: brightness(130%);
     width: clamp(1.5625rem, 1.4286rem + 0.6696vw, 2.5rem);
     height: clamp(1.25rem, 1.1161rem + 0.6696vw, 2.1875rem);
@@ -68,7 +68,7 @@ header {
     transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.delete-icon:hover {
+.delete-icon:hover, .delete-icon-images:hover {
     filter: brightness(180%);
     transform: scale(1.2);
 }
@@ -890,6 +890,13 @@ button:hover:not(.search-btn) {
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
+    position: relative;
+}
+
+.gallery-header {
+    display: flex;
+    gap: 50px;
+    align-items: center;
 }
 
 .gallery {
@@ -940,7 +947,7 @@ button:hover:not(.search-btn) {
     background-repeat: no-repeat;
 }
 
-.go-back {
+.gallery-button {
     cursor: pointer;
     font-size: 16px;
     color: white;
@@ -949,11 +956,19 @@ button:hover:not(.search-btn) {
     border-radius: 10px;
     padding: 5px 10px;
     text-align: center;
-    width: 100px;
+    width: 120px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.go-back:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+.gallery-button:hover {
+    background-color: var(--turquoise);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: var(--bg-color);
+}
+
+.delete-icon-images {
+    position: absolute;
+    right: 0;
 }
 
 @media only screen and (max-height: 800px) {

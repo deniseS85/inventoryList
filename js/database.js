@@ -277,4 +277,46 @@ async function getAllImages() {
     }
 }
 
+async function getProductsByImage(imageID) {
+    try {
+        const response = await fetch(`php/getProductsByImageID.php?image_id=${imageID}`);
+        const productID = await response.json();
+        return { imageID: imageID, productID: productID.toString() };
+    } catch (error) {
+        console.error('Fehler beim Abrufen der Produkt-ID für Bild:', error);
+    }
+}
+
+async function deleteImages() {
+    for (let item of selectedImageIDs) {
+        let formData = new FormData();
+        formData.append('productID', item.productId);
+        formData.append('imageID', item.imageId);
+        
+        try {
+            const response = await fetch('php/deleteImageFromProduct.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                console.log('productID:', item.productId);
+                console.log('categoryID:', result.category_ID);
+                let imageContainer = document.querySelector(`[data-image-id="${item.imageId}"]`).closest('.image-container');
+                imageContainer && (imageContainer.remove());
+                let imageCell = document.getElementById(`imageColumn_${item.productId}_${result.category_ID}`);
+                imageCell && (imageCell.innerHTML = '');
+                
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    selectedImageIDs = [];
+    document.getElementById('deleteImage').style.display = 'none';
+    togglePopup('deleteImageConfirmation');
+}
+
+
 
