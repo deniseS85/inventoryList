@@ -793,7 +793,7 @@ async function showImages(images) {
     images.forEach(async image => {
         const imageHtml = generateImageView(image);
         gallery.insertAdjacentHTML('beforeend', imageHtml);
-        let productID = await getProductsByImage(image.ID);
+        /* let productID = await getProductsByImage(image.ID); */
     });
     document.getElementById('galleryContainer').style.display = 'flex';
     togglePopup('settingsPopup');
@@ -814,15 +814,33 @@ function toggleSelect() {
     const selectContainers = document.querySelectorAll('.image-checkbox');
     selectContainers.forEach(container => {
         if (container.style.display === 'none') {
-            container.style.display = 'block';
-            document.getElementById('select-btn').style.backgroundColor = "#2BB8EE";
-            document.getElementById('select-btn').style.color = "#051C25";
+            showSelectedImages(container);
         } else {
-            container.style.display = 'none';
-            document.getElementById('select-btn').style.backgroundColor = "#051C25";
-            document.getElementById('select-btn').style.color = "white";
+            removeSelectedImages(container);
         }
     });
+}
+
+function showSelectedImages(container) {
+    container.style.display = 'block';
+    document.getElementById('select-btn').style.backgroundColor = "#2BB8EE";
+    document.getElementById('select-btn').style.color = "#051C25";
+}
+
+function removeSelectedImages(container) {
+    container.style.display = 'none';
+    document.getElementById('select-btn').style.backgroundColor = "#051C25";
+    document.getElementById('select-btn').style.color = "white";
+    selectedImageIDs = [];
+    let images = document.querySelectorAll('.image-container img');
+    images.forEach(img => {
+        img.style.opacity = "1";
+    });
+    let checkboxes = document.querySelectorAll('.image-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    document.getElementById('deleteImage').style.display = 'none';
 }
 
 async function selectImageForDelete(event) {
