@@ -301,12 +301,14 @@ async function deleteImages() {
             const result = await response.json();
 
             if (response.ok && result.success) {
-                console.log('productID:', item.productId);
-                console.log('categoryID:', result.category_ID);
                 let imageContainer = document.querySelector(`[data-image-id="${item.imageId}"]`).closest('.image-container');
                 imageContainer && (imageContainer.remove());
                 let imageCell = document.getElementById(`imageColumn_${item.productId}_${result.category_ID}`);
                 imageCell && (imageCell.innerHTML = '');
+                let previewImageContainer = document.getElementById(`previewImage_${item.productId}`);
+                if (previewImageContainer) {
+                    resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
+                }
                 
             }
         } catch (error) {

@@ -877,7 +877,6 @@ function deleteImageConfirmation() {
     let quantityText = selectedImageIDs.length === 1 ? 'das eine' : `die ${selectedImageIDs.length}`;
     confirmationText.innerHTML = /*html*/`
         Bist du sicher, dass du ${quantityText} ${imageLabel} löschen möchtest?`;
-
     togglePopup('deleteImageConfirmation');
 }
 
