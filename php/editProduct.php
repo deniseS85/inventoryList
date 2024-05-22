@@ -30,8 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $imageId = isset($_POST['image-id']) && !empty($_POST['image-id']) ? $_POST['image-id'] : null;    
     $categoryId = $_POST['category-id'];
     $currentImageURL = isset($_POST['current-image-url']) && !empty($_POST['current-image-url']) ? $_POST['current-image-url'] : null;
-    
-    // Initialize $newImageURL
+    $imageToRemove = isset($_POST['imageToRemove']) && $_POST['imageToRemove'] === 'true';
     $newImageURL = null;
 
     // Überprüfen, ob ein neues Bild hochgeladen wurde
@@ -75,6 +74,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->close();
         }
     }
+    // Bild löschen, wenn zur Löschung vorgemerkt
+    if ($imageToRemove && $currentImageURL) {
+        $conn->begin_transaction();
+        // Aktualisieren des Produkt-Eintrags, setzen Sie image_ID auf NULL
+        $stmt = $conn->prepare("UPDATE Products SET product_name = ?, amount = ?, price = ?, information = ?, tag_ID = ?, image_ID = NULL WHERE ID = ?");
+        $stmt->bind_param("sdssii", $productName, $productAmount, $productValue, $productInfo, $tagId, $productId);
+        $product_updated = $stmt->execute();
+        $stmt->close();
+    
+        // Löschen des Bild-Eintrags
+        $stmt = $conn->prepare("DELETE FROM Images WHERE ID = ?");
+        $stmt->bind_param("i", $imageId);
+        $image_deleted = $stmt->execute();
+        $stmt->close();
+    
+        if ($product_updated && $image_deleted) {
+            $oldImageURL = "uploads/" . basename($currentImageURL);
+            if (file_exists($oldImageURL)) {
+                unlink($oldImageURL);
+            }
+            $conn->commit();
+            $updatedProduct = array(
+                'id' => $productId,
+                'categoryId' => $categoryId,
+                'name' => $productName,
+                'amount' => $productAmount,
+                'price' => $productValue,
+                'information' => $productInfo,
+                'tagID' => $tagId,
+                'imageID' => null,
+                'imageUrl' => null
+            );
+            echo json_encode($updatedProduct);
+            exit;
+        } else {
+            $conn->rollback();
+            echo json_encode(array('error' => 'Error deleting image or associated product'));
+            exit;
+        }
+    }
 
     // Das Produkt aktualisieren
     $stmt = $conn->prepare("UPDATE Products SET product_name = ?, amount = ?, price = ?, information = ?, tag_ID = ?, image_ID = ? WHERE ID = ?");
@@ -97,6 +136,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'imageUrl' => $imageUrl
         );
         echo json_encode($updatedProduct);
+    } else {
+        echo json_encode(array('error' => 'Error updating product: ' . $conn->error));
     }
 
     $stmt->close();

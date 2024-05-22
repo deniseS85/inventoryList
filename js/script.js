@@ -5,6 +5,8 @@ let expanded = false;
 const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
 let selectedImageIDs = [];
 let imageSelectionListenerAdded = false;
+let isSelectEnabled = false;
+let deleteImageFlag = false;
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -605,7 +607,15 @@ function resetUploadImage(categoryID, productID, uploadedImageElementId, uploade
     resetElements(uploadedImageIdInputId, [{ name: 'value', value: '' }]);
     resetElements(uploadInputElementId, [{ name: 'value', value: null }]);
     resetElements(removeImgElementID, [{ name: 'style.display', value: 'none' }]);
-    document.querySelector('#editUploadImageForm .edit-img-upload').style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='none' rx='100' ry='100' stroke='%2305FBFBFF' stroke-width='3' stroke-dasharray='3 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`;
+    let editImgUploadForm = document.querySelector('#editUploadImageForm');
+
+    if (editImgUploadForm) {
+        let editImgUpload = editImgUploadForm.querySelector('.edit-img-upload');
+        if (editImgUpload) {
+            editImgUpload.style.backgroundImage = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='none' rx='100' ry='100' stroke='%2305FBFBFF' stroke-width='3' stroke-dasharray='3 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`;
+        }
+    }
+
     currentImageUrl[productID] = '';
     let imageCell = document.getElementById(`imageColumn_${productID}_${categoryID}`);
     imageCell && (imageCell.innerHTML = '');
@@ -634,6 +644,7 @@ function removeProductFromHTML(productID) {
 
 async function togglePopupEditProduct() {
     resetTagStyle();
+    document.getElementById('newImage').style.filter = 'grayscale(0)';
     let productId = document.getElementById('productDetailPopup').getAttribute('data-product-id');
     let categoryId = document.getElementById('productDetailPopup').getAttribute('data-category-id');
 
@@ -641,6 +652,7 @@ async function togglePopupEditProduct() {
         let product = await getProductById(productId);
         
         if (product) {
+            console.log(product)
             await prepareProductData(product, productId, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
@@ -710,8 +722,16 @@ async function getCurrentImage(product) {
     let image = product.image_ID ? await getImagePerProduct(product.image_ID) : null;
     let imageUrl = image ? image.url : '';
     let newImageElement = document.getElementById('newImage');
-    newImageElement.src = imageUrl ? `php/uploads/${imageUrl}` : '';
-    newImageElement.style.display = imageUrl ? 'block' : 'none'; 
+    let removeImageElement = document.getElementById('remove-image');
+
+    if (imageUrl) {
+        newImageElement.src = `php/uploads/${imageUrl}`;
+        newImageElement.style.display = 'block';
+        removeImageElement.style.display = 'block';
+    } else {
+        newImageElement.style.display = 'none';
+        removeImageElement.style.display = 'none';
+    }
     toggleEventListenerUploadImg(newImageElement);
     document.getElementById('currentImageUrl').value = imageUrl;
 }
@@ -748,11 +768,29 @@ async function editProduct(event) {
     if (currentImageUrl) {
         formData.append('current-image-url', currentImageUrl);
     }
+    
+    if (deleteImageFlag) {
+        formData.append('imageToRemove', 'true');
+    } else {
+        // Lösche das Flag, falls kein Bild gelöscht werden soll
+        formData.delete('imageToRemove');
+    }
     await saveEditProductInDatabase(formData);
     resetUploadImageSrc('currentImage', 'newImage', 'currentImageId', null);
+    document.getElementById('newImage').style.filter = 'grayscale(0)';
+    deleteImageFlag = false;
+}
+
+function removeImage() {
+    deleteImageFlag = true;
+    document.getElementById('newImage').style.filter = 'grayscale(1)';
+    document.getElementById('remove-image').style.display = 'none';
+    /* document.getElementById('currentImage').value = '';
+    document.getElementById('currentImageUrl').value = ''; */
 }
 
 async function updateProductTable(updatedProduct, categoryID) {
+    console.log('Updated Product:', updatedProduct);
     let productRow = document.getElementById(`productRow_${updatedProduct.id}`);
     if (productRow) {
         let tag = await getTagPerProduct(updatedProduct.tagID);
@@ -768,6 +806,7 @@ async function updateProductDetail(updatedProduct) {
     let tag = await getTagPerProduct(updatedProduct.tagID);
     let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
     let imageUrl = updatedProduct.imageUrl || null;
+
     let infoItems = [
         { label: 'Name', value: updatedProduct.name },
         { label: 'Menge', value: updatedProduct.amount },
@@ -791,9 +830,8 @@ async function showImages(images) {
     gallery.addEventListener('change', selectImageForDelete);
     
     images.forEach(async image => {
-        const imageHtml = generateImageView(image);
+        let imageHtml = generateImageView(image);
         gallery.insertAdjacentHTML('beforeend', imageHtml);
-        /* let productID = await getProductsByImage(image.ID); */
     });
     document.getElementById('galleryContainer').style.display = 'flex';
     togglePopup('settingsPopup');
@@ -811,13 +849,18 @@ function goBackToMain() {
 }
 
 function toggleSelect() {
-    const selectContainers = document.querySelectorAll('.image-checkbox');
+    isSelectEnabled = !isSelectEnabled;
+    let selectContainers = document.querySelectorAll('.image-checkbox');
+    let images = document.querySelectorAll('.gallery img');
+
     selectContainers.forEach(container => {
-        if (container.style.display === 'none') {
-            showSelectedImages(container);
-        } else {
-            removeSelectedImages(container);
-        }
+        container.style.display === 'none' ? showSelectedImages(container) : removeSelectedImages(container);
+    });
+
+    images.forEach(img => {
+        img.style.cursor = isSelectEnabled ? 'pointer' : 'default';
+        img.classList.toggle('select-enabled', isSelectEnabled);
+        img.closest('.image-container').classList.toggle('hover-effect', isSelectEnabled);
     });
 }
 
@@ -846,6 +889,7 @@ function removeSelectedImages(container) {
 async function selectImageForDelete(event) {
     let imgElement = event.target.closest('.image-container').querySelector('img');
     let checkbox = event.target;
+
     if (checkbox.matches('.image-checkbox')) {
         let imageID = checkbox.dataset.imageId;
         
@@ -871,6 +915,15 @@ async function selectImageForDelete(event) {
     }
 }
 
+function toggleCheckbox(imageID) {
+    if (isSelectEnabled) {
+        let checkbox = document.querySelector(`.image-checkbox[data-image-id="${imageID}"]`);
+        checkbox.checked = !checkbox.checked;
+        selectImageForDelete({ target: checkbox });
+    }
+   
+}
+
 function deleteImageConfirmation() {
     let confirmationText = document.getElementById('confirmationTextImage');
     let imageLabel = selectedImageIDs.length === 1 ? 'Bild' : 'Bilder';
@@ -879,6 +932,7 @@ function deleteImageConfirmation() {
         Bist du sicher, dass du ${quantityText} ${imageLabel} löschen möchtest?`;
     togglePopup('deleteImageConfirmation');
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
@@ -889,4 +943,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showTagsOptions('tagOptionsContainer', '');
     showTagsOptions('tagOptionsEditContainer', 'Edit');
     document.getElementById('editProductForm').addEventListener('submit', editProduct);
+    document.getElementById('currentImage').addEventListener('change', function() {
+        document.getElementById('newImage').style.filter = 'none';
+    });
 });

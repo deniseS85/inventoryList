@@ -598,8 +598,8 @@ footer img:hover {
 
 .upload-container {
     position: relative;
-   /*  max-width: 153px; */
-    min-width: 153px;
+    margin: auto;
+    width: 90px;
 }
 
 .img-upload {
@@ -644,6 +644,15 @@ footer img:hover {
     height: clamp(2.1875rem, 2.0536rem + 0.6696vw, 3.125rem);
     cursor: pointer;
     transition: transform 0.4s ease;
+}
+
+.remove-image {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    top: -11px;
+    right: 0px;
 }
 
 .custom-file-upload {
@@ -913,10 +922,21 @@ button:hover:not(.search-btn) {
     object-fit: cover;
     border: 2px solid var(--turquoise);
     border-radius: 10px;
+    transition: box-shadow 0.5s ease;
+}
+
+.select-enabled:hover {
+    border:  3px solid var(--turquoise);
+    box-shadow: 0px 0px 10px var(--turquoise);
 }
 
 .image-container {
     position: relative;
+    transition: transform 0.5s ease;
+}
+
+.hover-effect:hover {
+    transform: scale(1.04);
 }
 
 .image-checkbox {
@@ -932,11 +952,6 @@ button:hover:not(.search-btn) {
     -webkit-appearance: none;
     outline: none;
     background-color: var(--font-color);
-    transition: transform 0.5s ease;
-}
-
-.image-checkbox:hover {
-    transform: scale(1.2);
 }
 
 .image-checkbox:checked {

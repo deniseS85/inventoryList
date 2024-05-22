@@ -98,7 +98,7 @@ function generateImageFormUploadHTML(categoryID, productID) {
 function generateImageView(image) {
     return /*html*/`
         <div class="image-container">
-            <img src="php/uploads/${image.url}" id="${image.ID}">
+            <img src="php/uploads/${image.url}" id="${image.ID}" onclick="toggleCheckbox(${image.ID})">
             <input type="checkbox" class="image-checkbox" data-image-id="${image.ID}" style="display:none;">
         </div>`;
 }

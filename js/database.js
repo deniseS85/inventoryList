@@ -243,26 +243,32 @@ async function deleteProductItem() {
 }
 
 async function saveEditProductInDatabase(formData) {
-    fetch('php/editProduct.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
+    try {
+        const response = await fetch('php/editProduct.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
             throw new Error(response.statusText);
         }
-    })
-    .then(updatedProduct => {
+
+        const updatedProduct = await response.json();
+        
+        if (updatedProduct.error) {
+            console.error('Fehler beim Ändern des Produktes:', updatedProduct.error);
+            return;
+        }
+        console.log(updatedProduct);
         togglePopupEditProduct(null);
         updateProductTable(updatedProduct, updatedProduct.categoryId);
         updateProductDetail(updatedProduct); 
-    })
-    .catch(error => {
+        resetUploadImage(updatedProduct.categoryId, updatedProduct.id, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
+    } catch (error) {
         console.error('Fehler beim Ändern des Produktes:', error.message);
-    });
+    }
 }
+
 
 async function getAllImages() {
     try {
@@ -303,13 +309,8 @@ async function deleteImages() {
             if (response.ok && result.success) {
                 let imageContainer = document.querySelector(`[data-image-id="${item.imageId}"]`).closest('.image-container');
                 imageContainer && (imageContainer.remove());
-                let imageCell = document.getElementById(`imageColumn_${item.productId}_${result.category_ID}`);
-                imageCell && (imageCell.innerHTML = '');
                 let previewImageContainer = document.getElementById(`previewImage_${item.productId}`);
-                if (previewImageContainer) {
-                    resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
-                }
-                
+                previewImageContainer && (resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload'));
             }
         } catch (error) {
             console.error('Error:', error);
@@ -317,8 +318,12 @@ async function deleteImages() {
     }
     selectedImageIDs = [];
     document.getElementById('deleteImage').style.display = 'none';
+    toggleSelect();
     togglePopup('deleteImageConfirmation');
 }
+
+
+
 
 
 
