@@ -45,6 +45,7 @@
                     <img id="newImage" class="uploaded-new-image" style="display:none;">
                 </div>
                 <img src="./assets/img/remove-img.png" id="remove-image" class="remove-image" onclick="removeImage()" style="display:none;">
+                <img src="./assets/img/remove-img.png" id="remove-new-image" class="remove-image" onclick="resetUploadImageSrc('currentImage', 'newImage', 'remove-new-image')" style="display:none;">
             </div>
 
             <input type="hidden" id="currentProductID" name="product-id" value="">

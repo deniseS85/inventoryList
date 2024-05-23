@@ -259,7 +259,6 @@ async function saveEditProductInDatabase(formData) {
             console.error('Fehler beim Ändern des Produktes:', updatedProduct.error);
             return;
         }
-        console.log(updatedProduct);
         togglePopupEditProduct(null);
         updateProductTable(updatedProduct, updatedProduct.categoryId);
         updateProductDetail(updatedProduct); 

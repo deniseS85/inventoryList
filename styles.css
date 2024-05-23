@@ -600,6 +600,7 @@ footer img:hover {
     position: relative;
     margin: auto;
     width: 90px;
+    max-width: 90px;
 }
 
 .img-upload {
@@ -625,8 +626,8 @@ footer img:hover {
 
 .remove-img-upload {
     position: absolute;
-    top: -6px;
-    right: 22px;
+    top: -12px;
+    right: -4px;
     width: 32px;
     cursor: pointer;
     transition: transform 0.4s ease;

@@ -526,6 +526,7 @@ document.addEventListener('change', async function(event) {
     let files = event.target.files;
     let file = files && files.length > 0 ? files[0] : null;
     let editImageElement = document.querySelector('#editUploadImageForm .edit-img-upload');
+    let removeImageNewElement = document.getElementById('remove-new-image');
 
     if (!targetID || !file) return;
 
@@ -542,6 +543,16 @@ document.addEventListener('change', async function(event) {
         await productAlreadyExist(file);
     } else if (targetID === 'currentImage') {
         showNewImage(file);
+    }
+
+    if (targetID === 'currentImage') {
+        if (file) {
+            // Wenn eine Datei ausgewählt wurde, zeige das "remove-new-image" an
+            removeImageNewElement.style.display = 'block';
+        } else {
+            // Wenn keine Datei ausgewählt wurde, verstecke das "remove-new-image"
+            removeImageNewElement.style.display = 'none';
+        }
     }
 });
 
@@ -645,6 +656,7 @@ function removeProductFromHTML(productID) {
 async function togglePopupEditProduct() {
     resetTagStyle();
     document.getElementById('newImage').style.filter = 'grayscale(0)';
+    document.getElementById('remove-new-image').style.display = 'none';
     let productId = document.getElementById('productDetailPopup').getAttribute('data-product-id');
     let categoryId = document.getElementById('productDetailPopup').getAttribute('data-category-id');
 
@@ -652,7 +664,6 @@ async function togglePopupEditProduct() {
         let product = await getProductById(productId);
         
         if (product) {
-            console.log(product)
             await prepareProductData(product, productId, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
@@ -785,12 +796,9 @@ function removeImage() {
     deleteImageFlag = true;
     document.getElementById('newImage').style.filter = 'grayscale(1)';
     document.getElementById('remove-image').style.display = 'none';
-    /* document.getElementById('currentImage').value = '';
-    document.getElementById('currentImageUrl').value = ''; */
 }
 
 async function updateProductTable(updatedProduct, categoryID) {
-    console.log('Updated Product:', updatedProduct);
     let productRow = document.getElementById(`productRow_${updatedProduct.id}`);
     if (productRow) {
         let tag = await getTagPerProduct(updatedProduct.tagID);
