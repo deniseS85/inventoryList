@@ -42,6 +42,9 @@ async function getProductsByCategory(categoryID) {
 async function getProductById(productId) {
     try {
         const response = await fetch(`php/getProductByID.php?product_id=${productId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const product = await response.json();
         return product;
     } catch (error) {
@@ -268,7 +271,6 @@ async function saveEditProductInDatabase(formData) {
     }
 }
 
-
 async function getAllImages() {
     try {
         const response = await fetch('php/getImages.php');
@@ -306,10 +308,22 @@ async function deleteImages() {
             const result = await response.json();
 
             if (response.ok && result.success) {
-                let imageContainer = document.querySelector(`[data-image-id="${item.imageId}"]`).closest('.image-container');
-                imageContainer && (imageContainer.remove());
-                let previewImageContainer = document.getElementById(`previewImage_${item.productId}`);
-                previewImageContainer && (resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload'));
+                let imageElement = document.querySelector(`[data-image-id="${item.imageId}"]`);
+                if (imageElement) {
+                    let imageContainer = imageElement.closest('.image-container');
+                    imageContainer && (imageContainer.remove());
+                    resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
+                    removeSelectedImages(imageElement);
+                    try {
+                        let product = await getProductById(item.productId);
+                        updateProductDetail(product);
+                        updateProductTable(product, result.category_ID) ;
+                    } catch (error) {
+                        console.error('Error fetching product:', error);
+                    }
+                } else {
+                    console.error('Image element with ID', item.imageId, 'not found.');
+                }
             }
         } catch (error) {
             console.error('Error:', error);
@@ -317,8 +331,8 @@ async function deleteImages() {
     }
     selectedImageIDs = [];
     document.getElementById('deleteImage').style.display = 'none';
-    toggleSelect();
     togglePopup('deleteImageConfirmation');
+    toggleSelect();
 }
 
 

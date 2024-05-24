@@ -102,8 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'amount' => $productAmount,
                 'price' => $productValue,
                 'information' => $productInfo,
-                'tagID' => $tagId,
-                'imageID' => null,
+                'tag_ID' => $tagId,
+                'image_ID' => null,
                 'imageUrl' => null
             );
             echo json_encode($updatedProduct);
@@ -131,8 +131,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'amount' => $productAmount,
             'price' => $productValue,
             'information' => $productInfo,
-            'tagID' => $tagId,
-            'imageID' => $imageId,
+            'tag_ID' => $tagId,
+            'image_ID' => $imageId,
             'imageUrl' => $imageUrl
         );
         echo json_encode($updatedProduct);

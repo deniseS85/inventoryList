@@ -598,7 +598,7 @@ footer img:hover {
 
 .upload-container {
     position: relative;
-    margin: auto;
+    margin: 10px auto;
     width: 90px;
     max-width: 90px;
 }

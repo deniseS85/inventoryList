@@ -542,15 +542,13 @@ document.addEventListener('change', async function(event) {
         editImageElement.style.backgroundImage = 'none';
         await productAlreadyExist(file);
     } else if (targetID === 'currentImage') {
-        showNewImage(file);
+        showNewImage(file );
     }
 
     if (targetID === 'currentImage') {
         if (file) {
-            // Wenn eine Datei ausgewählt wurde, zeige das "remove-new-image" an
             removeImageNewElement.style.display = 'block';
         } else {
-            // Wenn keine Datei ausgewählt wurde, verstecke das "remove-new-image"
             removeImageNewElement.style.display = 'none';
         }
     }
@@ -719,12 +717,12 @@ function setFieldValues(fieldValues) {
 
 function getFieldValues(product, tagHtml, formattedPrice, productId, categoryId) {
     return [
-        { id: 'productCurrentName', value: product.product_name },
+        { id: 'productCurrentName', value: product.name },
         { id: 'currentAmount', value: product.amount },
         { id: 'currentProductValue', value: formattedPrice },
         { id: 'currentProductInfo', value: product.information },
         { id: 'currentTag', value: tagHtml },
-        { id: 'currentProductID', value: productId },
+        { id: 'currentProductID', value: product.id },
         { id: 'currentCategoryID', value: categoryId }
     ];
 }
@@ -783,7 +781,6 @@ async function editProduct(event) {
     if (deleteImageFlag) {
         formData.append('imageToRemove', 'true');
     } else {
-        // Lösche das Flag, falls kein Bild gelöscht werden soll
         formData.delete('imageToRemove');
     }
     await saveEditProductInDatabase(formData);
@@ -799,10 +796,14 @@ function removeImage() {
 }
 
 async function updateProductTable(updatedProduct, categoryID) {
+    if (updatedProduct.hasOwnProperty('ID')) {
+        updatedProduct.id = updatedProduct.ID;
+        delete updatedProduct.ID;
+    }
     let productRow = document.getElementById(`productRow_${updatedProduct.id}`);
     if (productRow) {
-        let tag = await getTagPerProduct(updatedProduct.tagID);
-        let image = await getImagePerProduct(updatedProduct.imageID);
+        let tag = await getTagPerProduct(updatedProduct.tag_ID);
+        let image = await getImagePerProduct(updatedProduct.image_ID);
         let newRowHTML = generateTableRow(updatedProduct, categoryID, tag, image);
         productRow.outerHTML = newRowHTML;
     } else {
@@ -811,9 +812,13 @@ async function updateProductTable(updatedProduct, categoryID) {
 }
 
 async function updateProductDetail(updatedProduct) {
-    let tag = await getTagPerProduct(updatedProduct.tagID);
+    let tag = await getTagPerProduct(updatedProduct.tag_ID);
     let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
-    let imageUrl = updatedProduct.imageUrl || null;
+    let image = await getImagePerProduct(updatedProduct.image_ID);
+    let imageUrl = '';
+    if (image && image.url) {
+        imageUrl = image.url;
+    }
 
     let infoItems = [
         { label: 'Name', value: updatedProduct.name },
@@ -929,7 +934,6 @@ function toggleCheckbox(imageID) {
         checkbox.checked = !checkbox.checked;
         selectImageForDelete({ target: checkbox });
     }
-   
 }
 
 function deleteImageConfirmation() {

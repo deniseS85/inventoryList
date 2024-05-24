@@ -95,6 +95,7 @@ function generateImageFormUploadHTML(categoryID, productID) {
         </form>`;
 }
 
+
 function generateImageView(image) {
     return /*html*/`
         <div class="image-container">
