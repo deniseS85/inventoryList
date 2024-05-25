@@ -61,6 +61,7 @@
         include 'popups/newTag.php';
         include 'popups/settings.php';
         include 'popups/deleteImage.php';
+        include 'popups/deleteTag.php';
     ?>
        
 </body>

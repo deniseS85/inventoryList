@@ -115,7 +115,7 @@ async function showTagsOptions(tagOptionsContainerID, dropDownID) {
         tags.forEach(tag => {
             let option = document.createElement('div');
             option.classList.add('option');
-            
+            option.dataset.tagId = tag.ID;
             option.addEventListener('click', function() {
                 selectTag(tag, dropDownID);
             });
@@ -336,22 +336,7 @@ async function deleteImages() {
             const result = await response.json();
 
             if (response.ok && result.success) {
-                let imageElement = document.querySelector(`[data-image-id="${item.imageId}"]`);
-                if (imageElement) {
-                    let imageContainer = imageElement.closest('.image-container');
-                    imageContainer && (imageContainer.remove());
-                    resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
-                    removeSelect(imageElement, 'image');
-                    try {
-                        let product = await getProductById(item.productId);
-                        updateProductDetail(product);
-                        updateProductTable(product, result.category_ID) ;
-                    } catch (error) {
-                        console.error('Error fetching product:', error);
-                    }
-                } else {
-                    console.error('Image element with ID', item.imageId, 'not found.');
-                }
+                await updateUIafterDeleteImages(item.imageId, item.productId, result.category_ID);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -361,6 +346,70 @@ async function deleteImages() {
     document.getElementById('deleteImage').style.display = 'none';
     togglePopup('deleteImageConfirmation');
     toggleSelect();
+}
+
+async function updateUIafterDeleteImages(imageID, productID, categoryID) {
+    let imageElement = document.querySelector(`[data-image-id="${imageID}"]`);
+    if (imageElement) {
+        let imageContainer = imageElement.closest('.image-container');
+        imageContainer && (imageContainer.remove());
+        resetUploadImage(categoryID, productID, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
+        removeSelect(imageElement, 'image');
+        try {
+            let product = await getProductById(productID);
+            await updateProductDetail(product);
+            await updateProductTable(product, categoryID);
+        } catch (error) {
+            console.error('Error fetching product:', error);
+        }
+    } else {
+        console.error('Image element with ID', imageID, 'not found.');
+    }
+}
+
+async function deleteTags() {
+    for (let item of selectedTagIDs) {
+        let formData = new FormData();
+        formData.append('productID', item.productId);
+        formData.append('tagID', item.tagId);
+
+        try {
+            const response = await fetch('php/deleteTag.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                await updateUIafterDeleteTag(item.tagId, item.productId, result.category_ID)
+            }
+        } catch (error) {
+            console.error('Error', error);
+        }
+    }
+    selectedTagIDs = [];
+    document.getElementById('deleteTag').style.display = 'none';
+    togglePopup('deleteTagConfirmation');
+    toggleSelect();
+}
+
+async function updateUIafterDeleteTag(tagID, productID, categoryID) {
+    let tagElement = document.querySelector(`[data-tag-id="${tagID}"]`);
+    if (tagElement) {
+        let tagContainer = tagElement.closest('.tags-container');
+        tagContainer && (tagContainer.remove());
+        removeTagFromDropdown(tagID);
+        removeSelect(tagElement, 'tag');
+        try {
+            let product = await getProductById(productID);
+            await updateProductDetail(product);
+            await updateProductTable(product, categoryID);
+        } catch {
+            console.error('Error fetching product:', error);
+        }
+    } else {
+        console.error('Tag element with ID', tagID, 'not found.');
+    }
 }
 
 

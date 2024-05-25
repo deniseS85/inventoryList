@@ -1045,17 +1045,25 @@ async function selectTagForDelete(event) {
             }
         }
     }
-    console.log('tags', selectedTagIDs);
 }
 
 function deleteTagConfirmation() {
-    console.log('tag löschen')
+    let uniqueTagIDs = [...new Set(selectedTagIDs.map(tag => tag.tagId))];
+    let numberOfUniqueTags = uniqueTagIDs.length;
+    let tagLabel = numberOfUniqueTags === 1 ? 'Tag' : 'Tags';
+    let quantityText = numberOfUniqueTags === 1 ? 'das eine' : `die ${numberOfUniqueTags}`;
+    let confirmationText = document.getElementById('confirmationTextTag');
+    confirmationText.innerHTML = /*html*/`
+        Bist du sicher, dass du ${quantityText} ${tagLabel} löschen möchtest?`;
+    togglePopup('deleteTagConfirmation');
 }
 
-
-
-
-
+function removeTagFromDropdown(tagID) {
+    let options = document.querySelectorAll(`.option[data-tag-id="${tagID}"]`);
+    options.forEach(option => {
+        option.remove();
+    });
+}
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();

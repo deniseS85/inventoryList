@@ -311,7 +311,8 @@ td:nth-child(5), th:nth-child(5),
 td:nth-child(6), th:nth-child(6) {
     width: 8%;
     text-align: center;
-    padding: 0; 
+    padding: 0;
+    white-space: nowrap
 }
 
 td:nth-child(6) img {
@@ -752,7 +753,7 @@ p {
     overflow-y: auto;
     border-radius: 6px;
     border: 1px solid var(--turquoise);
-    padding-bottom: 5px;
+  /*   padding-bottom: 5px; */
 }
 
 .dropdownContent::-webkit-scrollbar {
