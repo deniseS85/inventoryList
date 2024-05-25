@@ -284,6 +284,19 @@ async function getAllImages() {
     }
 }
 
+async function getAllTags() {
+    try {
+        const response = await fetch('php/getTags.php');
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Tags');
+        }
+        const tags = await response.json();
+        showTags(tags);
+    } catch (error) {
+        console.error('Error fetching all tags:', error);
+    }
+}
+
 async function getProductsByImage(imageID) {
     try {
         const response = await fetch(`php/getProductsByImageID.php?image_id=${imageID}`);
@@ -291,6 +304,21 @@ async function getProductsByImage(imageID) {
         return { imageID: imageID, productID: productID.toString() };
     } catch (error) {
         console.error('Fehler beim Abrufen der Produkt-ID für Bild:', error);
+    }
+}
+
+async function getProductsByTag(tagID) {
+    try {
+        const response = await fetch(`php/getProductsByTagID.php?tag_id=${tagID}`);
+        const productIDs = await response.json();
+        if (Array.isArray(productIDs)) {
+            return { tagID: tagID, productIDs: productIDs.map(String) };
+        } else {
+            return { tagID: tagID, productIDs: [] };
+        }
+    } catch (error) {
+        console.error('Fehler beim Abrufen der Produkt-IDs für Tag:', error);
+        return { tagID: tagID, productIDs: [] }; 
     }
 }
 
@@ -313,7 +341,7 @@ async function deleteImages() {
                     let imageContainer = imageElement.closest('.image-container');
                     imageContainer && (imageContainer.remove());
                     resetUploadImage(result.category_ID, item.productId, 'editUploadedImage', 'editUploadedImageId', 'editUploadImage', 'removeEditImgUpload');
-                    removeSelectedImages(imageElement);
+                    removeSelect(imageElement, 'image');
                     try {
                         let product = await getProductById(item.productId);
                         updateProductDetail(product);

@@ -120,7 +120,7 @@ main {
     align-items: center;
 }
   
-input:not(#productImage):not(.image-checkbox), select {
+input:not(#productImage):not(.image-checkbox):not(.tag-checkbox), select {
     padding: 5px;
     border: 1px transparent;
     border-bottom: 2px solid var(--turquoise);
@@ -936,11 +936,32 @@ button:hover:not(.search-btn) {
     transition: transform 0.5s ease;
 }
 
+.tags-container {
+    border-radius: 5px;
+    color: var(--font-color);
+    width: clamp(6.25rem, 4.4643rem + 8.9286vw, 18.75rem);
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: transform 0.5s ease;
+    border: 2px solid var(--turquoise);
+}
+
+.tags-container div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .hover-effect:hover {
     transform: scale(1.04);
 }
 
-.image-checkbox {
+.image-checkbox, .tag-checkbox {
     position: absolute;
     top: 0;
     right: 0;
@@ -955,7 +976,7 @@ button:hover:not(.search-btn) {
     background-color: var(--font-color);
 }
 
-.image-checkbox:checked {
+.image-checkbox:checked, .tag-checkbox:checked {
     background-color: var(--bg-color);
     background-image: url('./assets/img/check.png');
     background-size: contain;

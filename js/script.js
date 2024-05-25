@@ -4,6 +4,7 @@ let currentImageUrl = {};
 let expanded = false;
 const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
 let selectedImageIDs = [];
+let selectedTagIDs = [];
 let imageSelectionListenerAdded = false;
 let isSelectEnabled = false;
 let deleteImageFlag = false;
@@ -834,10 +835,112 @@ async function updateProductDetail(updatedProduct) {
 
 function openSettings() {
     togglePopup('settingsPopup');
+    isSelectEnabled = false;
+    toggleSelection('.image-checkbox', '.gallery img', 'image');
+    toggleSelection('.tag-checkbox', '.tags-container', 'tag');
+    resetSelectButton();
+}
+
+function goBackToMain() {
+    document.querySelector('.category-item-container').style.display = 'flex';
+    document.getElementById('itemContainer').style.display = 'flex';
+    document.getElementById('galleryContainer').style.display = 'none';
+    selectedImageIDs = [];
+    selectedTagIDs = [];
+    isSelectEnabled = false;
+    toggleSelection('.image-checkbox', '.gallery img', 'image');
+    toggleSelection('.tag-checkbox', '.tags-container', 'tag');
+    resetSelectButton();
+}
+
+function toggleSelect() {
+    isSelectEnabled = !isSelectEnabled;
+    toggleSelection('.image-checkbox', '.gallery img', 'image');
+    toggleSelection('.tag-checkbox', '.tags-container', 'tag');
+    updateSelectButton();
+}
+
+function toggleSelection(checkboxSelector, elementSelector, type) {
+    let containers = document.querySelectorAll(checkboxSelector);
+    containers.forEach(container => {
+        if (isSelectEnabled) {
+            showSelect(container);
+        } else {
+            removeSelect(container, type);
+        }
+    });
+
+    let elements = document.querySelectorAll(elementSelector);
+    elements.forEach(el => {
+        el.style.cursor = isSelectEnabled ? 'pointer' : 'default';
+        el.classList.toggle('select-enabled', isSelectEnabled);
+        let closestContainer = type === 'image' ? el.closest('.image-container') : el.closest('.tags-container');
+        if (closestContainer) {
+            closestContainer.classList.toggle('hover-effect', isSelectEnabled);
+        }
+    });
+}
+
+function showSelect(container) {
+    container.style.display = 'block';
+}
+
+function removeSelect(container, type) {
+    container.style.display = 'none';
+
+    if (type === 'image') {
+        selectedImageIDs = [];
+        resetSelection('.image-container img', '.image-checkbox', 'deleteImage');
+    } else if (type === 'tag') {
+        selectedTagIDs = [];
+        resetSelection('.tags-container div', '.tag-checkbox', 'deleteTag');
+    }
+}
+
+function toggleCheckbox(itemID, itemType) {
+    if (isSelectEnabled) {
+        let checkbox = document.querySelector(`.${itemType}-checkbox[data-${itemType}-id="${itemID}"]`);
+        checkbox.checked = !checkbox.checked;
+
+        if (itemType === 'image') {
+            selectImageForDelete({ target: checkbox });
+        } else if (itemType === 'tag') {
+            selectTagForDelete({ target: checkbox });
+        }
+    }
+}
+
+function resetSelection(elementSelector, checkboxSelector, deleteButtonId) {
+    let elements = document.querySelectorAll(elementSelector);
+    elements.forEach(element => {
+        element.style.opacity = "1";
+    });
+
+    let checkboxes = document.querySelectorAll(checkboxSelector);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    document.getElementById(deleteButtonId).style.display = 'none';
+}
+
+function resetSelectButton() {
+    document.getElementById('select-btn').style.backgroundColor = "#051C25";
+    document.getElementById('select-btn').style.color = "white";
+}
+
+function updateSelectButton() {
+    if (isSelectEnabled) {
+        document.getElementById('select-btn').style.backgroundColor = "#2BB8EE";
+        document.getElementById('select-btn').style.color = "#051C25";
+    } else {
+        document.getElementById('select-btn').style.backgroundColor = "#051C25";
+        document.getElementById('select-btn').style.color = "white";
+    }
 }
 
 async function showImages(images) {
     let gallery = document.getElementById('gallery');
+    let tagsContainer = document.getElementById('tagsContainer');
 
     gallery.innerHTML = '';
     gallery.addEventListener('change', selectImageForDelete);
@@ -846,57 +949,13 @@ async function showImages(images) {
         let imageHtml = generateImageView(image);
         gallery.insertAdjacentHTML('beforeend', imageHtml);
     });
+
+    gallery.style.display = 'flex';
+    tagsContainer.style.display = 'none';
     document.getElementById('galleryContainer').style.display = 'flex';
     togglePopup('settingsPopup');
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('itemContainer').style.display = 'none';
-}
-
-function goBackToMain() {
-    document.querySelector('.category-item-container').style.display = 'flex';
-    document.getElementById('itemContainer').style.display = 'flex';
-    document.getElementById('galleryContainer').style.display = 'none';
-    document.getElementById('select-btn').style.backgroundColor = "#051C25";
-    document.getElementById('select-btn').style.color = "white";
-    selectedImageIDs = [];
-}
-
-function toggleSelect() {
-    isSelectEnabled = !isSelectEnabled;
-    let selectContainers = document.querySelectorAll('.image-checkbox');
-    let images = document.querySelectorAll('.gallery img');
-
-    selectContainers.forEach(container => {
-        container.style.display === 'none' ? showSelectedImages(container) : removeSelectedImages(container);
-    });
-
-    images.forEach(img => {
-        img.style.cursor = isSelectEnabled ? 'pointer' : 'default';
-        img.classList.toggle('select-enabled', isSelectEnabled);
-        img.closest('.image-container').classList.toggle('hover-effect', isSelectEnabled);
-    });
-}
-
-function showSelectedImages(container) {
-    container.style.display = 'block';
-    document.getElementById('select-btn').style.backgroundColor = "#2BB8EE";
-    document.getElementById('select-btn').style.color = "#051C25";
-}
-
-function removeSelectedImages(container) {
-    container.style.display = 'none';
-    document.getElementById('select-btn').style.backgroundColor = "#051C25";
-    document.getElementById('select-btn').style.color = "white";
-    selectedImageIDs = [];
-    let images = document.querySelectorAll('.image-container img');
-    images.forEach(img => {
-        img.style.opacity = "1";
-    });
-    let checkboxes = document.querySelectorAll('.image-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
-    document.getElementById('deleteImage').style.display = 'none';
 }
 
 async function selectImageForDelete(event) {
@@ -926,14 +985,7 @@ async function selectImageForDelete(event) {
             }
         }
     }
-}
-
-function toggleCheckbox(imageID) {
-    if (isSelectEnabled) {
-        let checkbox = document.querySelector(`.image-checkbox[data-image-id="${imageID}"]`);
-        checkbox.checked = !checkbox.checked;
-        selectImageForDelete({ target: checkbox });
-    }
+    console.log('images', selectedImageIDs);
 }
 
 function deleteImageConfirmation() {
@@ -944,6 +996,64 @@ function deleteImageConfirmation() {
         Bist du sicher, dass du ${quantityText} ${imageLabel} löschen möchtest?`;
     togglePopup('deleteImageConfirmation');
 }
+
+function showTags(tags) {
+    let tagsContainer = document.getElementById('tagsContainer');
+    let gallery = document.getElementById('gallery');
+
+    tagsContainer.innerHTML = '';
+    tagsContainer.addEventListener('change', selectTagForDelete);
+
+    tags.forEach(tag => {
+        let tagHtml = generateTagsView(tag);
+        tagsContainer.insertAdjacentHTML('beforeend', tagHtml);
+    });
+
+    tagsContainer.style.display = 'flex';
+    gallery.style.display = 'none';
+    document.getElementById('galleryContainer').style.display = 'flex';
+    togglePopup('settingsPopup');
+    document.querySelector('.category-item-container').style.display = 'none';
+    document.getElementById('itemContainer').style.display = 'none';
+}
+
+async function selectTagForDelete(event) {
+    let tagElement = event.target.closest('.tags-container').querySelector('div');
+    let checkbox = event.target;
+
+    if (checkbox.matches('.tag-checkbox')) {
+        let tagID = checkbox.dataset.tagId;
+
+        if (checkbox.checked) {
+            if (!selectedTagIDs.some(item => item.tagId === tagID)) {
+                let { tagID: fetchedTagId, productIDs } = await getProductsByTag(tagID);
+                let productIdArray = Array.isArray(productIDs) ? productIDs : [];
+                productIdArray.forEach(productId => {
+                    selectedTagIDs.push({ tagId: fetchedTagId, productId: productId || '' });
+                });
+                if (productIdArray.length === 0) {
+                    selectedTagIDs.push({ tagId: fetchedTagId, productId: '' });
+                }
+                tagElement.style.opacity = "0.5";
+                document.getElementById('deleteTag').style.display = 'flex';
+            }
+        } else {
+            selectedTagIDs = selectedTagIDs.filter(item => item.tagId !== tagID);
+            tagElement.style.opacity = "1";
+            if (selectedTagIDs.length === 0) {
+                document.getElementById('deleteTag').style.display = 'none';
+            }
+        }
+    }
+    console.log('tags', selectedTagIDs);
+}
+
+function deleteTagConfirmation() {
+    console.log('tag löschen')
+}
+
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -3,7 +3,7 @@ include 'db_connection.php';
 
 if(isset($_GET['image_id'])) {
     $image_id = $_GET['image_id'];
-    $sql = "SELECT ID FROM Products WHERE Image_ID = ?";
+    $sql = "SELECT ID FROM Products WHERE image_ID = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $image_id);

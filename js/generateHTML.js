@@ -95,14 +95,23 @@ function generateImageFormUploadHTML(categoryID, productID) {
         </form>`;
 }
 
-
 function generateImageView(image) {
     return /*html*/`
         <div class="image-container">
-            <img src="php/uploads/${image.url}" id="${image.ID}" onclick="toggleCheckbox(${image.ID})">
+            <img src="php/uploads/${image.url}" id="${image.ID}" onclick="toggleCheckbox(${image.ID}, 'image')">
             <input type="checkbox" class="image-checkbox" data-image-id="${image.ID}" style="display:none;">
         </div>`;
 }
+
+function generateTagsView(tag) {
+    return /*html*/`
+        <div class="tags-container">
+            <div id="${tag.ID}" onclick="toggleCheckbox(${tag.ID}, 'tag')" style="background-color:${tag.color}">${tag.tag_name}</div>
+            <input type="checkbox" class="tag-checkbox" data-tag-id="${tag.ID}" style="display:none;">
+        </div>`;
+}
+
+
 
 
 

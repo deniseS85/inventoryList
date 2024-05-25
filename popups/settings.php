@@ -3,7 +3,7 @@
         <h4 class="popup-title">Einstellungen</h4>
         <div class="setting-items">
             <div onclick="getAllImages()">Bilder</div>
-            <div>Tags</div>
+            <div onclick="getAllTags()">Tags</div>
             <div>Einstellungen</div>
             <div>Liste exportieren</div>
             <div>Konto bearbeiten</div>

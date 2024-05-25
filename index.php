@@ -35,8 +35,10 @@
                     <div onclick="goBackToMain()" class="gallery-button">Zurück</div>
                     <div onclick="toggleSelect()" class="gallery-button" id="select-btn">Auswählen</div>
                     <img onclick="deleteImageConfirmation()" class="delete-icon-images" id="deleteImage" src="./assets/img/delete.png" style="display:none;">
+                    <img onclick="deleteTagConfirmation()" class="delete-icon-images" id="deleteTag" src="./assets/img/delete.png" style="display:none;">
                 </div>
                 <div class="gallery" id="gallery"></div>
+                <div class="gallery" id="tagsContainer"></div>
             </div>
             <div class="category-item-container"></div>
             <div id="itemContainer" class="itemsContainer"></div>
