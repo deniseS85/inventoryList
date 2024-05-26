@@ -357,8 +357,8 @@ async function updateUIafterDeleteImages(imageID, productID, categoryID) {
         removeSelect(imageElement, 'image');
         try {
             let product = await getProductById(productID);
-            await updateProductDetail(product);
-            await updateProductTable(product, categoryID);
+            updateProductTable(product, categoryID);
+            updateProductDetail(product);
         } catch (error) {
             console.error('Error fetching product:', error);
         }
@@ -402,8 +402,9 @@ async function updateUIafterDeleteTag(tagID, productID, categoryID) {
         removeSelect(tagElement, 'tag');
         try {
             let product = await getProductById(productID);
-            await updateProductDetail(product);
-            await updateProductTable(product, categoryID);
+            updateProductTable(product, categoryID);
+            updateProductDetail(product);
+            
         } catch {
             console.error('Error fetching product:', error);
         }

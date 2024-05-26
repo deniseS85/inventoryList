@@ -23,7 +23,7 @@
                 <div class="label-header" style="margin-bottom:10px" onclick="toggleDropdown('dropdownContentEdit')">
                     <div class="current-tag">
                         <div class="label-tags">Tag:</div>
-                        <div id="currentTag"></div>
+                        <div id="currentTag" style="position: relative;"></div>
                     </div>
                     <p><i class="arrow-down"></i></p>
                 </div>

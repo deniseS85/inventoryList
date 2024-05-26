@@ -583,6 +583,48 @@ footer img:hover {
     gap: 20px;
 }
 
+#removeTagButton {
+    position: absolute; 
+    top: 50%; 
+    right: 5px; 
+    transform: translateY(-50%);
+    display: flex;
+}
+
+#removeTagButton img {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    padding: 2px;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+
+#removeTagButton img:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tag {
+    display: flex;
+    justify-content: center;
+    height: unset;
+    padding: 3px 10px;
+    font-size: 17px;
+    border-radius: 5px;
+}
+
+.tag.value {
+    width: auto;
+}
+
+.tag.current {
+    justify-content: space-between;
+    min-width: 150px;
+    padding-right: 0;
+}
 
 .label-header {
     display: flex;
@@ -590,7 +632,6 @@ footer img:hover {
     justify-content: space-between;
     align-items: center;
     padding-right: 10px;
-    height: 20px;
 }
 
 .label-tags {

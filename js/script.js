@@ -324,7 +324,11 @@ function sortByNameAmountValue(columnIndex, rows, sortOrder) {
 
 function toggleDropdown(dropDownID) {
     let dropDown = document.getElementById(dropDownID);
-    dropDown.classList.toggle("expanded");
+    let eventTarget = event.target; // Das Element, auf das geklickt wurde
+
+    if (!eventTarget.matches("#removeTagButton, #removeTagButton img")) {
+        dropDown.classList.toggle("expanded");
+    }
 }
 
 function closeAllDropdowns() {
@@ -384,11 +388,16 @@ function selectTag(tag, dropDownID) {
 }
 
 function selectTagEditProduct(tag) {
+    console.log(tag.ID)
     let currentTag = document.getElementById('currentTag');
-    let additionalStyles = `height: unset; padding: 1px 10px; border-radius: 5px; font-size: 17px`;
-    currentTag.style.cssText += additionalStyles;
-    currentTag.innerHTML = tag.tag_name;
+    currentTag.className = 'tag current';
+    currentTag.innerHTML = /*html*/`
+        ${tag.tag_name}
+        <span onclick="removeCurrentTag(${tag.ID})" id="removeTagButton">
+            <img src="./assets/img/remove-tag.png">
+        </span>`;
     currentTag.style.backgroundColor = tag.color;
+
     let selectedOptionEdit = document.getElementById('selectedOptionEdit');
     selectedOptionEdit.innerHTML = '';
 }
@@ -428,7 +437,6 @@ function addNewItem(event) {
 
 function addNewItemAfterLoadDOM() {
     document.getElementById('addProductForm').addEventListener('submit', addNewItem);
-    
 }
 
 function scrollToLastElement(containerPath, itemSelector) {
@@ -490,8 +498,7 @@ async function openProductDetailPopup(categoryID, productID, name, amount, price
 function getTagHTML(tagName, tagStyle) {
     if (tagName && tagStyle) {
         let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
-        let additionalStyles = `height: unset; width: 100px; padding: 3px 10px; font-size: 17px; border-radius: 5px`;
-        return /*html*/`<span class="tag" style="background-color: ${backgroundColor}; ${additionalStyles};">${tagName}</span>`;
+        return /*html*/`<span class="tag value" style="background-color: ${backgroundColor};">${tagName}</span>`;
     }
     return '';
 }
@@ -663,7 +670,7 @@ async function togglePopupEditProduct() {
         let product = await getProductById(productId);
         
         if (product) {
-            await prepareProductData(product, productId, categoryId);
+            await prepareProductData(product, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
             isEditInputValid();
@@ -676,11 +683,22 @@ async function togglePopupEditProduct() {
     closeAllDropdowns();
 }
 
-async function prepareProductData(product, productId, categoryId) {
+async function prepareProductData(product, categoryId) {
     let tag = product.tag_ID ? await getTagPerProduct(product.tag_ID) : null;
-    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
+    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color};`) : '';
+    
+    if (tagHtml) {
+        tagHtml = /*html*/`
+            <span class="tag current" style="background-color: ${tag.color};">
+                ${tag.tag_name}
+                <span onclick="removeCurrentTag(${tag.ID})" id="removeTagButton">
+                    <img src="./assets/img/remove-tag.png">
+                </span>
+            </span>`;
+    }
+
     let formattedPrice = formatPrice(product.price).replace('€', '').trim();
-    let fieldValues = getFieldValues(product, tagHtml, formattedPrice, productId, categoryId);
+    let fieldValues = getFieldValues(product, tagHtml, formattedPrice, categoryId);
     setFieldValues(fieldValues);
     document.getElementById('currentImageId').value = product.image_ID || '';
     document.getElementById('currentTagId').value = product.tag_ID || '';
@@ -706,6 +724,13 @@ function resetTagStyle() {
     });
 }
 
+function removeCurrentTag(tagID) {
+    let currentTag = document.getElementById('currentTag');
+    currentTag.innerHTML = '';
+    document.getElementById('currentTagId').value = '';
+    resetTagStyle();
+}
+
 function setFieldValues(fieldValues) {
     fieldValues.forEach(({ id, value }) => {
         if (id === 'currentTag') {
@@ -716,7 +741,7 @@ function setFieldValues(fieldValues) {
     });
 }
 
-function getFieldValues(product, tagHtml, formattedPrice, productId, categoryId) {
+function getFieldValues(product, tagHtml, formattedPrice, categoryId) {
     return [
         { id: 'productCurrentName', value: product.name },
         { id: 'currentAmount', value: product.amount },
@@ -774,9 +799,14 @@ async function editProduct(event) {
     event.preventDefault();
     let formData = new FormData(this);
     let currentImageUrl = document.getElementById('currentImageUrl').value;
+    let currentTag = document.getElementById('currentTagId').value;
 
     if (currentImageUrl) {
         formData.append('current-image-url', currentImageUrl);
+    }
+
+    if (!currentTag) {
+        formData.append('tag-id', '');
     }
     
     if (deleteImageFlag) {
@@ -807,8 +837,6 @@ async function updateProductTable(updatedProduct, categoryID) {
         let image = await getImagePerProduct(updatedProduct.image_ID);
         let newRowHTML = generateTableRow(updatedProduct, categoryID, tag, image);
         productRow.outerHTML = newRowHTML;
-    } else {
-        console.error('Product row not found for product ID:', updatedProduct.id);
     }
 }
 
@@ -985,7 +1013,6 @@ async function selectImageForDelete(event) {
             }
         }
     }
-    console.log('images', selectedImageIDs);
 }
 
 function deleteImageConfirmation() {
@@ -1064,6 +1091,7 @@ function removeTagFromDropdown(tagID) {
         option.remove();
     });
 }
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
