@@ -2,7 +2,6 @@
 
 include 'db_connection.php';
 
-
 $sql = "SELECT * FROM Images";
 $result = mysqli_query($conn, $sql);
 

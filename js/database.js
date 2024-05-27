@@ -413,6 +413,31 @@ async function updateUIafterDeleteTag(tagID, productID, categoryID) {
     }
 }
 
+async function exportToExcel() {
+    try {
+        const response = await fetch('php/exportToExcel.php');
+        if (!response.ok) {
+            throw new Error('Fehler beim Exportieren der Tabelle');
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'products.xls');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        togglePopup('settingsPopup');
+    } catch (error) {
+        console.error('Fehler beim Exportieren der Tabelle:', error);
+    }
+}
+
+
+
+
+
+
 
 
 

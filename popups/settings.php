@@ -5,7 +5,7 @@
             <div onclick="getAllImages()">Bilder</div>
             <div onclick="getAllTags()">Tags</div>
             <div>Einstellungen</div>
-            <div>Liste exportieren</div>
+            <div onclick="exportToExcel()">Liste exportieren</div>
             <div>Konto bearbeiten</div>
         </div>
         <div class="btn-container">
