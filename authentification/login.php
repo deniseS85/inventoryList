@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="auth-container" id="auth-container">
     <form id="loginForm">
         <h4 class="popup-title">Login</h4>
         <div class="form-group">
@@ -10,8 +10,8 @@
         <div class="form-group">
             <label for="password" class="form-label">Passwort</label>
             <div class="password-container">
-                <input type="password" name="password" id="password" required>
-                <img src="./assets/img/password-hide.png" class="password-toggle-icon" onclick="togglePassword()">
+                <input type="password" name="password" id="passwordLogin" required>
+                <img src="./assets/img/password-hide.png" class="password-toggle-icon" onclick="togglePassword('passwordLogin')">
             </div>
             <span id="passwordError"></span>
         </div>
@@ -22,18 +22,23 @@
                 <label for="rememberMe">Angemeldet bleiben</label>
             </div>
             <div class="forgot-container">
-                <a href="#" class="forgot-link">Passwort vergessen?</a>
+                <a onclick="showForm('forgotForm')" class="forgot-link">Passwort vergessen?</a>
             </div>
         </div>
 
-        <div class="btn-container-login">
+        <div class="btn-container-auth">
             <button type="submit" id="loginButton">Login</button>
             <div id="loginError"></div>
         </div>
 
-        <div  class="sign-up-container">
+        <div  class="form-footer">
             <div>Noch nicht registriert?</div>
-            <a class="signup-link" href="#">Zur Registrierung</a>
+            <a onclick="showForm('signupForm')" class="signup-link">Zur Registrierung</a>
         </div>
     </form>
+
+    <?php 
+        include 'signup.php';
+        include 'forgotPassword.php'
+    ?>
 </div>

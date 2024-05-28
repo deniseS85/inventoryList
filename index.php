@@ -11,8 +11,10 @@
     <script language="javascript" type="text/javascript" src="js/login.js"></script>
 </head>
 <body>
-    <?php include 'php/db_connection.php'; ?>
-    <?php include 'authentification/login.php'; ?>
+    <?php 
+        include 'php/db_connection.php';
+        include 'authentification/login.php';
+    ?>
     
     <!-- <header>
         <img class="logo-icon" src="./assets/img/inventar.png">

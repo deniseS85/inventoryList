@@ -20,7 +20,7 @@ h6 {
     margin-bottom: 0;
 }
 
-.login-container {
+.auth-container {
     position: absolute;
     inset: 0;
     display: flex;
@@ -29,7 +29,15 @@ h6 {
     background-color: var(--bg-color);
 }
 
-#loginForm {
+.auth-container form {
+    display: none;
+}
+
+.auth-container form.active {
+    display: flex;
+}
+
+#loginForm, #signupForm, #forgotForm {
     width: clamp(16.875rem, 13.9286rem + 14.7321vw, 37.5rem);
     border: 2px solid var(--turquoise);
     border-radius: 15px;
@@ -44,7 +52,9 @@ h6 {
 }
 
 #loginForm .form-group,
-#loginForm .form-group input:not(.sub-form-group input) {
+#loginForm .form-group input:not(.sub-form-group input),
+#signupForm .form-group, #signupForm .form-group input, 
+#forgotForm .form-group, #forgotForm .form-group input {
     width: 100%;
 }
 
@@ -110,15 +120,16 @@ h6 {
     align-items: center;
 }
 
-.forgot-container .forgot-link, .sign-up-container .signup-link {
+.forgot-link, .signup-link, .login-link {
     color: var(--turquoise);
     text-decoration: none;
     text-shadow: 1px 1px 2px black;
     position: relative;
     transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
-.forgot-container .forgot-link::after, .sign-up-container .signup-link::after {
+.forgot-link::after, .signup-link::after, .login-link::after {
     content: '';
     position: absolute;
     width: 0;
@@ -130,33 +141,42 @@ h6 {
     transition: width 0.3s ease, right 0.3s ease;
 }
 
-.forgot-container .forgot-link:hover::after, .sign-up-container .signup-link:hover::after {
+.forgot-link:hover::after, .signup-link:hover::after, .login-link:hover::after {
     width: 100%;
 }
 
-.sign-up-container {
+.form-footer {
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
-.sign-up-container div, a {
+.form-footer div, a {
     font-size: 15px;
 }
 
-.sign-up-container a {
+.form-footer a {
     color: var(--turquoise);
     text-decoration: none;
 }
 
-.btn-container-login {
+.backToLogin {
+    justify-content: center;
+}
+
+.backToLogin div {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-container-auth {
     display: flex;
     width: 100%;
     justify-content: center;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
-#loginButton {
+#loginButton, #signupButton, #forgotButton {
     width: 100%;
 }
 
@@ -164,7 +184,7 @@ h6 {
     .sub-form-group label, .forgot-link {
         font-size: 12px;
     }
-    .sign-up-container div, .signup-link {
+    .form-footer div, a {
         font-size: 12px;
     }
 }
@@ -173,21 +193,12 @@ h6 {
     .forgot-container, .remember-container label {
         flex: 0;
     }
-    .sign-up-container {
+    .form-footer {
         flex-direction: column;
         align-items: center;
         gap: 10px;
     }
-    .btn-container-login {
-        margin: 10px 0;
-    }
 }
-
-
-
-
-
-
 
 header {
     height: 100px;
