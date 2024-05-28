@@ -20,6 +20,175 @@ h6 {
     margin-bottom: 0;
 }
 
+.login-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-color);
+}
+
+#loginForm {
+    width: clamp(16.875rem, 13.9286rem + 14.7321vw, 37.5rem);
+    border: 2px solid var(--turquoise);
+    border-radius: 15px;
+    padding: 20px;
+    color: var(--font-color);
+    background-color: var(--item-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#loginForm .form-group,
+#loginForm .form-group input:not(.sub-form-group input) {
+    width: 100%;
+}
+
+.form-label {
+    margin-bottom: 0;
+}
+
+.password-container {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 20px;
+    transition: transform 0.3s ease;
+}
+
+.password-toggle-icon:hover {
+    transform: translateY(-50%) scale(1.2);
+}
+
+.sub-form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.sub-form-group label, .forgot-link {
+    margin-top: 0;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: normal;
+    transition: color 0.3s ease;
+}
+
+.remember-container {
+   display: flex;
+   align-items: center;
+   cursor: pointer;
+   gap: 8px;
+}
+
+.remember-me-checkbox {
+    width: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
+    height: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
+    cursor: pointer;
+    border-radius: 5px;
+    border: 2px solid var(--turquoise);
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    background-color: var(--font-color);
+}
+
+.forgot-container {
+    display: flex;
+    align-items: center;
+}
+
+.forgot-container .forgot-link, .sign-up-container .signup-link {
+    color: var(--turquoise);
+    text-decoration: none;
+    text-shadow: 1px 1px 2px black;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.forgot-container .forgot-link::after, .sign-up-container .signup-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 5px;
+    left: 0;
+    background: var(--turquoise);
+    transition: width 0.3s ease, right 0.3s ease;
+}
+
+.forgot-container .forgot-link:hover::after, .sign-up-container .signup-link:hover::after {
+    width: 100%;
+}
+
+.sign-up-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sign-up-container div, a {
+    font-size: 15px;
+}
+
+.sign-up-container a {
+    color: var(--turquoise);
+    text-decoration: none;
+}
+
+.btn-container-login {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#loginButton {
+    width: 100%;
+}
+
+@media (max-width: 928px) {
+    .sub-form-group label, .forgot-link {
+        font-size: 12px;
+    }
+    .sign-up-container div, .signup-link {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 588px) {
+    .forgot-container, .remember-container label {
+        flex: 0;
+    }
+    .sign-up-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .btn-container-login {
+        margin: 10px 0;
+    }
+}
+
+
+
+
+
+
+
 header {
     height: 100px;
     display: flex;
@@ -120,7 +289,7 @@ main {
     align-items: center;
 }
   
-input:not(#productImage):not(.image-checkbox):not(.tag-checkbox), select {
+input:not(#productImage):not(.image-checkbox):not(.tag-checkbox):not(.remember-me-checkbox), select {
     padding: 5px;
     border: 1px transparent;
     border-bottom: 2px solid var(--turquoise);
@@ -138,8 +307,18 @@ select:focus {
     outline: none;
 }
 
-input[type=text]:focus {
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus {
     outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--font-color);
 }
 
 .search-btn {
@@ -1018,7 +1197,7 @@ button:hover:not(.search-btn) {
     background-color: var(--font-color);
 }
 
-.image-checkbox:checked, .tag-checkbox:checked {
+.image-checkbox:checked, .tag-checkbox:checked, .remember-me-checkbox:checked {
     background-color: var(--bg-color);
     background-image: url('./assets/img/check.png');
     background-size: contain;
