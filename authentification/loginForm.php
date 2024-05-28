@@ -1,19 +1,19 @@
 <div class="auth-container" id="auth-container">
-    <form id="loginForm">
+    <form id="loginForm" method="POST" action="php/logIn.php" onsubmit="return validateLoginForm();">
         <h4 class="popup-title">Login</h4>
         <div class="form-group">
             <label for="email" class="form-label">Email</label>
-            <input type="email" name="email" id="email" placeholder="Deine E-Mail-Adresse" required>
-            <span id="emailError"></span>
+            <input type="email" name="email" id="email" placeholder="Deine E-Mail-Adresse">
+            <div class="error" id="emailError"></div>
         </div>
 
         <div class="form-group">
             <label for="password" class="form-label">Passwort</label>
             <div class="password-container">
-                <input type="password" name="password" id="passwordLogin" required>
+                <input type="password" name="password" id="passwordLogin">
                 <img src="./assets/img/password-hide.png" class="password-toggle-icon" onclick="togglePassword('passwordLogin')">
             </div>
-            <span id="passwordError"></span>
+            <div class="error" id="passwordError"></div>
         </div>
 
         <div class="sub-form-group">
@@ -28,17 +28,24 @@
 
         <div class="btn-container-auth">
             <button type="submit" id="loginButton">Login</button>
-            <div id="loginError"></div>
         </div>
 
-        <div  class="form-footer">
+        <div class="form-footer">
             <div>Noch nicht registriert?</div>
             <a onclick="showForm('signupForm')" class="signup-link">Zur Registrierung</a>
         </div>
     </form>
 
     <?php 
-        include 'signup.php';
-        include 'forgotPassword.php'
+        include 'signupForm.php';
+        include 'forgotPasswordForm.php'
     ?>
+</div>
+
+<div id="infoNotUser" class="popup-not-user" style="display:none">
+    <span class="content-not-user">
+        <div>Du hast noch kein Konto,</div>
+        <div>bitte registriere dich</div>
+        <div><a onclick="showForm('signupForm')" class="signup-link here">hier</a></div>
+    </span>
 </div>

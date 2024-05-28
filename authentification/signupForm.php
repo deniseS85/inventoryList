@@ -1,5 +1,11 @@
-<form id="signupForm" style="display:none;">
+<form id="signupForm" action="php/signUp.php" method="post" style="display:none;">
     <h4 class="popup-title">Registrierung</h4>
+    <div class="form-group">
+        <label for="signupFirstName" class="form-label">Vorname</label>
+        <input type="text" name="signupFirstName" id="signupFirstName" placeholder="Dein Vorname" required>
+        <span id="signupFirstNameError"></span>
+    </div>
+
     <div class="form-group">
         <label for="signupEmail" class="form-label">Email</label>
         <input type="email" name="signupEmail" id="signupEmail" placeholder="Deine E-Mail-Adresse" required>
