@@ -3,14 +3,14 @@ function showForm(formId, popupID) {
         clearFormInputs();
         hideInfoMessage(formId, popupID);
         let forms = document.querySelectorAll('.auth-container form');
-        forms.forEach(function(form) {
+        forms.forEach(form => {
             form.style.opacity = '0';
             form.style.display = 'none';
         });
         let currentForm = document.getElementById(formId);
         if (currentForm) {
             currentForm.style.display = 'flex';
-            setTimeout(function() {
+            setTimeout(() => {
                 currentForm.style.opacity = '1';
             }, 30);
             localStorage.setItem('currentForm', formId);
@@ -20,12 +20,12 @@ function showForm(formId, popupID) {
 
 function clearFormInputs() {
     let inputs = document.querySelectorAll('.auth-container input');
-    inputs.forEach(function(input) {
+    inputs.forEach(input => {
         input.value = '';
     });
 
     let passwordToggleIcons = document.querySelectorAll('.auth-container .password-toggle-icon');
-    passwordToggleIcons.forEach(function(icon) {
+    passwordToggleIcons.forEach(icon => {
         icon.src = './assets/img/password-hide.png';
     });
 }
@@ -35,7 +35,7 @@ function hideInfoMessage(formId, popupID) {
 
     if (popupElement) {
         popupElement.style.opacity = '0';
-        setTimeout(function() {
+        setTimeout(() => {
             popupElement.style.display = 'none';
         }, 300); // Delayed hiding after animation
     }
@@ -123,7 +123,7 @@ function hidePopup(popupID) {
     let popupElement = document.getElementById(popupID);
     if (popupElement) {
         popupElement.style.opacity = '0';
-        setTimeout(function() {
+        setTimeout(() => {
             popupElement.style.display = 'none';
         }, 300);
     }

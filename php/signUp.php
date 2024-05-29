@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $registered = "already";
         } else {
             // Benutzer ist nicht registriert, fahre mit der Registrierung fort
-            $stmt = $conn->prepare("INSERT INTO Users (username, email, password_hash, registration_date) VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO Users (username, email, password_hash, registration_date, reset_token) VALUES (?, ?, ?, ?, NULL)");
             $stmt->bind_param("ssss", $signupFirstName, $signupEmail, $hashedPassword, $registrationDate);
             $stmt->execute();
             // Registrierung erfolgreich

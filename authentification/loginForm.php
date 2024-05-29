@@ -38,7 +38,7 @@
 
     <?php 
         include 'signupForm.php';
-        include 'forgotPasswordForm.php'
+        include 'forgotPasswordForm.php';
     ?>
 </div>
 
