@@ -31,3 +31,19 @@
         <a class="login-link" onclick="showForm('loginForm')">Zum Login</a>
     </div>
 </form>
+
+<div id="infoAlreadyUser" class="login-message-bg" style="display:none">
+    <span class="login-message-content">
+        <div>Du hast bereits ein Konto,</div>
+        <div> bitte melde dich
+            <a onclick="showForm('loginForm', 'infoAlreadyUser')" class="signup-link here">hier</a> an.
+        </div>
+    </span>
+</div>
+
+<div id="registrationSuccess" class="login-message-bg" style="display: none;">
+    <span class="login-message-content">
+        <div>Registrierung erfolgreich!</div>
+        <div>Du kannst dich jetzt anmelden.</div>
+    </span>
+</div>

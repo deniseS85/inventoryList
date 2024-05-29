@@ -42,10 +42,10 @@
     ?>
 </div>
 
-<div id="infoNotUser" class="popup-not-user" style="display:none">
-    <span class="content-not-user">
+<div id="infoNotUser" class="login-message-bg" style="display:none">
+    <span class="login-message-content">
         <div>Du hast noch kein Konto,</div>
         <div>bitte registriere dich</div>
-        <div><a onclick="showForm('signupForm')" class="signup-link here">hier</a></div>
+        <div><a onclick="showForm('signupForm', 'infoNotUser')" class="signup-link here">hier</a></div>
     </span>
 </div>

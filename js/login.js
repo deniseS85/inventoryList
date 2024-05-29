@@ -1,11 +1,21 @@
-function showForm(formId) {
-    clearFormInputs();
-    resetInfoNotUser(formId);
-    let forms = document.querySelectorAll('.auth-container form');
-    forms.forEach(function(form) {
-        form.style.display = 'none';
-    });
-    document.getElementById(formId).style.display = 'flex';
+function showForm(formId, popupID) {
+    if (formId) {
+        clearFormInputs();
+        hideInfoMessage(formId, popupID);
+        let forms = document.querySelectorAll('.auth-container form');
+        forms.forEach(function(form) {
+            form.style.opacity = '0';
+            form.style.display = 'none';
+        });
+        let currentForm = document.getElementById(formId);
+        if (currentForm) {
+            currentForm.style.display = 'flex';
+            setTimeout(function() {
+                currentForm.style.opacity = '1';
+            }, 30);
+            localStorage.setItem('currentForm', formId);
+        }
+    }
 }
 
 function clearFormInputs() {
@@ -20,9 +30,16 @@ function clearFormInputs() {
     });
 }
 
-function resetInfoNotUser(formId) {
-    document.getElementById('infoNotUser').style.display = 'none';
-    if (formId == 'signupForm') {
+function hideInfoMessage(formId, popupID) {
+    let popupElement = document.getElementById(popupID);
+
+    if (popupElement) {
+        popupElement.style.opacity = '0';
+        setTimeout(function() {
+            popupElement.style.display = 'none';
+        }, 300); // Delayed hiding after animation
+    }
+    if (formId) {
         window.history.replaceState({}, document.title, window.location.pathname); 
     }
 }
@@ -72,6 +89,42 @@ document.addEventListener("DOMContentLoaded", function() {
     const registered = urlParams.get('registered');
 
     if (registered === "false") {
-        document.getElementById('infoNotUser').style.display = 'flex';
+        showPopup('infoNotUser');
+    } else if (registered === "already") {
+        showPopup('infoAlreadyUser');
+        showForm('signupForm');
+    } else {
+        const currentForm = localStorage.getItem('currentForm');
+        if (currentForm) {
+            showForm(currentForm);
+        }
+    }
+
+    if (registered === "success") {
+        showPopup('registrationSuccess');
+        setTimeout(function() {
+            hidePopup('registrationSuccess');
+            showForm('loginForm');
+        }, 3000);
     }
 });
+
+function showPopup(popupID) {
+    let popupElement = document.getElementById(popupID);
+    if (popupElement) {
+        popupElement.style.display = 'flex';
+        setTimeout(function() {
+            popupElement.style.opacity = '1';
+        }, 50);
+    }
+}
+
+function hidePopup(popupID) {
+    let popupElement = document.getElementById(popupID);
+    if (popupElement) {
+        popupElement.style.opacity = '0';
+        setTimeout(function() {
+            popupElement.style.display = 'none';
+        }, 300);
+    }
+}
