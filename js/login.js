@@ -107,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
             showForm('loginForm');
         }, 3000);
     }
+    console.log(document.getElementById('changedPasswordSuccess'))
 });
 
 function showPopup(popupID) {

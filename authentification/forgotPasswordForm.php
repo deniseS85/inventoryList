@@ -1,4 +1,4 @@
-<form id="forgotForm" action="php/resetPassword.php" method="POST" style="display:none;">
+<form id="forgotForm" action="php/sendPasswordReset.php" method="POST" style="display:none;">
     <h4 class="popup-title">Passwort zurücksetzen</h4>
     <div class="form-group">
         <label for="forgotEmail" class="form-label">Email</label>
