@@ -38,17 +38,19 @@ function sendMail($email, $reset_link, $username) {
     $mail->Body .=  '<body>';
     $mail->Body .=      '<h2>Passwort zurücksetzen</h2>';
     $mail->Body .=      '<p>Hey ' . $username . '! 😊</p>';
-    $mail->Body .=      '<p>Du hast angefordert, Dein Passwort zurückzusetzen. Keine Sorge, wir helfen Dir gerne!</p>';
-    $mail->Body .=      '<p>Klicke einfach auf den folgenden Link, um fortzufahren und Dein Passwort zurückzusetzen:</p>';
+    $mail->Body .=      '<p>Du hast angefordert, dein Passwort zurückzusetzen. Keine Sorge, wir helfen dir gerne!</p>';
+    $mail->Body .=      '<p>Klicke einfach auf den folgenden Link, um fortzufahren und dein Passwort zurückzusetzen:</p>';
     $mail->Body .=      '<p><a href="' . $reset_link . '">' . $reset_link . '</a></p>';
     $mail->Body .=      '<p>Bitte beachte, dass dieser Link nur 30 Minuten gültig ist.</p>';
-    $mail->Body .=      '<p>Wenn Du Probleme hast oder Fragen auftauchen, zögere nicht, uns zu kontaktieren. Wir helfen Dir gerne weiter!</p>';
+    $mail->Body .=      '<p>Wenn du Probleme hast oder Fragen auftauchen, zögere nicht, uns zu kontaktieren. Wir helfen dir gerne weiter!</p>';
     $mail->Body .=      '<p>Bis bald! 🌟</p>';
     $mail->Body .=  '</body>';
     $mail->Body .= '</html>';
 
-    if (!$mail->send()) {
-        throw new Exception("Die E-Mail konnte nicht gesendet werden: " . $mail->ErrorInfo);
+    if ($mail->send()) {
+        return true; 
+    } else {
+        return false;
     }
 }
 ?>

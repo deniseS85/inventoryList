@@ -37,7 +37,7 @@ function hideInfoMessage(formId, popupID) {
         popupElement.style.opacity = '0';
         setTimeout(() => {
             popupElement.style.display = 'none';
-        }, 300); // Delayed hiding after animation
+        }, 300);
     }
     if (formId) {
         window.history.replaceState({}, document.title, window.location.pathname); 
@@ -51,8 +51,6 @@ function togglePassword(inputID) {
     let passwordToggleIcon = passwordInput.nextElementSibling;
     passwordToggleIcon.src = (passwordInput.type === 'password') ? './assets/img/password-hide.png' : './assets/img/password-visible.png';
 }
-
-
 
 function validateLoginForm() {    
     let email = document.getElementById('email').value;
@@ -87,6 +85,7 @@ function isValidEmail(email) {
 document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const registered = urlParams.get('registered');
+    const emailSent = urlParams.get('emailSent');
 
     if (registered === "false") {
         showPopup('infoNotUser');
@@ -100,21 +99,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    if (registered === "success") {
-        showPopup('registrationSuccess');
-        setTimeout(function() {
-            hidePopup('registrationSuccess');
-            showForm('loginForm');
-        }, 3000);
+    if (emailSent) {
+        const emailSentPopup = document.getElementById('sendMailPopup');
+        if (emailSentPopup) {
+            emailSentPopup.style.display = "flex";
+            setTimeout(() => {
+                showForm('loginForm');
+                emailSentPopup.style.display = "none";
+            }, 6000);
+        }
     }
-    console.log(document.getElementById('changedPasswordSuccess'))
 });
 
 function showPopup(popupID) {
     let popupElement = document.getElementById(popupID);
     if (popupElement) {
         popupElement.style.display = 'flex';
-        setTimeout(function() {
+        setTimeout(() => {
             popupElement.style.opacity = '1';
         }, 50);
     }
@@ -129,3 +130,4 @@ function hidePopup(popupID) {
         }, 300);
     }
 }
+

@@ -3,6 +3,8 @@ session_start();
 include 'db_connection.php';
 require 'send_mail.php';
 
+$emailSent = null;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['forgotEmail'])) {
     $email = $_POST['forgotEmail'];
     $stmt = $conn->prepare("SELECT * FROM Users WHERE email = ?");
@@ -20,13 +22,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['forgotEmail'])) {
         $stmt->bind_param("sss", $token, $expiry_date, $email);
         $stmt->execute();
 
-        $reset_link = "http://localhost/inventoryList/authentification/resetPasswordForm.php?token=$token";
+        $reset_link = "http://localhost/inventoryList/authentification/resetPasswordForm.php?token=$token&expiry=$expiry_date";
 
-        sendMail($email, $reset_link, $username);
-
-        echo "Eine E-Mail zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet.";
+        $emailSent = sendMail($email, $reset_link, $username);
+        
+        header("Location: http://localhost/inventoryList/?emailSent=" . ($emailSent ? 'true' : 'false'));
+        exit();
     } else {
-        echo "Benutzer mit dieser E-Mail-Adresse nicht gefunden.";
+        header("Location: http://localhost/inventoryList/?emailSent=false");
+        exit();
     }
 }
+
+$stmt->close();
+$conn->close();
+
 ?>

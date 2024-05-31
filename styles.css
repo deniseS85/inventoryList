@@ -60,6 +60,20 @@ h6 {
     width: 100%;
 }
 
+#forgotForm {
+    position: relative;
+}
+
+.send-mail-message {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+}
+
 .error {
     height: 17px;
     color: #F44336;
@@ -218,7 +232,21 @@ h6 {
     height: 190px;
 }
 
-.login-message-content div {
+.reset-passwort-message {
+    background-color: var(--item-bg);
+    border: 1px solid var(--turquoise);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+    width: 95%;
+    height: 85%;
+    padding: 10px;
+}
+
+.login-message-content div, .reset-passwort-message div {
     color: var(--font-color);
     font-weight: bold;
     font-size: 18px;
@@ -247,7 +275,7 @@ h6 {
         align-items: center;
         gap: 10px;
     }
-    .login-message-content div, .here {
+    .login-message-content div, .reset-passwort-message, .here {
         font-size: 16px;
     }
 }
