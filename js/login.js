@@ -139,6 +139,8 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (registered === "already") {
         showPopup('infoAlreadyUser');
         showForm('signupForm');
+    } else if (registered === "success") {
+        showPopup('registrationSuccess');
     } else {
         const currentForm = localStorage.getItem('currentForm');
         if (currentForm) {
@@ -194,5 +196,9 @@ function hidePopup(popupID) {
             popupElement.style.display = 'none';
         }, 300);
     }
+}
+
+function doNotClose(event) {
+    event.stopPropagation();
 }
 

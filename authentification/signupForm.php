@@ -31,8 +31,8 @@
     </div>
 </form>
 
-<div id="infoAlreadyUser" class="login-message-bg" style="display:none">
-    <span class="login-message-content">
+<div id="infoAlreadyUser" class="login-message-bg" style="display:none" onclick="hidePopup('infoAlreadyUser')">
+    <span class="login-message-content" onclick="doNotClose(event)">
         <div>Du hast bereits ein Konto,</div>
         <div> bitte melde dich
             <a onclick="showForm('loginForm', 'infoAlreadyUser')" class="signup-link here">hier</a> an.
@@ -40,9 +40,12 @@
     </span>
 </div>
 
-<div id="registrationSuccess" class="login-message-bg" style="display: none;">
-    <span class="login-message-content">
+<div id="registrationSuccess" class="login-message-bg" style="display: none;" onclick="hidePopup('registrationSuccess')">
+    <span class="login-message-content" onclick="doNotClose(event)">
         <div>Registrierung erfolgreich!</div>
         <div>Du kannst dich jetzt anmelden.</div>
+        <div class="btn-container-auth">
+        <a onclick="hidePopup('registrationSuccess')" class="signup-link here">Zum Login</a>
+    </div>
     </span>
 </div>
