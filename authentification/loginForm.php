@@ -1,5 +1,5 @@
 <div class="auth-container" id="auth-container">
-    <form id="loginForm" method="POST" action="php/logIn.php" onsubmit="return validateLoginForm();">
+    <form id="loginForm" method="POST" action="php/logIn.php" onsubmit="return validateForm('loginForm', 'email', 'passwordLogin', 'emailError', 'passwordError');">
         <h4 class="popup-title">Login</h4>
         <div class="form-group">
             <label for="email" class="form-label">Email</label>

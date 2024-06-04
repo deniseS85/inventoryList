@@ -24,6 +24,11 @@ function clearFormInputs() {
         input.value = '';
     });
 
+    let errorElements = document.querySelectorAll('.auth-container .error');
+    errorElements.forEach(element => {
+        element.innerHTML = '';
+    })
+
     let passwordToggleIcons = document.querySelectorAll('.auth-container .password-toggle-icon');
     passwordToggleIcons.forEach(icon => {
         icon.src = './assets/img/password-hide.png';
@@ -50,14 +55,24 @@ function togglePassword(inputID) {
 
     let passwordToggleIcon = passwordInput.nextElementSibling;
     let pathPrefix = (inputID === 'newPassword' || inputID === 'confirmPassword') ? '../assets/img/' : './assets/img/';
-    passwordToggleIcon.src = (passwordInput.type === 'password') ? pathPrefix + 'password-hide.png' : pathPrefix + 'password-visible.png';}
+    passwordToggleIcon.src = (passwordInput.type === 'password') ? pathPrefix + 'password-hide.png' : pathPrefix + 'password-visible.png';
+}
 
-function validateLoginForm() {    
-    let email = document.getElementById('email').value;
-    let password = document.getElementById('passwordLogin').value;
-    let emailError = document.getElementById('emailError');
-    let passwordError = document.getElementById('passwordError');
+function validateForm(formID, emailID, passwordID, emailErrorID, passwordErrorID) {
+    let email = document.getElementById(emailID).value; 
+    let password = document.getElementById(passwordID).value;
+    let emailError = document.getElementById(emailErrorID);
+    let passwordError = document.getElementById(passwordErrorID);
 
+    if (formID === 'signupForm') {
+        let firstName = document.getElementById('signupFirstName').value;
+        let firstNameError = document.getElementById('signupFirstNameError');
+        if (firstName.trim() === "") {
+            showError(firstNameError, "Vorname ist erforderlich");
+            return false;
+        }
+    } 
+    
     if (email.trim() === "") {
         showError(emailError, "E-Mail ist erforderlich"); 
         return false;
@@ -69,7 +84,20 @@ function validateLoginForm() {
     if (password.trim() === "") {
         showError(passwordError, "Passwort ist erforderlich");
         return false;
-    } 
+    }
+    return true;
+}
+
+function validateForgotPasswordForm(formID, emailID, emailErrorID) {
+    let email = document.getElementById(emailID).value; 
+    let emailError = document.getElementById(emailErrorID);
+    if (email.trim() === "") {
+        showError(emailError, "E-Mail ist erforderlich"); 
+        return false;
+    } else if (!isValidEmail(email)) {
+        showError(emailError, "Ungültige E-Mail-Adresse");
+        return false;
+    }
     return true;
 }
 
@@ -104,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const registered = urlParams.get('registered');
     const emailSent = urlParams.get('emailSent');
+    let resetForm = document.getElementById('resetForm');
 
     if (registered === "false") {
         showPopup('infoNotUser');
@@ -128,20 +157,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    document.getElementById('resetForm').addEventListener('submit', event => {
-        event.preventDefault();
-       
-        if (validatePasswords()) {
-            fetch('../php/setNewPassword.php', {
-                method: 'POST',
-                body: new FormData(document.getElementById('resetForm'))
-            }).then(result => {
-                showPopup('passwordUpdatedPopup');
-                return result.text();
-            });
-        }
-    });
+    if (resetForm) {
+        document.getElementById('resetForm').addEventListener('submit', submitResetPasswordForm);
+    }
 });
+
+function submitResetPasswordForm(event) {
+    event.preventDefault();
+       
+    if (validatePasswords()) {
+        fetch('../php/setNewPassword.php', {
+            method: 'POST',
+            body: new FormData(document.getElementById('resetForm'))
+        }).then(result => {
+            showPopup('passwordUpdatedPopup');
+            return result.text();
+        });
+    }
+}
 
 function showPopup(popupID) {
     let popupElement = document.getElementById(popupID);

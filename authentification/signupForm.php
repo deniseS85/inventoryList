@@ -1,29 +1,28 @@
-<form id="signupForm" action="php/signUp.php" method="post" style="display:none;">
+<form id="signupForm" action="php/signUp.php" method="post" style="display:none;" onsubmit="return validateForm('signupForm', 'signupEmail', 'passwordSignup', 'signupEmailError', 'signupPasswordError')";>
     <h4 class="popup-title">Registrierung</h4>
     <div class="form-group">
         <label for="signupFirstName" class="form-label">Vorname</label>
-        <input type="text" name="signupFirstName" id="signupFirstName" placeholder="Dein Vorname" required>
-        <span id="signupFirstNameError"></span>
+        <input type="text" name="signupFirstName" id="signupFirstName" placeholder="Dein Vorname">
+        <div class="error" id="signupFirstNameError"></div>
     </div>
 
     <div class="form-group">
         <label for="signupEmail" class="form-label">Email</label>
-        <input type="email" name="signupEmail" id="signupEmail" placeholder="Deine E-Mail-Adresse" required>
-        <span id="signupEmailError"></span>
+        <input type="email" name="signupEmail" id="signupEmail" placeholder="Deine E-Mail-Adresse">
+        <div class="error" id="signupEmailError"></div>
     </div>
 
     <div class="form-group">
         <label for="signupPassword" class="form-label">Passwort</label>
         <div class="password-container">
-            <input type="password" name="signupPassword" id="passwordSignup" required>
+            <input type="password" name="signupPassword" id="passwordSignup">
             <img src="./assets/img/password-hide.png" class="password-toggle-icon" onclick="togglePassword('passwordSignup')">
         </div>
-        <span id="signupPasswordError"></span>
+        <div class="error" id="signupPasswordError"></div>
     </div>
 
     <div class="btn-container-auth">
         <button type="submit" id="signupButton">Registrieren</button>
-        <div id="signupError"></div>
     </div>
 
     <div class="form-footer">
