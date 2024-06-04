@@ -49,8 +49,8 @@ function togglePassword(inputID) {
     passwordInput.type = (passwordInput.type === 'password') ? 'text' : 'password';
 
     let passwordToggleIcon = passwordInput.nextElementSibling;
-    passwordToggleIcon.src = (passwordInput.type === 'password') ? './assets/img/password-hide.png' : './assets/img/password-visible.png';
-}
+    let pathPrefix = (inputID === 'newPassword' || inputID === 'confirmPassword') ? '../assets/img/' : './assets/img/';
+    passwordToggleIcon.src = (passwordInput.type === 'password') ? pathPrefix + 'password-hide.png' : pathPrefix + 'password-visible.png';}
 
 function validateLoginForm() {    
     let email = document.getElementById('email').value;
@@ -82,6 +82,24 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+function validatePasswords() {
+    let newPassword = document.getElementById('newPassword').value;
+    let confirmPassword = document.getElementById('confirmPassword').value;
+    let errorContainer = document.getElementById('newPasswordError');
+
+    if (newPassword !== confirmPassword) {
+        errorContainer.innerHTML = "Die Passwörter stimmen nicht überein."
+        return false; 
+    } else {
+        errorContainer.innerHTML = "";
+        return true;
+    }
+}
+
+function closeTab() {
+    window.close();
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const registered = urlParams.get('registered');
@@ -109,6 +127,20 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 6000);
         }
     }
+
+    document.getElementById('resetForm').addEventListener('submit', event => {
+        event.preventDefault();
+       
+        if (validatePasswords()) {
+            fetch('../php/setNewPassword.php', {
+                method: 'POST',
+                body: new FormData(document.getElementById('resetForm'))
+            }).then(result => {
+                showPopup('passwordUpdatedPopup');
+                return result.text();
+            });
+        }
+    });
 });
 
 function showPopup(popupID) {

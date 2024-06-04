@@ -15,10 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['token']) && isset($_PO
         $stmt = $conn->prepare("UPDATE Users SET password_hash = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?");
         $stmt->bind_param("ss", $newPassword, $token);
         $stmt->execute();
-        header("Location: http://localhost/inventoryList/");
-        exit;
-    } else {
-        echo "Ungültiger oder abgelaufener Token.";
     }
 }
+
+if (isset($stmt)) {
+    $stmt->close();
+}
+
+$conn->close();
 ?>

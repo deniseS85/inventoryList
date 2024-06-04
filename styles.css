@@ -29,6 +29,20 @@ h6 {
     background-color: var(--bg-color);
 }
 
+.reset-content {
+    display: flex;
+    gap: 20px;
+    width: clamp(18.75rem, 16.9643rem + 8.9286vw, 31.25rem);
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--item-bg);
+    border-radius: 15px;
+    border: 1px solid var(--turquoise);
+    color: var(--font-color);
+    padding: 20px;
+    text-align: center;
+}
+
 .auth-container form {
     display: none;
 }
@@ -60,7 +74,7 @@ h6 {
     width: 100%;
 }
 
-#forgotForm {
+#forgotForm, #resetForm {
     position: relative;
 }
 
@@ -73,6 +87,7 @@ h6 {
     align-items: center;
     border-radius: 15px;
 }
+
 
 .error {
     height: 17px;
