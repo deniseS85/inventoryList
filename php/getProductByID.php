@@ -4,6 +4,7 @@ include 'db_connection.php';
 
 header('Content-Type: application/json');
 
+
 if (isset($_GET['product_id'])) {
     $product_id = intval($_GET['product_id']);
 
@@ -26,7 +27,8 @@ if (isset($_GET['product_id'])) {
             'information' => $product['information'],
             'categoryId' => $product['category_ID'],
             'tag_ID' => $product['tag_ID'],
-            'image_ID' => $product['image_ID']
+            'image_ID' => $product['image_ID'],
+            'user_id' => $product['user_id']
         );
         echo json_encode($product_data);
     } else {

@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db_connection.php';
 
 function getGUID(){
@@ -22,60 +23,61 @@ function getGUID(){
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_FILES['uploadImage'])) {
+        if (!isset($_SESSION['user_id'])) {
+            die("Benutzer ist nicht angemeldet.");
+        }
+        $user_id = $_SESSION['user_id'];
+
         $file_name = $_FILES["uploadImage"]["name"];
         $target_dir = "uploads/";
         $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
-        $new_file_name = getGUID() . '.' . $file_extension; // Hier wird die GUID als Dateiname verwendet
+        $new_file_name = getGUID() . '.' . $file_extension;
         $target_file = $target_dir . basename($new_file_name);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
         $check = getimagesize($_FILES["uploadImage"]["tmp_name"]);
         if ($check === false) {
-            echo "Error: File is not an image.";
-            $uploadOk = 0;
+            die("Error: File is not an image.");
         }
 
         if (file_exists($target_file)) {
-            echo "Error: Sorry, file already exists.";
-            $uploadOk = 0;
+            die("Error: Sorry, file already exists.");
         }
 
         if ($_FILES["uploadImage"]["size"] > 500000) {
-            echo "Error: Sorry, your file is too large.";
-            $uploadOk = 0;
+            die("Error: Sorry, your file is too large.");
         }
 
         if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
             && $imageFileType != "gif") {
-            echo "Error: Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-            $uploadOk = 0;
+            die("Error: Sorry, only JPG, JPEG, PNG & GIF files are allowed.");
         }
 
         if ($uploadOk == 1) {
             if (move_uploaded_file($_FILES["uploadImage"]["tmp_name"], $target_file)) {
-                $image_url = $new_file_name; // Hier wird die GUID als URL gespeichert
-                $stmt = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
-                $stmt->bind_param("s", $image_url);
+                $image_url = $new_file_name; 
+                $stmt = $conn->prepare("INSERT INTO Images (url, user_id) VALUES (?, ?)");
+                $stmt->bind_param("si", $image_url, $user_id);
 
                 if ($stmt->execute()) {
                     $image_id = $stmt->insert_id;
                     echo $image_id;
                 } else {
-                    echo "Error: " . $stmt->error;
+                    die("Error: " . $stmt->error);
                 }
                 $stmt->close();
             } else {
-                echo "Error: Sorry, there was an error uploading your file.";
+                die("Error: Sorry, there was an error uploading your file.");
             }
         } else {
-            echo "Error: Sorry, your file was not uploaded.";
+            die("Error: Sorry, your file was not uploaded.");
         }
     } else {
-        echo "Error: File not found.";
+        die("Error: File not found.");
     }
 } else {
-    echo "Error: Invalid request method.";
+    die("Error: Invalid request method.");
 }
 
 $conn->close();

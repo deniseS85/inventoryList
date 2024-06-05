@@ -1,12 +1,20 @@
 <?php
-
+session_start();
 include 'db_connection.php';
 
-$sql = "SELECT * FROM Categories";
-$result = mysqli_query($conn, $sql);
+if (!isset($_SESSION['user_id'])) {
+  die("Benutzer ist nicht angemeldet.");
+}
+
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT * FROM Categories WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if (!$result) {
-  die("Error fetching categories: " . mysqli_error($conn));
+  die("Fehler beim Abrufen der Kategorien: " . mysqli_error($conn));
 }
 
 $categories = array();
@@ -21,5 +29,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 echo json_encode($categories);
 
+$stmt->close();
 mysqli_close($conn);
 ?>

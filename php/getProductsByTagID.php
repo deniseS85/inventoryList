@@ -1,4 +1,5 @@
 <?php
+
 include 'db_connection.php';
 
 if(isset($_GET['tag_id'])) {
