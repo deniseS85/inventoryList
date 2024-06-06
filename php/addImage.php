@@ -22,12 +22,8 @@ function getGUID(){
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_FILES['uploadImage'])) {
-        if (!isset($_SESSION['user_id'])) {
-            die("Benutzer ist nicht angemeldet.");
-        }
+    if (isset($_SESSION['user_id']) && isset($_FILES['uploadImage'])) {
         $user_id = $_SESSION['user_id'];
-
         $file_name = $_FILES["uploadImage"]["name"];
         $target_dir = "uploads/";
         $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);

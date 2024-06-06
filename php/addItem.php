@@ -3,10 +3,7 @@ session_start();
 include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!isset($_SESSION['user_id'])) {
-        die("Benutzer ist nicht angemeldet.");
-    }
-    if (isset($_POST['product-name']) && !empty($_POST['product-name'])) {
+    if (isset($_SESSION['user_id']) && isset($_POST['product-name']) && !empty($_POST['product-name'])) {
         $product_name = $_POST['product-name'];
         $product_amount = !empty($_POST['product-amount']) ? $_POST['product-amount'] : 0;
         $product_value = !empty($_POST['product-value']) ? $_POST['product-value'] : 0;

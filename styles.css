@@ -324,6 +324,19 @@ header {
     cursor: default;
 }
 
+.header-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.greeting-text {
+    color: var(--font-color);
+    font-size: 14px;
+    cursor: default;
+}
+
 .add-icon {
     width: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
     height: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
@@ -595,7 +608,7 @@ td:nth-child(4), th:nth-child(4) {
 
 td:nth-child(5), th:nth-child(5),
 td:nth-child(6), th:nth-child(6) {
-    width: 8%;
+    width: 10.5%;
     text-align: center;
     padding: 0;
     white-space: nowrap

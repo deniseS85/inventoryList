@@ -498,7 +498,7 @@ async function openProductDetailPopup(categoryID, productID, name, amount, price
 function getTagHTML(tagName, tagStyle) {
     if (tagName && tagStyle) {
         let backgroundColor = tagStyle.match(/background-color:\s*([^;]+)/)[1];
-        return /*html*/`<span class="tag value" style="background-color: ${backgroundColor};">${tagName}</span>`;
+        return /*html*/`<div class="tag value" style="background-color: ${backgroundColor};">${tagName}</div>`;
     }
     return '';
 }
@@ -717,7 +717,7 @@ function isEditInputValid() {
 
 function resetTagStyle() {
     let currentTag = document.getElementById('currentTag');
-    let styleProperties = ['height', 'padding', 'border-radius', 'font-size', 'background-color'];
+    let styleProperties = ['padding', 'border-radius', 'font-size', 'background-color'];
 
     styleProperties.forEach(property => {
         currentTag.style.removeProperty(property);
@@ -842,7 +842,7 @@ async function updateProductTable(updatedProduct, categoryID) {
 
 async function updateProductDetail(updatedProduct) {
     let tag = await getTagPerProduct(updatedProduct.tag_ID);
-    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
+    let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
     let image = await getImagePerProduct(updatedProduct.image_ID);
     let imageUrl = '';
     if (image && image.url) {

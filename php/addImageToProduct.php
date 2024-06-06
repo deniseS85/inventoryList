@@ -22,30 +22,18 @@ function getGUID(){
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!isset($_SESSION['user_id'])) {
-        die(json_encode(array('success' => false, 'message' => 'Benutzer ist nicht angemeldet.')));
-    }
-
-    if (isset($_POST['productID']) && isset($_POST['imageID'])) {
+    if (isset($_SESSION['user_id']) && isset($_POST['productID']) && isset($_POST['imageID'])) {
         $productID = $_POST['productID'];
         $imageID = $_POST['imageID'];
-
-        // Sicherheitsüberprüfung für den Bild-Upload
-        if (!isset($_POST['uploadedImageId']) && !isset($_FILES['uploadImage'])) {
-            die(json_encode(array('success' => false, 'message' => 'Bilddatei wurde nicht hochgeladen.')));
-        }
-
+        $user_id = $_SESSION['user_id'];
         // Überprüfen, ob es sich um ein neues Bild handelt
         if (isset($_POST['uploadedImageId'])) {
             // Neues Bild: Generieren Sie einen eindeutigen Namen und fügen Sie es in die Tabelle "Images" ein
             $new_image_name = getGUID() . '.jpg';
             $stmt_insert_image = $conn->prepare("INSERT INTO Images (url, user_id) VALUES (?, ?)");
-            $stmt_insert_image->bind_param("si", $new_image_name, $_SESSION['user_id']);
-            if ($stmt_insert_image->execute()) {
-                $inserted_image_id = $stmt_insert_image->insert_id;
-            } else {
-                die(json_encode(array('success' => false, 'message' => 'Fehler beim Hochladen des Bildes.')));
-            }
+            $stmt_insert_image->bind_param("si", $new_image_name, $user_id);
+            $stmt_insert_image->execute();
+            $inserted_image_id = $stmt_insert_image->insert_id;
             $stmt_insert_image->close();
         } else {
             // Bild aktualisieren
@@ -54,19 +42,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Bild-ID in die Tabelle "Products" aktualisieren
         $stmt_update_product = $conn->prepare("UPDATE Products SET image_ID = ?, user_id = ? WHERE ID = ?");
-        $stmt_update_product->bind_param("iii", $inserted_image_id, $_SESSION['user_id'], $productID);
+        $stmt_update_product->bind_param("iii", $inserted_image_id, $user_id, $productID);
 
         if ($stmt_update_product->execute()) {
-            // Erfolgreich aktualisiert, zusätzliche Verarbeitung...
-            die(json_encode(array('success' => true, 'message' => 'Bild erfolgreich aktualisiert')));
+            // Die category_ID abrufen
+            $stmt_get_category = $conn->prepare("SELECT category_ID FROM Products WHERE ID = ?");
+            $stmt_get_category->bind_param("i", $productID);
+            $stmt_get_category->execute();
+            $stmt_get_category->bind_result($categoryID);
+            $stmt_get_category->fetch();
+            $stmt_get_category->close();
+
+            // URL des hochgeladenen Bildes abrufen
+            $stmt_get_image_url = $conn->prepare("SELECT url FROM Images WHERE ID = ?");
+            $stmt_get_image_url->bind_param("i", $inserted_image_id);
+            $stmt_get_image_url->execute();
+            $stmt_get_image_url->bind_result($imageUrl);
+            $stmt_get_image_url->fetch();
+            $stmt_get_image_url->close();
+
+            $response = array('success' => true, 'message' => 'Bild erfolgreich aktualisiert', 'categoryID' => $categoryID, 'imageURL' => $imageUrl, 'imageID' => $inserted_image_id);
+            echo json_encode($response);
         } else {
-            die(json_encode(array('success' => false, 'message' => 'Fehler beim Aktualisieren des Bildes.')));
+            $response = array('success' => false, 'message' => 'Fehler beim Aktualisieren des Bildes');
+            echo json_encode($response);
         }
         $stmt_update_product->close();
+        $conn->close();
     } else {
-        die(json_encode(array('success' => false, 'message' => 'productID oder imageID fehlt')));
+        $response = array('success' => false, 'message' => 'productID oder imageID fehlt');
+        echo json_encode($response);
     }
 } else {
-    die(json_encode(array('success' => false, 'message' => 'Ungültige Anfrage-Methode')));
+    $response = array('success' => false, 'message' => 'Keine POST-Anfrage');
+    echo json_encode($response);
 }
 ?>

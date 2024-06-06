@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db_connection.php';
 
 function getGUID(){
@@ -21,6 +22,9 @@ function getGUID(){
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!isset($_SESSION['user_id'])) {
+        die("Benutzer ist nicht angemeldet.");
+    }
     $productId = $_POST['product-id'];
     $productName = $_POST['product-name'];
     $productAmount = $_POST['product-amount'];
@@ -55,8 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->close();
         } else {
             // Falls das Produkt kein Bild hatte, füge das neue Bild in die Datenbank ein und hole die zugehörige Image-ID
-            $stmt = $conn->prepare("INSERT INTO Images (url) VALUES (?)");
-            $stmt->bind_param("s", $newImageFileName);
+            $stmt = $conn->prepare("INSERT INTO Images (url, user_id) VALUES (?, ?)");
+            $stmt->bind_param("si", $newImageFileName, $_SESSION['user_id']);
             $stmt->execute();
             $imageId = $stmt->insert_id;
             $stmt->close();

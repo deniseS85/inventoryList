@@ -46,14 +46,14 @@ function generateTableHTML(product, categoryID) {
 
 function generateTableRow(product, categoryID, tag, image) { 
     let formattedPrice = formatPrice(product.price);
-    let tagStyle = tag ? `background-color: ${tag.color}; height: 20px; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
+    let tagStyle = tag ? `background-color: ${tag.color}; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
         <tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
             <td>${product.name}</td>
             <td>${product.amount}</td>
             <td>${formattedPrice}</td>
             <td>${product.information}</td>
-            <td>${tag ? `<span style="${tagStyle}">${tag.tag_name}</span>` : ''}</td>
+            <td>${tag ? `<div style="${tagStyle}">${tag.tag_name}</div>` : ''}</td>
             <td id="imageColumn_${product.id}_${categoryID}">${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
         </tr>`;
 }

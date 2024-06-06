@@ -1,3 +1,17 @@
+async function getCurrentUserID() {
+    try {
+        const response = await fetch('php/getUserID.php');
+        if (!response.ok){
+            throw new Error('Fehler beim Abrufen der Benutzer-ID');
+        }
+        const userID = await response.text();
+        return userID;
+    } catch (error) {
+        console.error('Error fetching current user ID:', error);
+        return null;
+    }
+}
+
 async function getCategories() {
     try {
         const response = await fetch('php/getCategories.php');
@@ -106,7 +120,7 @@ function addNewTag() {
 
 async function showTagsOptions(tagOptionsContainerID, dropDownID) {
     try {
-        const response = await fetch('php/getTags.php');
+        const response = await fetch('php/getTagsByUserID.php');
         const tags = await response.json();
         let tagOptionsContainer = document.getElementById(tagOptionsContainerID);
 
@@ -273,12 +287,17 @@ async function saveEditProductInDatabase(formData) {
 
 async function getAllImages() {
     try {
+        const currentUserID = await getCurrentUserID();
+        if (currentUserID === null) {
+            throw new Error('Benutzer-ID nicht verfügbar');
+        }
         const response = await fetch('php/getImages.php');
         if (!response.ok){
             throw new Error('Fehler beim Laden der Bilder');
         }
         const images = await response.json();
-        showImages(images);
+        const userImages = images.filter(image => image.user_id === currentUserID);
+        showImages(userImages);
     } catch (error) {
         console.error('Error fetching all images:', error);
     }
@@ -286,12 +305,17 @@ async function getAllImages() {
 
 async function getAllTags() {
     try {
+        const currentUserID = await getCurrentUserID();
+        if (currentUserID === null) {
+            throw new Error('Benutzer-ID nicht verfügbar');
+        }
         const response = await fetch('php/getTags.php');
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Tags');
         }
         const tags = await response.json();
-        showTags(tags);
+        const userTags = tags.filter(tag => tag.user_id === currentUserID);
+        showTags(userTags);
     } catch (error) {
         console.error('Error fetching all tags:', error);
     }
@@ -311,6 +335,7 @@ async function getProductsByTag(tagID) {
     try {
         const response = await fetch(`php/getProductsByTagID.php?tag_id=${tagID}`);
         const productIDs = await response.json();
+        
         if (Array.isArray(productIDs)) {
             return { tagID: tagID, productIDs: productIDs.map(String) };
         } else {

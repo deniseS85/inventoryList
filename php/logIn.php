@@ -16,7 +16,7 @@ if(isset($_COOKIE['login_cookie'])) {
         $_SESSION['username'] = $user['username'];
         $registered = true;
     } else {
-        setcookie("login_cookie", "", time() - 1);
+        setcookie("login_cookie", "", time() - 1, "/");
     }
 }
 
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmtUpdate = $conn->prepare("UPDATE Users SET remember_token = ? WHERE email = ?");
                     $stmtUpdate->bind_param("ss", $token, $email);
                     $stmtUpdate->execute();
-                    setcookie("login_cookie", $token, time() + (3600*24*360));
+                    setcookie("login_cookie", $token, time() + (3600*24*360), "/");
                 }
             }
         }

@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_SESSION['user_id']) && isset($_POST['category-name']) && !empty($_POST['category-name'])) {
         $category_name = $_POST['category-name'];
         $user_id = $_SESSION['user_id'];
+        
         $stmt = $conn->prepare("INSERT INTO Categories (category_name, user_id) VALUES (?, ?)");
         $stmt->bind_param("si", $category_name, $user_id);
 
