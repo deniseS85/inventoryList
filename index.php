@@ -10,6 +10,7 @@
     <?php
         session_start();
         $loggedIn = isset($_SESSION['user_id']);
+        $hasCookie = isset($_COOKIE['login_cookie']);
         if ($loggedIn) {
             echo '<script language="javascript" type="text/javascript" src="js/script.js"></script>';
             echo '<script language="javascript" type="text/javascript" src="js/database.js"></script>';
@@ -21,7 +22,7 @@
 
 <body>
     <?php include 'php/db_connection.php';
-        if (!$loggedIn) {
+        if (!$loggedIn && !$hasCookie) {
             include 'authentification/loginForm.php';
             exit;
         }

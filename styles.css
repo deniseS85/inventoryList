@@ -628,7 +628,11 @@ tr {
     cursor: pointer;
 }
 
-tr:hover {
+tbody tr:nth-child(odd) {
+    background-color: #07374a;
+}
+
+tr:hover, tbody tr:hover {
     background-color: var(--turquoise);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -653,6 +657,85 @@ thead tr:hover {
     background-color: transparent;
     cursor: pointer;
 }
+
+@media screen and (max-width: 1260px) {
+    .item-header {
+        border-bottom: 1px solid var(--turquoise);
+    }
+    h4 {
+        font-size: 20px;
+    }
+    .table-separator {
+        display: none;
+    }
+    table {
+        margin: auto;
+    }
+    tbody {
+        display: block;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    th, td {
+        padding: 5px 0;
+        font-size: 14px;
+    }
+    td {
+        display: block;
+        float: left;
+        width: 100%;
+    }
+    td::before {
+        content:attr(data-label);
+        float: left;
+        font-weight: bold;
+        margin-right: 3em;
+        width: 43%;
+    }
+    tr {
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    td:nth-child(2), th:nth-child(2),
+    th:nth-child(3), td:nth-child(3) {
+        width: 100%;
+        padding-left: 10px;
+        text-align: left;
+    }
+    td:first-child, th:first-child,
+    td:nth-child(4), th:nth-child(4) {
+        width: 100%;
+        padding-left: 10px;
+    }
+    td:nth-child(5), th:nth-child(5),
+    td:nth-child(6), th:nth-child(6) {      
+        width: 100%;
+        padding: 5px 10px;
+        text-align: left;
+    }
+    td:last-child {
+        height: 30px;
+        display: flex;
+        align-items: center;
+        padding-top: 10px;
+        margin-bottom: 10px;
+    }
+    td:first-child {
+        margin-top: 7px;
+    }
+    td:nth-child(5) div {
+        display: inline;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+    td:nth-child(6) img {
+        width: 30px;
+        max-width: 30px;
+        height: 30px;
+    }
+}
+
 
 footer {
     background-color: rgb(34,151,195);
@@ -712,7 +795,7 @@ footer img:hover {
 }
 
 .delete-category-container {
-    width: 500px;
+    width: clamp(18.75rem, 17.8571rem + 4.4643vw, 25rem);
     height: 230px;
 }
 

@@ -1,7 +1,7 @@
 <div id="newTagPopup" class="new-category-popup-bg" onclick="togglePopupNewTag()">
     <div class="new-tag-container" onclick="doNotClose(event)">
         <h4 class="popup-title-new-tag">Neuer Tag</h4>
-        <input onkeydown="return /[a-zA-Z0-9\säöüß.,]/i.test(event.key)" id="tagInput" class="input-new-tag" type="text" placeholder="Tagname" required oninput="validateInput('addTagButton', this)">
+        <input onkeydown="return /[a-zA-Z0-9\säöüß.,]/i.test(event.key)" id="tagInput" class="input-new-tag" maxlength="15" type="text" placeholder="Tagname" required oninput="validateInput('addTagButton', this)">
         <input type="hidden" id="tagColorInput" name="tag-color">
         <div class="select-colors"></div>
         <div class="btn-container-new-tag">

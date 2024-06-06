@@ -49,12 +49,12 @@ function generateTableRow(product, categoryID, tag, image) {
     let tagStyle = tag ? `background-color: ${tag.color}; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
     return /*html*/`
         <tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
-            <td>${product.name}</td>
-            <td>${product.amount}</td>
-            <td>${formattedPrice}</td>
-            <td>${product.information}</td>
-            <td>${tag ? `<div style="${tagStyle}">${tag.tag_name}</div>` : ''}</td>
-            <td id="imageColumn_${product.id}_${categoryID}">${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
+            <td data-label="Produkt">${product.name}</td>
+            <td data-label="Menge">${product.amount}</td>
+            <td data-label="Preis">${formattedPrice}</td>
+            <td data-label="Beschreibung">${product.information}</td>
+            <td data-label="Tag">${tag ? `<div style="${tagStyle}">${tag.tag_name}</div>` : ''}</td>
+            <td data-label="Bild" id="imageColumn_${product.id}_${categoryID}">${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
         </tr>`;
 }
 

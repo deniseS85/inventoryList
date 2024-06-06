@@ -2,7 +2,7 @@ let currentCategoryID;
 let tableSortOrder = {};
 let currentImageUrl = {}; 
 let expanded = false;
-const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2BB8EE', '#5b5b5b'];
+const colors = ['#FF5733', '#38761d', '#3366FF', '#FF33F3', '#bf9000', '#FF0000', '#6a329f', '#2497c5', '#5b5b5b'];
 let selectedImageIDs = [];
 let selectedTagIDs = [];
 let imageSelectionListenerAdded = false;
