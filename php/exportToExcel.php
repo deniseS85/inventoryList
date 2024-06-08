@@ -1,19 +1,23 @@
 <?php
+session_start(); 
 include 'db_connection.php';
+require '/Applications/XAMPP/xamppfiles/htdocs/vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
+$user_id = $_SESSION['user_id'];
 
 function formatPrice($price) {
     if (!empty(trim($price))) {
         $parsedPrice = floatval(str_replace(',', '.', $price));
-
-        if (!is_nan($parsedPrice)) {
-            $roundedPrice = number_format($parsedPrice, 2, '.', '');
-            $formattedPrice = number_format($roundedPrice, 2, ',', '.') . ' €';
-            return $formattedPrice;
-        } else {
-            return '';
-        }
+        return $parsedPrice;
     } else {
-        return '0,00 €';
+        return 0.00;
     }
 }
 
@@ -21,63 +25,14 @@ $sql = "SELECT Products.*, Categories.category_name, Tags.tag_name
         FROM Products 
         JOIN Categories ON Products.category_ID = Categories.ID
         LEFT JOIN Tags ON Products.tag_ID = Tags.ID
+        WHERE Products.user_id = $user_id 
         ORDER BY product_name ASC";
 
 $result = mysqli_query($conn, $sql);
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
 
-$filename = "products.xls";
-header("Content-Type: application/vnd.ms-excel");
-header("Content-Disposition: attachment; filename='.$filename'");
-
-echo '<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:x="urn:schemas-microsoft-com:office:excel"
-      xmlns="http://www.w3.org/TR/REC-html40">';
-echo '<head><meta charset="utf-8">';
-echo '<!--[if gte mso 9]>';
-echo '<xml>';
-echo '<x:ExcelWorkbook>';
-echo '<x:ExcelWorksheets>';
-echo '<x:ExcelWorksheet>';
-echo '<x:Name>Tabelle 1</x:Name>';
-echo '<x:WorksheetOptions>';
-echo '<x:DisplayGridlines/>';
-echo '<x:Zoom>125</x:Zoom>';
-echo '</x:WorksheetOptions>';
-echo '</x:ExcelWorksheet>';
-echo '</x:ExcelWorksheets>';
-echo '</x:ExcelWorkbook>';
-echo '</xml>';
-echo '<![endif]-->';
-echo '</head>';
-
-echo '<style>
-.table {
-    border: 1px solid #051C25;
-    width: 100%;
-    border-collapse: separate;
-}
-.table-header {
-    height: 25px;
-    background-color: #084051;
-    color: #2BB8EE;
-    vertical-align: middle;
-    font-weight: bold;
-    font-size: 14px;
-    font-family: \'Aptos\';
-    border: 0;
-}
-.table-row {
-    height: 20px;
-    vertical-align: middle;
-    font-size: 12px;
-    font-family: \'Aptos\';
-    border: 0;
-}
-</style>';
-
-echo '<table class="table">';
-
-// Spaltenüberschriften
+// Set column headers
 $columnMap = [
     'product_name' => 'Name',
     'amount' => 'Menge',
@@ -87,72 +42,146 @@ $columnMap = [
     'tag_name' => 'Tag'
 ];
 
-$flag = false;
-$rowCount = 0;
-while ($row = mysqli_fetch_assoc($result)) {
-    if (!$flag) {
-        // Header
-        echo '<tr>';
-        foreach ($columnMap as $key => $value) {
-            if (array_key_exists($key, $row)) {
-                $width = ($key == 'product_name' || $key == 'information' || $key == 'category_name' || $key == 'tag_name') ? '200px' : '70px';
-                if ($key == 'amount' || $key == 'price') {
-                    $textAlign = 'right';
-                } elseif ($key == 'product_name' || $key == 'information' || $key == 'category_name' || $key == 'tag_name') {
-                    $textAlign = 'left';
-                }
-                $paddingContent = str_repeat("&nbsp;", 2) . $value . str_repeat("&nbsp;", 2);
-                echo "<th class='table-header' style='width: $width; text-align: $textAlign; border-bottom: 1px solid #051C25;'>$paddingContent</th>";
-            }
-        }
-        echo '</tr>';
-        $flag = true;
+$headerStyle = [
+    'font' => ['bold' => true, 'size' => 14, 'name' => 'Aptos', 'color' => ['rgb' => '2BB8EE']],
+    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '084051']]
+];
+
+$paddingStyle = [
+    'product_name' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+    'amount' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+    'price' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+    'information' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+    'category_name' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+    'tag_name' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+];
+
+// Tabellenheader
+$col = 1;
+foreach ($columnMap as $key => $value) {
+    $width = ($key == 'product_name' || $key == 'information' || $key == 'category_name' || $key == 'tag_name') ? 33 : 11;
+    $sheet->getColumnDimensionByColumn($col)->setWidth($width);
+    $sheet->setCellValueByColumnAndRow($col, 1, $value);
+    $sheet->getStyleByColumnAndRow($col, 1)->applyFromArray($headerStyle);
+    if (array_key_exists($key, $paddingStyle)) {
+        $sheet->getStyleByColumnAndRow($col, 1)->getAlignment()->setHorizontal($paddingStyle[$key]);
     }
-    // Datenzeilen
-    echo '<tr>';
-    foreach ($columnMap as $key => $value) {
-        if (array_key_exists($key, $row)) {
-            $width = ($key == 'product_name' || $key == 'information' || $key == 'category_name' || $key == 'tag_name') ? '200px' : '70px';
-            if ($key == 'amount' || $key == 'price') {
-                    $textAlign = 'right';
-                } elseif ($key == 'product_name' || $key == 'information' || $key == 'category_name' || $key == 'tag_name') {
-                    $textAlign = 'left';
-                }
-            $backgroundColor = (($rowCount) % 2 == 0) ? '#ffffff' : '#97eafc';
-            $cellContent = $key == 'price' ? formatPrice($row[$key]) : $row[$key];
-            $paddingContent = str_repeat("&nbsp;", 3) . $cellContent . str_repeat("&nbsp;", 3);
-            echo "<td class='table-row' style='width: $width; background-color: $backgroundColor; text-align: $textAlign;'>$paddingContent</td>";
-        } 
-    }
-    echo '</tr>';
-    $rowCount++;
+    $sheet->getRowDimension(1)->setRowHeight(25);
+    $sheet->getStyleByColumnAndRow($col, 1)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+    $sheet->getStyleByColumnAndRow($col, 1)->getAlignment()->setIndent(1);
+    $col++;
 }
 
+
+// Datenzeilen
+$row = 2;
+$isEvenRow = false;
+while ($row_data = mysqli_fetch_assoc($result)) {
+    $col = 1;
+    foreach ($columnMap as $key => $value) {
+        $cellValue = $row_data[$key];
+        if ($key == 'price') {
+            $cellValue = formatPrice($cellValue);
+            $sheet->setCellValueByColumnAndRow($col, $row, $cellValue);
+            $sheet->getStyleByColumnAndRow($col, $row)->getNumberFormat()->setFormatCode('#,##0.00 €');
+        } else {
+            $sheet->setCellValueByColumnAndRow($col, $row, $cellValue);
+        }
+        $sheet->getRowDimension($row)->setRowHeight(20);
+        $sheet->getStyleByColumnAndRow($col, $row)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyleByColumnAndRow($col, $row)->getAlignment()->setIndent(1);
+
+        if (array_key_exists($key, $paddingStyle)) {
+            $sheet->getStyleByColumnAndRow($col, $row)->getAlignment()->setHorizontal($paddingStyle[$key]);
+        }
+
+        $backgroundColor = $isEvenRow ? 'FFFFFF' : '97EAFC';
+        $sheet->getStyleByColumnAndRow($col, $row)->applyFromArray([
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID, 
+                'startColor' => ['rgb' => $backgroundColor]
+            ],
+            'font' => ['size' => 12, 'name' => 'Aptos']
+        ]);
+        
+        $col++;
+    }
+    $row++;
+    $isEvenRow = !$isEvenRow;
+}
+
+// Berechnung der Gesamtsumme und Anzahl der Produkte
 $totalAmount = 0;
 mysqli_data_seek($result, 0);
-while ($row = mysqli_fetch_assoc($result)) {
-    $totalAmount += $row['amount'];
+while ($row_data = mysqli_fetch_assoc($result)) {
+    $totalAmount += $row_data['amount'];
 }
 
-// Abfrage für die Gesamtsumme
+$resultTotal = mysqli_query($conn, "SELECT SUM(amount * price) AS total FROM Products WHERE user_id = $user_id");
 $totalValue = 0;
-$resultTotal = mysqli_query($conn, "SELECT SUM(amount * price) AS total FROM Products");
 if ($rowTotal = mysqli_fetch_assoc($resultTotal)) {
     $totalValue = $rowTotal['total'];
 }
 
-echo "<tr>
-        <td style='border-top: 1px solid #051C25;' class='table-header' colspan='" . (count($columnMap) - 1) . "'>" . str_repeat("&nbsp;", 2) . "Anzahl der Produkte:" . str_repeat("&nbsp;", 2) . "</td>
-        <td style='border-top: 1px solid #051C25; text-align: right;' class='table-header'>" . str_repeat("&nbsp;", 2) . $totalAmount . str_repeat("&nbsp;", 2) . "</td>
-    </tr>";
+// Gesamtzeilen
+$sheet->setCellValueByColumnAndRow(1, $row, 'Anzahl der Produkte:');
+$sheet->mergeCellsByColumnAndRow(1, $row, count($columnMap) - 1, $row);
+$sheet->getStyleByColumnAndRow(1, $row)->applyFromArray($headerStyle);
+$sheet->getRowDimension($row)->setRowHeight(25); 
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setIndent(1);
 
-echo "<tr>
-        <td class='table-header' colspan='" . (count($columnMap) - 1) . "'>" . str_repeat("&nbsp;", 2) . "Gesamtwert:" . str_repeat("&nbsp;", 2) . "</td>
-        <td style='text-align: right;' class='table-header'>" . str_repeat("&nbsp;", 2) . formatPrice($totalValue) . str_repeat("&nbsp;", 2) . "</td>
-    </tr>";
+$sheet->setCellValueByColumnAndRow(count($columnMap), $row, $totalAmount);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->applyFromArray($headerStyle);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setIndent(1);
 
+$row++;
 
-echo '</table></body></html>';
+$sheet->setCellValueByColumnAndRow(1, $row, 'Gesamtwert:');
+$sheet->mergeCellsByColumnAndRow(1, $row, count($columnMap) - 1, $row);
+$sheet->getStyleByColumnAndRow(1, $row)->applyFromArray($headerStyle);
+$sheet->getRowDimension($row)->setRowHeight(25);
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+$sheet->getStyleByColumnAndRow(1, $row)->getAlignment()->setIndent(1);
+
+$sheet->setCellValueByColumnAndRow(count($columnMap), $row, $totalValue);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getNumberFormat()->setFormatCode('#,##0.00 €');
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->applyFromArray($headerStyle);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+$sheet->getStyleByColumnAndRow(count($columnMap), $row)->getAlignment()->setIndent(1);
+
+$sheet->getSheetView()->setZoomScale(125);
+
+$highestColumn = $sheet->getHighestColumn();
+$highestRow = $sheet->getHighestRow();
+$sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
+    'borders' => [
+        'outline' => [
+            'borderStyle' => Border::BORDER_MEDIUM,
+            'color' => ['rgb' => '051C25']
+        ]
+    ]
+]);
+
+$sheet->setSelectedCell('A1');
+
+// Save Excel file
+$filename = "products.xlsx";
+$writer = new Xlsx($spreadsheet);
+$writer->save($filename);
+
+// Download Excel file
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+
+$writer->save('php://output');
 
 mysqli_close($conn);
 ?>

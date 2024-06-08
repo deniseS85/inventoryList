@@ -448,7 +448,7 @@ async function exportToExcel() {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'products.xls');
+        link.setAttribute('download', 'products.xlsx');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

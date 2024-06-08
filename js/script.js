@@ -1106,10 +1106,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-window.addEventListener('beforeunload', function() {
-    // Überprüfen Sie, ob der Benutzer nicht die Option "Angemeldet bleiben" gewählt hat
-    if (!document.cookie.includes('login_cookie')) {
-        // Abmeldung initiieren, wenn kein `login_cookie` vorhanden ist
-        navigator.sendBeacon('php/logout.php');
-    }
-});

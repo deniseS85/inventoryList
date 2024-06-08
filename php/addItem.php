@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $category_id = $_POST['category-id'];
         $user_id = $_SESSION['user_id']; 
         $stmt = $conn->prepare("INSERT INTO Products (product_name, amount, price, information, category_ID, tag_ID, image_ID, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sdsiiiii", $product_name, $product_amount, $product_value, $product_info, $category_id, $tag_id, $image_id, $user_id);
+        $stmt->bind_param("sdssiiii", $product_name, $product_amount, $product_value, $product_info, $category_id, $tag_id, $image_id, $user_id);
 
         if ($stmt->execute()) {
             $new_product_id = $stmt->insert_id;
