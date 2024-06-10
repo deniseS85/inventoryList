@@ -590,36 +590,35 @@ th:hover {
     color: silver;
 } 
 
-td:first-child, th:first-child {
+td[data-label="Produkt"], th[data-label="Produkt"] {
     width: 30%;
     padding-left: 20px;
 }
 
-
-td:nth-child(2), th:nth-child(2),
-th:nth-child(3), td:nth-child(3) {
+td[data-label="Menge"], th[data-label="Menge"],
+td[data-label="Preis"], th[data-label="Wert"] {
     width: 8%;
     text-align: center;
 }
 
-td:nth-child(4), th:nth-child(4) {
+td[data-label="Beschreibung"], th[data-label="Beschreibung"] {
     width: 35%;
     padding-left: 2%;
     word-wrap: break-word;
 }
 
-td:nth-child(5), th:nth-child(5) {
+td[data-label="Tag"], th[data-label="Tag"] {
     width: 12%;
     text-align: center;
     padding: 0;
     white-space: nowrap
 }
 
-td:nth-child(6), th:nth-child(6) {
+td[data-label="Bild"], th[data-label="Bild"] {
     width: 7%;
     text-align: center;
     padding: 0;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
 .table-tag {
@@ -630,7 +629,7 @@ td:nth-child(6), th:nth-child(6) {
 }
 
 @media screen and (min-width: 1261px) {
-    td:nth-child(5), th:nth-child(5), .table-column-tag {
+    td[data-label="Tag"], th[data-label="Tag"], .table-column-tag {
         position: relative;
     }
     
@@ -656,7 +655,7 @@ td:nth-child(6), th:nth-child(6) {
     }
 }
 
-td:nth-child(6) img, .table-image {
+td[data-label="Bild"] img, .table-image {
     width: 40px;
     max-width: 40px;
     height: 40px;
@@ -680,19 +679,19 @@ tr:hover, tbody tr:hover {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-tr:last-child td:last-child {
+tr[data-label="Bild"] td[data-label="Bild"] {
     border-bottom-right-radius: 10px;
 }
 
-tr:last-child td:first-child {
+tr[data-label="Bild"] td[data-label="Produkt"] {
     border-bottom-left-radius: 10px;
 }
 
-tr:last-child:hover td:last-child {
+tr[data-label="Bild"]:hover td[data-label="Bild"] {
     border-bottom-right-radius: 10px;
 }
 
-tr:last-child:hover td:first-child {
+tr[data-label="Bild"]:hover td[data-label="Produkt"] {
     border-bottom-left-radius: 10px;
 }
 
@@ -765,8 +764,8 @@ thead tr:hover {
     tr {
         margin-bottom: 15px;
     }
-    td:nth-child(2), th:nth-child(2),
-    th:nth-child(3), td:nth-child(3) {
+    td[data-label="Menge"], th[data-label="Menge"],
+    th[data-label="Wert"], td[data-label="Preis"] {
         width: 100%;
         padding-left: 10px;
         text-align: left;
@@ -774,32 +773,32 @@ thead tr:hover {
         border-bottom: none;
         border-top: none;
     }
-    td:first-child, th:first-child,
-    td:nth-child(4), th:nth-child(4) {
+    td[data-label="Produkt"], th[data-label="Produkt"],
+    td[data-label="Beschreibung"], th[data-label="Beschreibung"] {
         width: 100%;
         padding-left: 10px;
     }
-    td:nth-child(4), th:nth-child(4),
-    th:nth-child(5), td:nth-child(5) {
+    td[data-label="Beschreibung"], th[data-label="Beschreibung"],
+    th[data-label="Tag"], td[data-label="Tag"] {
         border: 1px solid var(--turquoise);
         border-bottom: none;
         border-top: none;
     }
-    td:nth-child(5), th:nth-child(5),
-    td:nth-child(6), th:nth-child(6) {      
+    td[data-label="Tag"], th[data-label="Tag"],
+    td[data-label="Bild"], th[data-label="Bild"] {      
         width: 100%;
         padding: 5px 10px;
         text-align: left;
     }
-    td:last-child {
+    td[data-label="Bild"] {
         height: 35px;
         display: flex;
         align-items: center;
     }
-    td:first-child {
+    td[data-label="Produkt"] {
         padding-top: 7px;
     }
-    td:nth-child(5) div {
+    td[data-label="Tag"] div {
         display: inline-block;
         padding-top: 2px !important;
         padding-bottom: 2px !important;
@@ -808,16 +807,16 @@ thead tr:hover {
         text-align: center;
         line-height: 26px;
     }
-    td:nth-child(6) img, .table-image {
+    td[data-label="Bild"] img, .table-image {
         width: 30px;
         max-width: 30px;
         height: 30px;
         margin: 0;
     }
-    tr:last-child td:first-child {
+    tr[data-label="Bild"] td[data-label="Produkt"] {
         border-bottom-left-radius: unset;
     }
-    tr:last-child:hover td:first-child {
+    tr[data-label="Bild"]:hover td[data-label="Produkt"] {
         border-bottom-left-radius: 0; 
     }
     tr td {
@@ -826,18 +825,23 @@ thead tr:hover {
     tr:hover, tbody tr:hover {
         background-color: transparent;
     }
-    td:first-child {
+    td[data-label="Produkt"] {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         border: 1px solid var(--turquoise);
         border-bottom: none;
     }
-    
-    td:last-child  {
+    td[data-label="Bild"] {
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
         border: 1px solid var(--turquoise);
         border-top: none;
+    }
+
+    .last-element {
+        border-bottom: 1px solid var(--turquoise) !important;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 }
 

@@ -31,7 +31,7 @@ function generateTableHTML(product, categoryID) {
         }).filter(item => switchData[item.index].sliderValue === 'checked');
 
         let headerHTML = filteredHeaders.map(item => {
-            return `<th onclick="sortTable('${tableID}', ${item.index})">${item.header}</th>`;
+            return `<th data-label="${item.header}" onclick="sortTable('${tableID}', ${item.index})">${item.header}</th>`;
         }).join('');
 
         return /*html*/`
@@ -80,12 +80,9 @@ function filterColumns(columns) {
 }
 
 function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image) {
-    if (hideEmptyRows(filteredColumns)) {
-        return '';
-    }
-
+    if (hideEmptyRows(filteredColumns)) { return ''; }
     let isOnlyTagSelected = filteredColumns.every(item => item.column.label === 'Tag' || !switchData[item.index].sliderValue === 'checked');
-
+    let lastElementIndex = filteredColumns.length - 1;
     let rowHTML = filteredColumns.map((item, index) => {
         let column = item.column;
         let classList = (column.label === 'Tag') ? 'table-column-tag' : '';
@@ -96,23 +93,25 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
         }
 
         if (column.label === 'Tag') {
-            style += 'height: 40px; padding-right: 10px';
+            style += 'height: 40px; padding-right: 10px; line-height: 28px;';
             let tagAdditionalStyle = '';
 
             if (index === 0) {
                 tagAdditionalStyle += 'margin-left: 20px; width: 150px;';
             } else if (index === filteredColumns.length - 1) {
-                tagAdditionalStyle += 'margin-right: 20px; width: 150px;'
-            }
+                tagAdditionalStyle += 'margin: 0 auto; width: 150px;'
+            } 
 
             if (column.value.trim().startsWith('<div')) {
                 const additionalStyle = isOnlyTagSelected ? 'width: 150px; margin: 0 20px;' : tagAdditionalStyle;
                 column.value = column.value.replace('<div', `<div style="${additionalStyle} ${tagStyle}"`);
             }
         }
+        if (index === lastElementIndex) {
+            classList += ' last-element';
+        }
         return `<td class="${classList}" data-label="${column.label}" style="${style}">${column.value || ''}</td>`;
     }).join('');
-
     return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;
 }
 

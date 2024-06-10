@@ -887,15 +887,17 @@ async function goBackToMain(clickedButton) {
     toggleSelection('.image-checkbox', '.gallery img', 'image');
     toggleSelection('.tag-checkbox', '.tags-container', 'tag');
     resetSelectButton();
-    await isEditTableColumn(clickedButton);
+
+    if (clickedButton.id === 'backBtnTableView') {
+        await isEditTableColumn(clickedButton);
+    }
+    
 }
 
 async function isEditTableColumn(clickedButton) {
-    if (clickedButton.id === 'backBtnTableView') {
         updateItemInfos();
         updateCategoryItems();
         updateProductContainers();
-    }
 }
 
 async function updateItemInfos() {
