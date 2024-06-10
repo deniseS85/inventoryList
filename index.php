@@ -51,7 +51,7 @@
         <div class="main-content">
             <div class="gallery-container" id="galleryContainer">
                 <div class="gallery-header">
-                    <div onclick="goBackToMain()" class="gallery-button">Zurück</div>
+                    <div onclick="goBackToMain(this)" class="gallery-button">Zurück</div>
                     <div onclick="toggleSelect()" class="gallery-button" id="select-btn">Auswählen</div>
                     <img onclick="deleteImageConfirmation()" class="delete-icon-images" id="deleteImage" src="./assets/img/delete.png" style="display:none;">
                     <img onclick="deleteTagConfirmation()" class="delete-icon-images" id="deleteTag" src="./assets/img/delete.png" style="display:none;">
@@ -62,7 +62,7 @@
             <div class="category-item-container"></div>
             <div id="itemContainer" class="itemsContainer"></div>
             <div id="editTableViewContainer" class="editTableView">
-                <div onclick="goBackToMain()" class="gallery-button">Zurück</div>
+                <div onclick="goBackToMain(this)" id="backBtnTableView" class="gallery-button">Zurück</div>
                 <h4>Tabellenspalten bearbeiten</h4>
                 <div id="switchContainer" class="switchContainer"></div>
             </div>

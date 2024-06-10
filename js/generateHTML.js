@@ -102,7 +102,7 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
             if (index === 0) {
                 tagAdditionalStyle += 'margin-left: 20px; width: 150px;';
             } else if (index === filteredColumns.length - 1) {
-                tagAdditionalStyle += 'margin-right: 20px;'
+                tagAdditionalStyle += 'margin-right: 20px; width: 150px;'
             }
 
             if (column.value.trim().startsWith('<div')) {

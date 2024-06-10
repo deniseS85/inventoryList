@@ -876,7 +876,7 @@ function openSettings() {
     resetSelectButton();
 }
 
-function goBackToMain() {
+async function goBackToMain(clickedButton) {
     document.querySelector('.category-item-container').style.display = 'flex';
     document.getElementById('itemContainer').style.display = 'flex';
     document.getElementById('galleryContainer').style.display = 'none';
@@ -887,6 +887,60 @@ function goBackToMain() {
     toggleSelection('.image-checkbox', '.gallery img', 'image');
     toggleSelection('.tag-checkbox', '.tags-container', 'tag');
     resetSelectButton();
+    await isEditTableColumn(clickedButton);
+}
+
+async function isEditTableColumn(clickedButton) {
+    if (clickedButton.id === 'backBtnTableView') {
+        updateItemInfos();
+        updateCategoryItems();
+        updateProductContainers();
+    }
+}
+
+async function updateItemInfos() {
+    let itemContainer = document.getElementById('itemContainer');
+    let itemInfoList = itemContainer.querySelectorAll('.item-info');
+
+    for (let itemInfo of itemInfoList) {
+        let categoryName = itemInfo.querySelector('.item-title h4').innerHTML;
+        let productCountText = itemInfo.querySelector('.item-title h6').innerHTML;
+        let productCount = parseInt(productCountText.split(' ')[0]);
+
+        let newItemInfo = itemInfo.cloneNode(true); // Clone existing item-info element
+        newItemInfo.classList.add('open');
+        newItemInfo.querySelector('.item-title h4').innerHTML = categoryName;
+        newItemInfo.querySelector('.item-title h6').innerHTML = `${productCount} ${productCount === 1 ? 'Produkt' : 'Produkte'}`;
+        itemInfo.parentNode.replaceChild(newItemInfo, itemInfo);
+    }
+}
+
+async function updateCategoryItems() {
+    let categoryItems = document.querySelectorAll('.main-content .category-item');
+    for (let categoryItem of categoryItems) {
+        if (categoryItem.classList.contains('active')) {
+            categoryItem.classList.remove('active');
+            categoryItem.classList.add('active');
+        }
+    }
+}
+
+async function updateProductContainers() {
+    let itemContainer = document.getElementById('itemContainer');
+    let itemInfoList = itemContainer.querySelectorAll('.item-info');
+
+    for (let itemInfo of itemInfoList) {
+        let categoryID = itemInfo.dataset.categoryId;
+        let categoryContainer = document.querySelector(`.item-info[data-category-id="${categoryID}"]`);
+        let productContainer = categoryContainer.querySelector('.productContainer');
+
+        productContainer.innerHTML = generateTableHTML();
+
+        let products = await getProductsByCategory(categoryID);
+        for (let product of products) {
+            await showProduct(product, categoryID);
+        }
+    }
 }
 
 function toggleSelect() {
@@ -1054,7 +1108,6 @@ function showTags(tags) {
     document.getElementById('editTableViewContainer').style.display = 'none';
 }
 
-
 function showEditViewTable() {
     let elementsToHide = ['itemContainer', 'galleryContainer', 'tagsContainer', 'gallery'];
     setDisplayNone(elementsToHide);
@@ -1076,7 +1129,6 @@ function toggleSwitches() {
             if (slider.classList.contains('slider')) {
                 let sliderName = slider.getAttribute('data-name'); 
                 updateSliderValue(sliderName, checkbox.checked);
-                updateTableColumns();
             }
         });
     });
@@ -1090,19 +1142,6 @@ function updateSliderValue(name, isChecked) {
     saveSwitchData();
 }
 
-function updateTableColumns() {
-    let headers = document.querySelectorAll('#productTable th');
-    let rows = document.querySelectorAll('#productTable tbody tr');
-
-    headers.forEach((header, index) => {
-        let isVisible = switchData[index].sliderValue === 'checked';
-        header.style.display = isVisible ? 'table-cell' : 'none';
-        rows.forEach(row => {
-            let cells = row.querySelectorAll('td');
-            cells[index].style.display = isVisible ? 'table-cell' : 'none';
-        });
-    });
-}
 
 function saveSwitchData() {
     localStorage.setItem('switchData', JSON.stringify(switchData));
