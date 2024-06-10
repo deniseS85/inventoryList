@@ -4,7 +4,7 @@
         <div class="setting-items">
             <div onclick="getAllImages()">Bilder</div>
             <div onclick="getAllTags()">Tags</div>
-            <div>Einstellungen</div>
+            <div onclick="showEditViewTable()">Einstellungen</div>
             <div onclick="exportToExcel()">Liste exportieren</div>
             <div>Konto bearbeiten</div>
         </div>

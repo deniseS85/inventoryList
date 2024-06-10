@@ -61,6 +61,11 @@
             </div>
             <div class="category-item-container"></div>
             <div id="itemContainer" class="itemsContainer"></div>
+            <div id="editTableViewContainer" class="editTableView">
+                <div onclick="goBackToMain()" class="gallery-button">Zurück</div>
+                <h4>Tabellenspalten bearbeiten</h4>
+                <div id="switchContainer" class="switchContainer"></div>
+            </div>
         </div>
     </main>
 

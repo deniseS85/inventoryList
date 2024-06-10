@@ -39,7 +39,7 @@
                 </div>
                 <div class="upload-container">
                     <div class="img-upload">
-                        <label for="uploadImage" class="custom-file-upload">Bild hinzufügen</label>
+                        <label for="uploadImage" class="custom-file-upload">Bild<br> hinzufügen</label>
                         <input type="file" id="uploadImage" name="uploadImage" style="display:none;">
                         <img id="uploadedImage" class="uploaded-image" style="display:none;">
                     </div>

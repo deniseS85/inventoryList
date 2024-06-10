@@ -24,17 +24,21 @@ function generateItemHTML(categoryName, categoryID, productCount) {
 function generateTableHTML(product, categoryID) {
     if (product) {
         let tableID = `productTable_${categoryID}`; 
-     
+        let headers = ['Produkt', 'Menge', 'Wert', 'Beschreibung', 'Tag', 'Bild'];
+
+        let filteredHeaders = headers.map((header, index) => {
+            return { header, index };
+        }).filter(item => switchData[item.index].sliderValue === 'checked');
+
+        let headerHTML = filteredHeaders.map(item => {
+            return `<th onclick="sortTable('${tableID}', ${item.index})">${item.header}</th>`;
+        }).join('');
+
         return /*html*/`
             <table id="${tableID}">
                 <thead class="table-separator">
                     <tr>
-                        <th onclick="sortTable('${tableID}', 0)">Produkt</th>
-                        <th onclick="sortTable('${tableID}', 1)">Menge</th>
-                        <th onclick="sortTable('${tableID}', 2)">Wert</th>
-                        <th onclick="sortTable('${tableID}', 3)">Beschreibung</th>
-                        <th onclick="sortTable('${tableID}', 4)">Tag</th>
-                        <th>Bild</th>
+                        ${headerHTML}
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -44,18 +48,79 @@ function generateTableHTML(product, categoryID) {
     }
 }
 
-function generateTableRow(product, categoryID, tag, image) { 
-    let formattedPrice = formatPrice(product.price);
-    let tagStyle = tag ? `background-color: ${tag.color}; padding: 5px 10px; border-radius: 5px; font-size: 15px` : '';
-    return /*html*/`
-        <tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}','${image ? image.url : ''}')">
-            <td data-label="Produkt">${product.name}</td>
-            <td data-label="Menge">${product.amount}</td>
-            <td data-label="Preis">${formattedPrice}</td>
-            <td data-label="Beschreibung">${product.information}</td>
-            <td data-label="Tag">${tag ? `<div style="${tagStyle}">${tag.tag_name}</div>` : ''}</td>
-            <td data-label="Bild" id="imageColumn_${product.id}_${categoryID}">${image ? `<img src="php/uploads/${image.url}">` : ''}</td>
-        </tr>`;
+function generateTableRow(product, categoryID, tag, image) {
+    let tagStyle = tag ? `background-color: ${tag.color};` : '';
+
+    let columns = [
+        { label: 'Produkt', value: product.name },
+        { label: 'Menge', value: product.amount },
+        { label: 'Preis', value: formatPrice(product.price) },
+        { label: 'Beschreibung', value: product.information },
+        { label: 'Tag', value: tag ? generateTag(tag, tagStyle) : '' },
+        { label: 'Bild', value: image ? generateImage(image) : '' }    
+    ];
+
+    let filteredColumns = filterColumns(columns);
+    let rowHTML = buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image);
+    return rowHTML;
+}
+
+function generateTag(tag, tagStyle) {
+    return `<div class="table-tag" style="${tagStyle}">${tag.tag_name}</div>`;
+}
+
+function generateImage(image) {
+    return `<img src="php/uploads/${image.url}" class="table-image">`;
+}
+
+function filterColumns(columns) {
+    return columns.map((column, index) => {
+        return { column, index };
+    }).filter(item => switchData[item.index].sliderValue === 'checked');
+}
+
+function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image) {
+    if (hideEmptyRows(filteredColumns)) {
+        return '';
+    }
+
+    let isOnlyTagSelected = filteredColumns.every(item => item.column.label === 'Tag' || !switchData[item.index].sliderValue === 'checked');
+
+    let rowHTML = filteredColumns.map((item, index) => {
+        let column = item.column;
+        let classList = (column.label === 'Tag') ? 'table-column-tag' : '';
+        let style = '';
+       
+        if (window.innerWidth >= 1261 && column.label === 'Bild') {
+            style = 'padding: 0';
+        }
+
+        if (column.label === 'Tag') {
+            style += 'height: 40px; padding-right: 10px';
+            let tagAdditionalStyle = '';
+
+            if (index === 0) {
+                tagAdditionalStyle += 'margin-left: 20px; width: 150px;';
+            } else if (index === filteredColumns.length - 1) {
+                tagAdditionalStyle += 'margin-right: 20px;'
+            }
+
+            if (column.value.trim().startsWith('<div')) {
+                const additionalStyle = isOnlyTagSelected ? 'width: 150px; margin: 0 20px;' : tagAdditionalStyle;
+                column.value = column.value.replace('<div', `<div style="${additionalStyle} ${tagStyle}"`);
+            }
+        }
+        return `<td class="${classList}" data-label="${column.label}" style="${style}">${column.value || ''}</td>`;
+    }).join('');
+
+    return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;
+}
+
+function hideEmptyRows(filteredColumns) {
+    return filteredColumns.every(item => {
+        const value = item.column.value;
+        return !value || (typeof value === 'string' && value.trim() === '');
+    });
 }
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
@@ -110,6 +175,32 @@ function generateTagsView(tag) {
             <input type="checkbox" class="tag-checkbox" data-tag-id="${tag.ID}" style="display:none;">
         </div>`;
 }
+
+function generateEditTable(data) {
+    let switchContent = '';
+
+    data.forEach(item => {
+        switchContent += /*html*/`
+            <div class="switch-item">
+                <div>${item.value}</div>
+                <label class="switch">
+                    <input type="checkbox" name="switch" ${item.sliderValue === 'checked' ? 'checked' : ''}>
+                    <span class="slider round" data-name="${item.value}"></span>
+                </label>
+            </div>`;
+    });
+    return switchContent;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

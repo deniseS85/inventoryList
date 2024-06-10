@@ -8,6 +8,14 @@ let selectedTagIDs = [];
 let imageSelectionListenerAdded = false;
 let isSelectEnabled = false;
 let deleteImageFlag = false;
+const switchData = [
+    { value: 'Produkt', sliderValue: 'checked' },
+    { value: 'Menge', sliderValue: 'checked' },
+    { value: 'Wert', sliderValue: 'checked' },
+    { value: 'Beschreibung', sliderValue: 'checked' },
+    { value: 'Tag', sliderValue: 'checked' },
+    { value: 'Bild', sliderValue: 'checked' }
+];
 
 function togglePopupNewCategory() {
     togglePopup('newCategoryPopup');
@@ -388,7 +396,6 @@ function selectTag(tag, dropDownID) {
 }
 
 function selectTagEditProduct(tag) {
-    console.log(tag.ID)
     let currentTag = document.getElementById('currentTag');
     currentTag.className = 'tag current';
     currentTag.innerHTML = /*html*/`
@@ -873,6 +880,7 @@ function goBackToMain() {
     document.querySelector('.category-item-container').style.display = 'flex';
     document.getElementById('itemContainer').style.display = 'flex';
     document.getElementById('galleryContainer').style.display = 'none';
+    document.getElementById('editTableViewContainer').style.display = 'none';
     selectedImageIDs = [];
     selectedTagIDs = [];
     isSelectEnabled = false;
@@ -984,6 +992,7 @@ async function showImages(images) {
     togglePopup('settingsPopup');
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('itemContainer').style.display = 'none';
+    document.getElementById('editTableViewContainer').style.display = 'none';
 }
 
 async function selectImageForDelete(event) {
@@ -1042,6 +1051,75 @@ function showTags(tags) {
     togglePopup('settingsPopup');
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('itemContainer').style.display = 'none';
+    document.getElementById('editTableViewContainer').style.display = 'none';
+}
+
+
+function showEditViewTable() {
+    let elementsToHide = ['itemContainer', 'galleryContainer', 'tagsContainer', 'gallery'];
+    setDisplayNone(elementsToHide);
+    document.querySelector('.category-item-container').style.display = 'none';
+    document.getElementById('editTableViewContainer').style.display = 'flex';
+    togglePopup('settingsPopup');
+    toggleSwitches();
+}
+
+function toggleSwitches() {
+    let switchContainer = document.getElementById('switchContainer');
+    let switchContent = generateEditTable(switchData);
+    switchContainer.innerHTML = switchContent;
+
+    let checkboxes = switchContainer.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            let slider = checkbox.nextElementSibling;
+            if (slider.classList.contains('slider')) {
+                let sliderName = slider.getAttribute('data-name'); 
+                updateSliderValue(sliderName, checkbox.checked);
+                updateTableColumns();
+            }
+        });
+    });
+}
+
+function updateSliderValue(name, isChecked) {
+    let item = switchData.find(item => item.value === name);
+    if (item) {
+        item.sliderValue = isChecked ? 'checked' : '';
+    }
+    saveSwitchData();
+}
+
+function updateTableColumns() {
+    let headers = document.querySelectorAll('#productTable th');
+    let rows = document.querySelectorAll('#productTable tbody tr');
+
+    headers.forEach((header, index) => {
+        let isVisible = switchData[index].sliderValue === 'checked';
+        header.style.display = isVisible ? 'table-cell' : 'none';
+        rows.forEach(row => {
+            let cells = row.querySelectorAll('td');
+            cells[index].style.display = isVisible ? 'table-cell' : 'none';
+        });
+    });
+}
+
+function saveSwitchData() {
+    localStorage.setItem('switchData', JSON.stringify(switchData));
+}
+
+function loadSwitchData() {
+    const storedData = localStorage.getItem('switchData');
+    if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        parsedData.forEach((item, index) => {
+            switchData[index].sliderValue = item.sliderValue;
+        });
+    }
+}
+
+function setDisplayNone(elements) {
+    elements.forEach(elementID => document.getElementById(elementID).style.display = 'none');
 }
 
 async function selectTagForDelete(event) {
@@ -1092,6 +1170,15 @@ function removeTagFromDropdown(tagID) {
     });
 }
 
+function adjustTableStyle() {
+    let tableCells = document.querySelectorAll('td[data-label="Bild"]');
+    let style = (window.innerWidth >= 1261) ? 'padding: 0;' : ''; 
+    
+    tableCells.forEach(cell => {
+        cell.style.cssText = style;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
@@ -1104,5 +1191,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('currentImage').addEventListener('change', function() {
         document.getElementById('newImage').style.filter = 'none';
     });
+    loadSwitchData();
+    adjustTableStyle();
 });
+
+window.addEventListener('resize', adjustTableStyle);
 
