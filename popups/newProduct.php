@@ -3,7 +3,7 @@
         <h4 class="popup-title">Neues Produkt</h4>
         <form id="addProductForm" action="php/addItem.php" method="post" autocomplete="off" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="productName">Name:</label>
+                <label for="productName">Produkt:</label>
                 <input id="productName" class="input-new-item" type="text" name="product-name" required onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" oninput="validateInput('addItemButton', this)" maxlength="20">
             </div>
             <div class="form-group">
@@ -23,7 +23,7 @@
                 <div>
                     <div class="selectBox">
                         <div class="label-header" onclick="toggleDropdown('dropdownContent')">
-                            <div class="label-tags">Tags:</div>
+                            <div class="label-tags">Tag:</div>
                             <p><i class="arrow-down"></i></p>
                         </div>
 

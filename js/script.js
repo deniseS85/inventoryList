@@ -53,6 +53,7 @@ function togglePopupNewItem(categoryID) {
     selectedOption.style.backgroundColor = '';
     document.getElementById('categoryId').value = categoryID;
     togglePopup('newItemPopup');
+    adjustAddProduktForm(switchData);
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
@@ -680,6 +681,7 @@ async function togglePopupEditProduct() {
             await prepareProductData(product, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
+            adjustEditProduktForm(switchData);
             isEditInputValid();
         } else {
             console.error('Product not found');
@@ -1220,6 +1222,97 @@ function adjustTableStyle() {
     });
 }
 
+function adjustAddProduktForm(switchData) {
+    let addProductForm = document.getElementById('addProductForm');
+    let formGroups = addProductForm.querySelectorAll('.form-group');
+
+    formGroups.forEach(group => {
+        adjustFormGroups(group, switchData);
+    });
+    tagFormGroup(switchData);
+    imageFormGroup(switchData);
+}
+
+function adjustFormGroups(group, switchData) {
+    let label = group.querySelector('label');
+    if (label) {
+        let labelText = label.innerHTML.trim();
+        labelText = labelText.slice(0, -1);
+        let fieldName = labelText.toLowerCase();
+        let switchItem = switchData.find(item => item.value.toLowerCase() === fieldName);
+        if (switchItem && switchItem.sliderValue === 'checked') {
+            group.style.display = 'block';
+        } else {
+            group.style.display = 'none';
+        }
+    }
+}
+
+function tagFormGroup(switchData) {
+    let tagSwitchItem = switchData.find(item => item.value.toLowerCase() === 'tag');
+    if (tagSwitchItem && tagSwitchItem.sliderValue === 'checked') {
+        document.querySelector('.selectBox').style.display = 'block';
+    } else {
+        document.querySelector('.selectBox').style.display = 'none';
+    }
+}
+
+function imageFormGroup(switchData) {
+    let imageSwitchItem = switchData.find(item => item.value.toLowerCase() === 'bild');
+    if (imageSwitchItem && imageSwitchItem.sliderValue === 'checked') {
+        document.querySelector('.upload-container').style.display = 'flex';
+    } else {
+        document.querySelector('.upload-container').style.display = 'none';
+    }
+}
+
+
+
+/* ############## */
+function adjustEditProduktForm(switchData) {
+    let editProductForm = document.getElementById('editProductForm');
+    let formGroups = editProductForm.querySelectorAll('.form-group');
+
+    formGroups.forEach(group => {
+        adjustEditFormGroups(group, switchData);
+    });
+    editTagFormGroup(switchData);
+    editImageFormGroup(switchData);
+}
+
+function adjustEditFormGroups(group, switchData) {
+    let label = group.querySelector('label');
+    if (label) {
+        let labelText = label.innerHTML.trim();
+        labelText = labelText.slice(0, -1);
+        let fieldName = labelText.toLowerCase();
+        let switchItem = switchData.find(item => item.value.toLowerCase() === fieldName);
+        if (switchItem && switchItem.sliderValue === 'checked') {
+            group.style.display = 'block';
+        } else {
+            group.style.display = 'none';
+        }
+    }
+}
+
+function editTagFormGroup(switchData) {
+    let tagSwitchItem = switchData.find(item => item.value.toLowerCase() === 'tag');
+    if (tagSwitchItem && tagSwitchItem.sliderValue === 'checked') {
+        document.querySelector('.selectBox-edit').style.display = 'block';
+    } else {
+        document.querySelector('.selectBox-edit').style.display = 'none';
+    }
+}
+
+function editImageFormGroup(switchData) {
+    let imageSwitchItem = switchData.find(item => item.value.toLowerCase() === 'bild');
+    if (imageSwitchItem && imageSwitchItem.sliderValue === 'checked') {
+        document.querySelector('.edit-upload-container').style.display = 'flex';
+    } else {
+        document.querySelector('.edit-upload-container').style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
@@ -1234,6 +1327,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     loadSwitchData();
     adjustTableStyle();
+    adjustAddProduktForm(switchData);
+    adjustEditProduktForm(switchData);
 });
 
 window.addEventListener('resize', adjustTableStyle);

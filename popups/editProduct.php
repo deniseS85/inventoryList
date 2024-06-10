@@ -3,7 +3,7 @@
         <h4 class="popup-title">Produkt bearbeiten</h4>
         <form id="editProductForm" action="php/editProduct.php" method="post" autocomplete="off">
             <div class="form-group">
-                <label for="productCurrentName">Name:</label>
+                <label for="productCurrentName">Produkt:</label>
                 <input id="productCurrentName" class="input-new-item" type="text" name="product-name" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" oninput="validateInput('editItemButton', this)" maxlength="20">
             </div>
             <div class="form-group">
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="upload-container">
+            <div class="upload-container edit-upload-container">
                 <div class="img-upload">
                     <label for="currentImage" class="custom-file-upload">Bild<br> hinzufügen</label>
                     <input type="file" id="currentImage" name="uploadImage" style="display:none;">
