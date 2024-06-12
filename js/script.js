@@ -53,7 +53,7 @@ function togglePopupNewItem(categoryID) {
     selectedOption.style.backgroundColor = '';
     document.getElementById('categoryId').value = categoryID;
     togglePopup('newItemPopup');
-    adjustAddProduktForm(switchData);
+    adjustFormBySwitchTableColumn('addProductForm', '.selectBox', '.upload-container', switchData);
     focusInput('productName');
     clearInputValues('.input-new-item');
     validateInput('addItemButton', document.getElementById('productName'));
@@ -512,13 +512,18 @@ function getTagHTML(tagName, tagStyle) {
 }
 
 function getInfoItems(name, amount, formattedPrice, information, tagHtml) {
-    return [
-        { label: 'Name', value: name },
+    let allInfoItems = [
+        { label: 'Produkt', value: name },
         { label: 'Menge', value: amount },
-        { label: 'Preis', value: formattedPrice },
+        { label: 'Wert', value: formattedPrice },
         { label: 'Tag', value: tagHtml },
-        { label: 'Information', value: information }
+        { label: 'Beschreibung', value: information, isDescription: true }
     ];
+
+    return allInfoItems.filter(item => {
+        let switchItem = switchData.find(s => s.value.toLowerCase() === item.label.toLowerCase());
+        return switchItem && switchItem.sliderValue === 'checked';
+    });
 }
 
 function showImage(file, imageElementId, removeImgElementID) {
@@ -681,7 +686,7 @@ async function togglePopupEditProduct() {
             await prepareProductData(product, categoryId);
             await getCurrentImage(product);
             togglePopup('editProductPopup');
-            adjustEditProduktForm(switchData);
+            adjustFormBySwitchTableColumn('editProductForm', '.selectBox-edit', '.edit-upload-container', switchData);
             isEditInputValid();
         } else {
             console.error('Product not found');
@@ -1222,15 +1227,15 @@ function adjustTableStyle() {
     });
 }
 
-function adjustAddProduktForm(switchData) {
-    let addProductForm = document.getElementById('addProductForm');
-    let formGroups = addProductForm.querySelectorAll('.form-group');
+function adjustFormBySwitchTableColumn(formID, tagElement, imageElement, switchData) {
+    let form = document.getElementById(formID);
+    let formGroups = form.querySelectorAll('.form-group');
 
     formGroups.forEach(group => {
         adjustFormGroups(group, switchData);
     });
-    tagFormGroup(switchData);
-    imageFormGroup(switchData);
+    tagFormGroup(tagElement, switchData);
+    imageFormGroup(imageElement, switchData);
 }
 
 function adjustFormGroups(group, switchData) {
@@ -1248,68 +1253,21 @@ function adjustFormGroups(group, switchData) {
     }
 }
 
-function tagFormGroup(switchData) {
+function tagFormGroup(tagElement, switchData) {
     let tagSwitchItem = switchData.find(item => item.value.toLowerCase() === 'tag');
     if (tagSwitchItem && tagSwitchItem.sliderValue === 'checked') {
-        document.querySelector('.selectBox').style.display = 'block';
+        document.querySelector(tagElement).style.display = 'block';
     } else {
-        document.querySelector('.selectBox').style.display = 'none';
+        document.querySelector(tagElement).style.display = 'none';
     }
 }
 
-function imageFormGroup(switchData) {
+function imageFormGroup(imageElement, switchData) {
     let imageSwitchItem = switchData.find(item => item.value.toLowerCase() === 'bild');
     if (imageSwitchItem && imageSwitchItem.sliderValue === 'checked') {
-        document.querySelector('.upload-container').style.display = 'flex';
+        document.querySelector(imageElement).style.display = 'flex';
     } else {
-        document.querySelector('.upload-container').style.display = 'none';
-    }
-}
-
-
-
-/* ############## */
-function adjustEditProduktForm(switchData) {
-    let editProductForm = document.getElementById('editProductForm');
-    let formGroups = editProductForm.querySelectorAll('.form-group');
-
-    formGroups.forEach(group => {
-        adjustEditFormGroups(group, switchData);
-    });
-    editTagFormGroup(switchData);
-    editImageFormGroup(switchData);
-}
-
-function adjustEditFormGroups(group, switchData) {
-    let label = group.querySelector('label');
-    if (label) {
-        let labelText = label.innerHTML.trim();
-        labelText = labelText.slice(0, -1);
-        let fieldName = labelText.toLowerCase();
-        let switchItem = switchData.find(item => item.value.toLowerCase() === fieldName);
-        if (switchItem && switchItem.sliderValue === 'checked') {
-            group.style.display = 'block';
-        } else {
-            group.style.display = 'none';
-        }
-    }
-}
-
-function editTagFormGroup(switchData) {
-    let tagSwitchItem = switchData.find(item => item.value.toLowerCase() === 'tag');
-    if (tagSwitchItem && tagSwitchItem.sliderValue === 'checked') {
-        document.querySelector('.selectBox-edit').style.display = 'block';
-    } else {
-        document.querySelector('.selectBox-edit').style.display = 'none';
-    }
-}
-
-function editImageFormGroup(switchData) {
-    let imageSwitchItem = switchData.find(item => item.value.toLowerCase() === 'bild');
-    if (imageSwitchItem && imageSwitchItem.sliderValue === 'checked') {
-        document.querySelector('.edit-upload-container').style.display = 'flex';
-    } else {
-        document.querySelector('.edit-upload-container').style.display = 'none';
+        document.querySelector(imageElement).style.display = 'none';
     }
 }
 
@@ -1327,8 +1285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     loadSwitchData();
     adjustTableStyle();
-    adjustAddProduktForm(switchData);
-    adjustEditProduktForm(switchData);
+    adjustFormBySwitchTableColumn('addProductForm', '.selectBox', '.upload-container', switchData);
+    adjustFormBySwitchTableColumn('editProductForm', '.selectBox-edit', '.edit-upload-container', switchData);
 });
 
 window.addEventListener('resize', adjustTableStyle);

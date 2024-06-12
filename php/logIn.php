@@ -14,7 +14,7 @@ if(isset($_COOKIE['login_cookie'])) {
         $user = $result->fetch_assoc();
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $registered = true;
+        $registered = "true";
     } else {
         setcookie("login_cookie", "", time() - 1, "/");
     }

@@ -31,7 +31,7 @@
     <header>
         <div class="header-left">
             <img class="logo-icon" src="./assets/img/inventar.png">
-            <div class="greeting-text"><?php echo "Hallo " . $_SESSION['username'] . "!"; ?></div>
+            <div class="greeting-text"><?php echo "Hallo " . ($_SESSION['username'] ?? '') . "!"; ?></div>
         </div>
         <div class="title">Inventar</div>
         <img onclick="togglePopupNewCategory()" class="add-icon" src="./assets/img/add.png">

@@ -1016,7 +1016,7 @@ footer img:hover {
     justify-content: space-between;
 }
 
-.product:last-child {
+.product.description {
     display: flex;
     flex-direction: column;
     gap: 10px;

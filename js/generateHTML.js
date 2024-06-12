@@ -99,7 +99,7 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
             if (index === 0) {
                 tagAdditionalStyle += 'margin-left: 20px; width: 150px;';
             } else if (index === filteredColumns.length - 1) {
-                tagAdditionalStyle += 'margin: 0 auto; width: 150px;'
+                tagAdditionalStyle += 'margin: 0 auto;'
             } 
 
             if (column.value.trim().startsWith('<div')) {
@@ -124,19 +124,31 @@ function hideEmptyRows(filteredColumns) {
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     let infoHtml = '';
+
     infoItems.forEach(item => {
+        let itemClass = item.isDescription ? 'product description' : 'product';
         infoHtml += /*html*/`
-            <div class="product">
+           <div class="${itemClass}">
                 <div class="label">${item.label}:</div>
                 <div class="value">${item.value}</div>
             </div>`;
     });
     
-    let isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(categoryID, productID);
+    let switchImage = switchData.find(s => s.value.toLowerCase() === 'bild');
+    let isUploadedImage = '';
+    let displayImageDiv = 'flex';
+    let widthInfoDiv = '50%';
+
+    if (switchImage && switchImage.sliderValue === 'checked') {
+        isUploadedImage = imageUrl ? generateImagePreviewUploadHTML(imageUrl) : generateImageFormUploadHTML(categoryID, productID);
+    } else {
+        displayImageDiv = 'none';
+        widthInfoDiv = '100%';
+    }
 
     return /*html*/`
-        <div id="previewImage_${productID}" class="left">${isUploadedImage}</div>
-        <div class="right">
+        <div id="previewImage_${productID}" class="left" style="display: ${displayImageDiv};">${isUploadedImage}</div>
+        <div class="right" style="width: ${widthInfoDiv}">
             <div class="product-detail-info">${infoHtml}</div>
         </div>`;
 }
