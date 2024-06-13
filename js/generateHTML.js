@@ -203,7 +203,83 @@ function generateEditTable(data) {
     return switchContent;
 }
 
+function generateUserInfo(userData) {
+    let user = userData[0];
+    if (user) {
+        let accountContainer = document.getElementById('accountContainer');
+        accountContainer.innerHTML = /*html*/`
+            <div class="user-content">
+                <div class="left-user-content">
+                    <div>Vorname: </div>
+                    <div>Email: </div>
+                    <div>Mitglied seit: </div>
+                    <div class="forgot-container">
+                        <a style="font-size: 16px" onclick="changePasswort()" class="forgot-link">Passwort ändern</a>
+                    </div>
+                </div>
+                <div class="right-user-content">
+                    <div class="username">
+                        ${user.username}
+                        <img onclick="changeValueUserInfo('${user.username}', '.username', 'text')" class="edit-icon right-10" src="./assets/img/edit.png">
+                    </div>
+                    <div class="email">
+                        ${user.email}
+                        <img onclick="changeValueUserInfo('${user.email}', '.email', 'email')" class="edit-icon right-10" src="./assets/img/edit.png">
+                    </div>
+                    <div>${formatDate(user.registration_date)}</div>
+                    <div class="forgot-container">
+                        <a style="font-size: 16px" onclick="deleleAccount()" class="forgot-link">Konto löschen</a>
+                    </div>
+                    
+                </div>
+            </div>`;
+    } 
+}
 
+function changeValueUserInfo(value, element, inputType) {
+    let el = document.querySelector(element);
+    let input = document.createElement('input');
+    input.type = inputType;
+    input.value = value;
+    input.name = value;
+
+    el.style.paddingTop = '9px';
+    el.style.paddingBottom = '9px';
+
+    let saveButton = createIconButton('./assets/img/save-icon.png', 'save-icon', () => saveEdit());
+    let cancelButton = createIconButton('./assets/img/remove-img.png', 'cancel-icon', () => cancelEdit(element, value));
+
+    el.innerHTML = '';
+    el.appendChild(input);
+    el.appendChild(saveButton);
+    el.appendChild(cancelButton);
+    input.focus();
+}
+
+function createIconButton(img, style, clickHandler) {
+    let button = document.createElement('img');
+    button.src = img;
+    button.classList.add(style);
+    button.addEventListener('click', clickHandler);
+    return button;
+}
+
+function cancelEdit(element, value) {
+    let el = document.querySelector(element);
+    el.style.paddingTop = '15px';
+    el.style.paddingBottom = '15px';
+    if (el.classList.contains('username') || el.classList.contains('email')) {
+        el.innerHTML = /*html*/`
+            ${value}
+            <img onclick="changeValueUserInfo('${value}', '${element}', '${element.includes('username') ? 'text' : 'email'}')" class="edit-icon right-10" src="./assets/img/edit.png">`;
+    }
+}
+
+function changePasswort() {
+    
+}
+
+function deleleAccount() {}
 
 
 

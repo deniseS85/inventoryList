@@ -888,6 +888,7 @@ async function goBackToMain(clickedButton) {
     document.getElementById('itemContainer').style.display = 'flex';
     document.getElementById('galleryContainer').style.display = 'none';
     document.getElementById('editTableViewContainer').style.display = 'none';
+    document.getElementById('userAccount').style.display = 'none';
     selectedImageIDs = [];
     selectedTagIDs = [];
     isSelectEnabled = false;
@@ -896,12 +897,12 @@ async function goBackToMain(clickedButton) {
     resetSelectButton();
 
     if (clickedButton.id === 'backBtnTableView') {
-        await isEditTableColumn(clickedButton);
+        await isEditTableColumn();
     }
     
 }
 
-async function isEditTableColumn(clickedButton) {
+async function isEditTableColumn() {
         updateItemInfos();
         updateCategoryItems();
         updateProductContainers();
@@ -1056,6 +1057,7 @@ async function showImages(images) {
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('itemContainer').style.display = 'none';
     document.getElementById('editTableViewContainer').style.display = 'none';
+    document.getElementById('userAccount').style.display = 'none';
 }
 
 async function selectImageForDelete(event) {
@@ -1115,10 +1117,11 @@ function showTags(tags) {
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('itemContainer').style.display = 'none';
     document.getElementById('editTableViewContainer').style.display = 'none';
+    document.getElementById('userAccount').style.display = 'none';
 }
 
 function showEditViewTable() {
-    let elementsToHide = ['itemContainer', 'galleryContainer', 'tagsContainer', 'gallery'];
+    let elementsToHide = ['itemContainer', 'galleryContainer', 'tagsContainer', 'gallery', 'userAccount'];
     setDisplayNone(elementsToHide);
     document.querySelector('.category-item-container').style.display = 'none';
     document.getElementById('editTableViewContainer').style.display = 'flex';
@@ -1269,6 +1272,23 @@ function imageFormGroup(imageElement, switchData) {
     } else {
         document.querySelector(imageElement).style.display = 'none';
     }
+}
+
+function showAccount() {
+    let elementsToHide = ['itemContainer', 'galleryContainer', 'tagsContainer', 'gallery', 'editTableViewContainer'];
+    setDisplayNone(elementsToHide);
+    document.querySelector('.category-item-container').style.display = 'none';
+    document.getElementById('userAccount').style.display = 'flex';
+    togglePopup('settingsPopup');
+    generateUserAccountView();
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}.${month}.${year}`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

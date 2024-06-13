@@ -370,7 +370,22 @@ header {
     transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.edit-icon:hover {
+.cancel-icon, .save-icon {
+    width: clamp(1.5625rem, 1.4286rem + 0.6696vw, 2.5rem);
+    height: clamp(1.5625rem, 1.4286rem + 0.6696vw, 2.5rem);
+    cursor: pointer;
+    transition: filter 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    right: 45px;
+    top: 13px;
+}
+
+.save-icon {
+    right: 10px;
+    top: 10px;
+}
+
+.edit-icon:hover, .cancel-icon:hover, .save-icon:hover {
     filter: brightness(120%);
     transform: scale(1.2);
 }
@@ -1559,7 +1574,7 @@ button:hover:not(.search-btn) {
     gap: 20px;
 }
 
-.switchContainer {
+.switchContainer, .accountContainer {
     width: 80%;
     background-color: var(--item-bg);
     border-radius: 10px;
@@ -1635,6 +1650,62 @@ input:checked + .slider:before {
   
 .slider.round:before {
     border-radius: 50%;
+}
+
+.user-account {
+    display: none;
+    padding: 20px 0;
+    color: var(--font-color);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-content {
+    display: flex;
+}
+
+.username, .email {
+    position: relative;
+}
+
+.right-10 {
+    position: absolute;
+    right: 10px;
+}
+
+.left-user-content, .right-user-content {
+    flex: 1;
+}
+
+.left-user-content > div:nth-child(odd),
+.right-user-content > div:nth-child(odd) {
+    background-color: #07374a;
+}
+
+.left-user-content div, .right-user-content div {
+    padding: 15px 20px;
+}
+
+.left-user-content div:first-child {
+    border-top-left-radius: 10px;
+}
+
+.left-user-content div:last-child {
+    border-bottom-left-radius: 10px;
+}
+
+.right-user-content div:first-child {
+    border-top-right-radius: 10px;
+}
+
+.right-user-content div:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.left-user-content {
+    font-weight: bold;
 }
 
 @media only screen and (max-height: 800px) {

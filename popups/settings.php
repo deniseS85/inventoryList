@@ -6,7 +6,7 @@
             <div onclick="getAllTags()">Tags</div>
             <div onclick="showEditViewTable()">Einstellungen</div>
             <div onclick="exportToExcel()">Liste exportieren</div>
-            <div>Konto bearbeiten</div>
+            <div onclick="showAccount()">Konto bearbeiten</div>
         </div>
         <div class="btn-container">
             <button type="button" onclick="openSettings()">Schließen</button>

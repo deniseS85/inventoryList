@@ -458,6 +458,16 @@ async function exportToExcel() {
     }
 }
 
+async function generateUserAccountView() {
+    try {
+        const response = await fetch('php/getUserInfo.php');
+        let userData = await response.json();
+        generateUserInfo(userData);
+    }  catch (error) {
+        console.error('Fehler beim Abrufen der Benutzerdaten:', error);
+    }
+}
+
 
 
 
