@@ -896,7 +896,7 @@ footer img:hover {
     align-items: center;
 }
 
-.new-category-container, .new-item-container, .delete-category-container, .new-tag-container, .product-detail-container, .setting-container {
+.new-category-container, .new-item-container, .delete-category-container, .new-tag-container, .product-detail-container, .setting-container, .delete-user-container {
     width: clamp(18.75rem, 17.8571rem + 4.4643vw, 25rem);
     background-color: rgb(7,67,91);
     border: 2px solid var(--turquoise);
@@ -919,7 +919,6 @@ footer img:hover {
 
 .delete-category-container {
     width: clamp(18.75rem, 17.8571rem + 4.4643vw, 25rem);
-    height: 230px;
 }
 
 .confirmation-message {
@@ -1706,6 +1705,11 @@ input:checked + .slider:before {
 
 .left-user-content {
     font-weight: bold;
+}
+
+.delete-user-container {
+    width: clamp(22.375rem, 21.1071rem + 6.3393vw, 31.25rem);
+
 }
 
 @media only screen and (max-height: 800px) {

@@ -84,6 +84,7 @@
         include 'popups/settings.php';
         include 'popups/deleteImage.php';
         include 'popups/deleteTag.php';
+        include 'popups/deleteUser.php';
     ?>
        
 </body>

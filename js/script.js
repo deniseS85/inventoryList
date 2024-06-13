@@ -1343,8 +1343,9 @@ async function saveEdit(element, inputElement) {
 
 function changePasswort() {}
 
-function deleleAccount() {}
-
+function togglePopupDeleteUser() {
+    togglePopup('deleteUserConfirmation')
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();

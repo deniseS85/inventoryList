@@ -228,7 +228,7 @@ function generateUserInfo(userData) {
                     </div>
                     <div>${formatDate(user.registration_date)}</div>
                     <div class="forgot-container">
-                        <a style="font-size: 16px" onclick="deleleAccount()" class="forgot-link">Konto löschen</a>
+                        <a style="font-size: 16px" onclick="togglePopupDeleteUser()" class="forgot-link">Konto löschen</a>
                     </div>
                 </div>
             </div>`;

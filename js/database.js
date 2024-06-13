@@ -485,10 +485,32 @@ async function updateUserDataInDatabase(element, newValue, elementType) {
         if (!response.ok) {
             throw new Error('Fehler beim Aktualisieren der Benutzerdaten');
         }
-
         return await response.json();
     } catch (error) {
         throw new Error('Fehler beim Senden der AJAX-Anfrage: ' + error.message);
+    }
+}
+
+
+async function deleteAccount() {
+    try {
+        const response = await fetch('php/deleteUser.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            togglePopupDeleteUser();
+            await fetch('php/logout.php', {
+                method: 'GET'
+            });
+            window.location.href = 'http://localhost/inventoryList/';
+        }
+    } catch (error) {
+        console.error('Fehler beim Senden der Anfrage:', error);
     }
 }
 
