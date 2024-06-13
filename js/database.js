@@ -468,6 +468,30 @@ async function generateUserAccountView() {
     }
 }
 
+async function updateUserDataInDatabase(element, newValue, elementType) {
+    try {
+        const response = await fetch('php/editUserInfo.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                element: element,
+                newValue: newValue,
+                elementType: elementType
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Fehler beim Aktualisieren der Benutzerdaten');
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw new Error('Fehler beim Senden der AJAX-Anfrage: ' + error.message);
+    }
+}
+
 
 
 

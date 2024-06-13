@@ -1291,6 +1291,61 @@ function formatDate(dateString) {
     return `${day}.${month}.${year}`;
 }
 
+
+function changeValueUserInfo(value, element, inputType) {
+    let el = document.querySelector(element);
+    let input = document.createElement('input');
+    input.type = inputType;
+    input.value = value;
+    input.name = inputType === 'text' ? 'newUserName' : 'newEmail';
+
+    el.style.paddingTop = '9px';
+    el.style.paddingBottom = '9px';
+
+    let saveButton = createIconButton('./assets/img/save-icon.png', 'save-icon', () => saveEdit(element, input));
+    let cancelButton = createIconButton('./assets/img/remove-img.png', 'cancel-icon', () => cancelEdit(element, value));
+
+    el.innerHTML = '';
+    el.appendChild(input);
+    el.appendChild(saveButton);
+    el.appendChild(cancelButton);
+    input.focus();
+}
+
+function createIconButton(img, style, clickHandler) {
+    let button = document.createElement('img');
+    button.src = img;
+    button.classList.add(style);
+    button.addEventListener('click', clickHandler);
+    return button;
+}
+
+function cancelEdit(element, value) {
+    let el = document.querySelector(element);
+    el.style.paddingTop = '15px';
+    el.style.paddingBottom = '15px';
+    if (el.classList.contains('username') || el.classList.contains('email')) {
+        el.innerHTML = /*html*/`
+            ${value}
+            <img onclick="changeValueUserInfo('${value}', '${element}', '${element.includes('username') ? 'text' : 'email'}')" class="edit-icon right-10" src="./assets/img/edit.png">`;
+    }
+}
+
+async function saveEdit(element, inputElement) {
+    let newValue = inputElement.value;
+    let elementType = inputElement.type;
+    await updateUserDataInDatabase(element, newValue, elementType);
+    cancelEdit(element, newValue);
+    if (element === '.username') {
+        document.querySelector('.greeting-text').textContent = `Hallo ${newValue}!`;
+    }
+}
+
+function changePasswort() {}
+
+function deleleAccount() {}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
