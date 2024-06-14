@@ -203,11 +203,13 @@ function generateEditTable(data) {
     return switchContent;
 }
 
+let userAccountView = '';
+
 function generateUserInfo(userData) {
     let user = userData[0];
     if (user) {
         let accountContainer = document.getElementById('accountContainer');
-        accountContainer.innerHTML = /*html*/`
+        userAccountView = /*html*/`
             <div class="user-content">
                 <div class="left-user-content">
                     <div>Vorname: </div>
@@ -232,6 +234,7 @@ function generateUserInfo(userData) {
                     </div>
                 </div>
             </div>`;
+            accountContainer.innerHTML = userAccountView;
     } 
 }
 

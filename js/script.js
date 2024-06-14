@@ -1341,10 +1341,48 @@ async function saveEdit(element, inputElement) {
     }
 }
 
-function changePasswort() {}
-
 function togglePopupDeleteUser() {
     togglePopup('deleteUserConfirmation')
+}
+
+function backToAccountView() {
+    let accountContainer = document.getElementById('accountContainer');
+    accountContainer.innerHTML = userAccountView;
+}
+
+
+function changePasswort() {
+    fetch('popups/changePasswordForm.php')
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('accountContainer').innerHTML = html;
+        document.getElementById('currentPassword').addEventListener('input', validateAndEnableButton);
+        document.getElementById('newChangePassword').addEventListener('input', validateAndEnableButton);
+        document.getElementById('confirmNewPassword').addEventListener('input', validateAndEnableButton);
+    })
+    .catch(error => {
+        console.error('Error loading HTML:', error);
+    });
+}
+
+function validateAndEnableButton() {
+    let currentPassword = document.getElementById('currentPassword').value.trim();
+    let newPassword = document.getElementById('newChangePassword').value.trim();
+    let confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
+    let changePasswordButton = document.getElementById('changePasswordButton');
+    let newPasswordConfirmError = document.getElementById('newPasswordConfirmError');
+
+    if (currentPassword !== '' && newPassword !== '' && confirmNewPassword !== '') {
+        if (newPassword === confirmNewPassword) {
+            changePasswordButton.removeAttribute('disabled');
+            newPasswordConfirmError.innerHTML = '';
+        } else {
+            changePasswordButton.setAttribute('disabled', 'disabled');
+            newPasswordConfirmError.innerHTML = 'Die Passwörter stimmen nicht überein.';
+        }
+    } else {
+        changePasswordButton.setAttribute('disabled', 'disabled');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

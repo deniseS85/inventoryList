@@ -88,7 +88,7 @@ function validateForm(formID, emailID, passwordID, emailErrorID, passwordErrorID
     return true;
 }
 
-function validateForgotPasswordForm(formID, emailID, emailErrorID) {
+function validateForgotPasswordForm(emailID, emailErrorID) {
     let email = document.getElementById(emailID).value; 
     let emailError = document.getElementById(emailErrorID);
     if (email.trim() === "") {

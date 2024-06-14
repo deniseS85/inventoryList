@@ -514,6 +514,40 @@ async function deleteAccount() {
     }
 }
 
+async function validateAndSubmit(event) {
+    event.preventDefault();
+    let currentPassword = document.getElementById('currentPassword').value.trim();
+    let newPassword = document.getElementById('newChangePassword').value.trim();
+
+    try {
+        const response = await fetch('php/validateAndChangePassword.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'currentPassword': currentPassword,
+                'newPassword': newPassword 
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        const data = await response.json();
+
+        if (data.success) {
+            backToAccountView();
+        } else {
+            let currentPasswordError = document.getElementById('currentPasswordError');
+            currentPasswordError.innerHTML = "Das aktuelle Passwort ist nicht korrekt.";
+        }
+    } catch (error) {
+        let currentPasswordError = document.getElementById('currentPasswordError');
+        currentPasswordError.innerHTML = "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.";
+    }
+}
+
+
 
 
 

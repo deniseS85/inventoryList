@@ -668,6 +668,12 @@ td[data-label="Bild"], th[data-label="Bild"] {
     .table-image {
         margin: 0 auto;
     }
+    .switchContainer, .accountContainer {
+        width: 100% !important;
+    }
+    .switch-item, .change-password-container {
+        padding: 10px !important;
+    }
 }
 
 td[data-label="Bild"] img, .table-image {
@@ -763,7 +769,7 @@ thead tr:hover {
         float: left;
         font-weight: bold;
         margin-right: 3em;
-        width: 28%;
+        width: 39%;
     }
     .table-tag {
         width: 150px;
@@ -1415,7 +1421,8 @@ button:hover:not(.search-btn) {
 #addCategoryButton[disabled], 
 #addTagButton[disabled], 
 #editCategoryButton[disabled], 
-#editItemButton[disabled] {
+#editItemButton[disabled],
+#changePasswordButton[disabled] {
     opacity: 0.5;
     pointer-events: none;
 }
@@ -1709,7 +1716,34 @@ input:checked + .slider:before {
 
 .delete-user-container {
     width: clamp(22.375rem, 21.1071rem + 6.3393vw, 31.25rem);
+}
 
+.change-password-container {
+    display: flex;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+#changePasswordForm {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.change-password-btn {
+    justify-content: center;
+    gap: 20px;
+}
+
+@media only screen and (max-width: 494px) {
+    .change-password-btn {
+        gap: 10px;
+    }
+    .change-password-btn button {
+        padding: 10px 9px;
+    }
 }
 
 @media only screen and (max-height: 800px) {

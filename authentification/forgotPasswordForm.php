@@ -2,7 +2,7 @@
 $emailSent = isset($_GET['emailSent']) ? filter_var($_GET['emailSent'], FILTER_VALIDATE_BOOLEAN) : null;
 ?>
 
-<form id="forgotForm" action="php/sendPasswordReset.php" method="POST" style="display:none;" onsubmit="return validateForgotPasswordForm('forgotForm', 'forgotEmail', 'forgotEmailError')">
+<form id="forgotForm" action="php/sendPasswordReset.php" method="POST" style="display:none;" onsubmit="return validateForgotPasswordForm('forgotEmail', 'forgotEmailError')">
     <h4 class="popup-title">Passwort zurücksetzen</h4>
     <div class="form-group">
         <label for="forgotEmail" class="form-label">Email</label>
@@ -28,5 +28,4 @@ $emailSent = isset($_GET['emailSent']) ? filter_var($_GET['emailSent'], FILTER_V
             <?php endif; ?>
         </div>
     </div>
-
 </form>
