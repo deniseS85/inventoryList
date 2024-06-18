@@ -54,7 +54,10 @@
             <div id="itemContainer" class="itemsContainer"></div>
             <div id="editTableViewContainer" class="editTableView">
                 <div onclick="goBackToMain(this)" id="backBtnTableView" class="gallery-button">Zurück</div>
-                <h4>Tabellenspalten bearbeiten</h4>
+                <div class="editTableColums">
+                    <h4>Tabellenspalten bearbeiten</h4>
+                    <img class="add-icon" onclick="togglePopupNewTableColumn()" src="./assets/img/add.png">
+                </div>
                 <div id="switchContainer" class="switchContainer"></div>
             </div>
             <div id="userAccount" class="user-account">
@@ -85,6 +88,7 @@
         include 'popups/deleteImage.php';
         include 'popups/deleteTag.php';
         include 'popups/deleteUser.php';
+        include 'popups/addNewTableColumn.php';
     ?>
        
 </body>

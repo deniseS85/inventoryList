@@ -1129,9 +1129,9 @@ function showEditViewTable() {
     toggleSwitches();
 }
 
-function toggleSwitches() {
+async function toggleSwitches() {
     let switchContainer = document.getElementById('switchContainer');
-    let switchContent = generateEditTable(switchData);
+    let switchContent = await generateEditTable(switchData);
     switchContainer.innerHTML = switchContent;
 
     let checkboxes = switchContainer.querySelectorAll('input[type="checkbox"]');
@@ -1154,17 +1154,28 @@ function updateSliderValue(name, isChecked) {
     saveSwitchData();
 }
 
-
-function saveSwitchData() {
-    localStorage.setItem('switchData', JSON.stringify(switchData));
+async function saveSwitchData() {
+    let userID = await getCurrentUserID();
+    localStorage.setItem(`switchData_${userID}`, JSON.stringify(switchData));
 }
 
-function loadSwitchData() {
-    const storedData = localStorage.getItem('switchData');
+async function loadSwitchData() {
+    let userId = await getCurrentUserID();
+    let storedData = localStorage.getItem(`switchData_${userId}`);
     if (storedData) {
         const parsedData = JSON.parse(storedData);
+        
+        if (switchData.length < parsedData.length) {
+            for (let i = switchData.length; i < parsedData.length; i++) {
+                switchData.push({ value: '', sliderValue: '' });
+            }
+        }
+
         parsedData.forEach((item, index) => {
+            switchData[index].value = item.value;
             switchData[index].sliderValue = item.sliderValue;
+            switchData[index].userID = item.userID;
+            switchData[index].dataType = item.dataType;
         });
     }
 }
@@ -1385,6 +1396,81 @@ function validateAndEnableButton() {
     }
 }
 
+function togglePopupNewTableColumn() {
+    togglePopup('newTableColumnPopup');
+}
+
+async function validateAddColumnForm(event) {
+    event.preventDefault();
+    let dataTypeSelected = false;
+    let options = document.querySelectorAll('.type-radio');
+    let errorElement = document.getElementById('typeError');
+
+    options.forEach((option => {
+        if (option.checked) {
+            dataTypeSelected = true;
+        }
+    }));
+
+    if (!dataTypeSelected) {
+        errorElement.innerHTML = 'Bitte wähle einen Datentyp aus.';
+        return false;
+    } else {
+        await saveColumnData();
+        return true;
+    }
+}
+
+function findDataTypeFromCustomColum(field) {
+    if (field.field_value_varchar !== null) {
+        return 'varchar';
+    } else if (field.field_value_int !== null) {
+        return 'int';
+    } else if (field.field_value_date !== null) {
+        return 'date';
+    } else {
+        return 'varchar';
+    }
+}
+
+function calculateColumnWidths() {
+    let totalColumns = switchData.filter(item => item.sliderValue === 'checked').length;
+
+    if (totalColumns === 6) {
+        let columnStyles = '';
+
+        // Standardbreiten für die voreingestellten Spalten
+        let presetWidths = {
+            'Produkt': '30%',
+            'Menge': '8%',
+            'Preis': '8%',
+            'Beschreibung': '35%',
+            'Tag': '12%',
+            'Bild': '7%'
+        };
+
+        // Generierung der CSS-Regeln nur für die voreingestellten Spalten
+        Object.keys(presetWidths).forEach(key => {
+            columnStyles += `
+                td[data-label="${key}"], th[data-label="${key}"] {
+                    width: ${presetWidths[key]};
+                }`;
+        });
+
+        // Ersetzen der bestehenden CSS-Regeln
+        const existingStyleElement = document.getElementById('dynamicColumnStyles');
+        if (existingStyleElement) {
+            existingStyleElement.innerHTML = columnStyles;
+        } else {
+            const styleElement = document.createElement('style');
+            styleElement.id = 'dynamicColumnStyles';
+            styleElement.innerHTML = columnStyles;
+            document.head.appendChild(styleElement);
+        }
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
@@ -1401,7 +1487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     adjustTableStyle();
     adjustFormBySwitchTableColumn('addProductForm', '.selectBox', '.upload-container', switchData);
     adjustFormBySwitchTableColumn('editProductForm', '.selectBox-edit', '.edit-upload-container', switchData);
+    getCostumTableColumn();
 });
 
 window.addEventListener('resize', adjustTableStyle);
-

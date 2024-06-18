@@ -135,14 +135,34 @@ h6 {
     transition: color 0.3s ease;
 }
 
-.remember-container {
+.remember-container, .columntype-container {
    display: flex;
    align-items: center;
    cursor: pointer;
    gap: 8px;
 }
 
-.remember-me-checkbox {
+.columntype-container {
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.columntype-container .option label {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.columntype-container .option label:hover {
+    color: var(--turquoise);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.columntype-container .option input:checked + label {
+    color: var(--turquoise);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.remember-me-checkbox, .type-radio{
     width: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
     height: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
     cursor: pointer;
@@ -262,11 +282,15 @@ h6 {
     padding: 10px;
 }
 
-.login-message-content div, .reset-passwort-message div {
+.login-message-content div, .reset-passwort-message div, .info-header-add-colum {
     color: var(--font-color);
     font-weight: bold;
     font-size: 18px;
     text-align: center;
+}
+
+.info-add-colum {
+    margin-top: 15px;
 }
 
 .here {
@@ -308,8 +332,8 @@ header {
 }
 
 .logo-icon {
-    width: clamp(2.5rem, 2.4107rem + 0.4464vw, 3.125rem);
-    height: clamp(2.5rem, 2.4107rem + 0.4464vw, 3.125rem);
+    width: clamp(1.5625rem, 1.3393rem + 1.1161vw, 3.125rem);
+    height: clamp(1.5625rem, 1.3393rem + 1.1161vw, 3.125rem);
     cursor: pointer;
     transition: filter 0.3s ease;
 }
@@ -332,10 +356,10 @@ header {
 
 .greeting-text {
     color: var(--font-color);
-    font-size: 14px;
+    font-size: clamp(0.75rem, 0.6786rem + 0.3571vw, 1.25rem);
     cursor: default;
     position: absolute;
-    left: 56px;
+    left: clamp(1.875rem, 1.6429rem + 1.1607vw, 3.5rem);
 }
 
 .add-icon {
@@ -425,7 +449,7 @@ main {
     align-items: center;
 }
   
-input:not(#productImage):not(.image-checkbox):not(.tag-checkbox):not(.remember-me-checkbox), select {
+input:not(#productImage):not(.image-checkbox):not(.tag-checkbox):not(.remember-me-checkbox):not(.type-radio), select {
     padding: 5px;
     border: 1px transparent;
     border-bottom: 2px solid var(--turquoise);
@@ -511,6 +535,13 @@ input:-webkit-autofill:active {
     background-color: #0B252B;
     cursor: pointer;
     transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media only screen and (max-width: 450px) {
+    .category-item {
+        width: 160px;
+        height: 45px;
+    }
 }
 
 .category-item:hover {
@@ -605,13 +636,18 @@ th:hover {
     color: silver;
 } 
 
+/* ################################################ */
+
+
 td[data-label="Produkt"], th[data-label="Produkt"] {
-    width: 30%;
-    padding-left: 20px;
+    width: 32%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 td[data-label="Menge"], th[data-label="Menge"],
-td[data-label="Preis"], th[data-label="Wert"] {
+td[data-label="Wert"], th[data-label="Wert"] {
     width: 8%;
     text-align: center;
 }
@@ -619,20 +655,33 @@ td[data-label="Preis"], th[data-label="Wert"] {
 td[data-label="Beschreibung"], th[data-label="Beschreibung"] {
     width: 35%;
     padding-left: 2%;
-    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-td[data-label="Tag"], th[data-label="Tag"] {
-    width: 12%;
+td[data-label="Tag"]  {
+    width: 10%;
     text-align: center;
-    padding: 0;
+    padding: 20px;
+    white-space: nowrap
+}
+th[data-label="Tag"] {
+    width: 10%;
+    text-align: center;
     white-space: nowrap
 }
 
-td[data-label="Bild"], th[data-label="Bild"] {
+td[data-label="Bild"] {
+    width: 7%;
+    padding: 0;
+    white-space: nowrap;
+    text-align: center;
+}
+
+th[data-label="Bild"] {
     width: 7%;
     text-align: center;
-    padding: 0;
     white-space: nowrap;
 }
 
@@ -650,7 +699,7 @@ td[data-label="Bild"], th[data-label="Bild"] {
     
     .table-tag {
         position: absolute;
-        left: 0;
+        left: 0px;
         right: 0;
         top: 5px;
         overflow: hidden;
@@ -683,7 +732,7 @@ td[data-label="Bild"] img, .table-image {
     object-fit: cover;
     border-radius: 100%;
     border: 1px solid var(--turquoise);
-    margin: 0 20px;
+   /*  margin: 0 20px; */
 }
 
 tr {
@@ -786,7 +835,7 @@ thead tr:hover {
         margin-bottom: 15px;
     }
     td[data-label="Menge"], th[data-label="Menge"],
-    th[data-label="Wert"], td[data-label="Preis"] {
+    th[data-label="Wert"], td[data-label="Wert"] {
         width: 100%;
         padding-left: 10px;
         text-align: left;
@@ -810,6 +859,8 @@ thead tr:hover {
         width: 100%;
         padding: 5px 10px;
         text-align: left;
+        display: flex;
+        align-items: center;
     }
     td[data-label="Bild"] {
         height: 35px;
@@ -821,12 +872,11 @@ thead tr:hover {
     }
     td[data-label="Tag"] div {
         display: inline-block;
-        padding-top: 2px !important;
-        padding-bottom: 2px !important;
         width: 100px;
         font-size: 12px !important;
         text-align: center;
-        line-height: 26px;
+        line-height: 23px;
+        height: 23px;
     }
     td[data-label="Bild"] img, .table-image {
         width: 30px;
@@ -858,13 +908,20 @@ thead tr:hover {
         border: 1px solid var(--turquoise);
         border-top: none;
     }
-
+    .first-element {
+        border-top: 1px solid var(--turquoise) !important;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding-left: 10px !important;
+    }
     .last-element {
         border-bottom: 1px solid var(--turquoise) !important;
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
     }
 }
+
+/* ################################################ */
 
 footer {
     background-color: rgb(34,151,195);
@@ -915,12 +972,16 @@ footer img:hover {
     flex-direction: column;
 }
 
+.setting-container {
+    width: clamp(22.5rem, 20.3571rem + 10.7143vw, 37.5rem);
+}
+
 .new-category-container {
     height: 220px;
 }
 
 .new-item-container {
-    width: clamp(18.75rem, 16.0714rem + 13.3929vw, 37.5rem);
+    width: clamp(22.5rem, 20.3571rem + 10.7143vw, 37.5rem);
 }
 
 .delete-category-container {
@@ -1044,7 +1105,7 @@ footer img:hover {
 
 .label {
     font-weight: bold;
-    color: var(--turquoise)
+    color: var(--turquoise);
 }
 
 #addCategoryForm, #updateCategoryForm, #addTagForm {
@@ -1058,7 +1119,7 @@ footer img:hover {
     align-items: center;
 }
 
-#addProductForm, #editProductForm {
+#addProductForm, #editProductForm, #addTableColumnForm {
     width: 90%;
     margin: 20px 0 0 0;
 }
@@ -1343,7 +1404,7 @@ p {
     border: 1px solid var(--turquoise);
 }
  
-label:not(.switch):not(.custom-file-upload) {
+label:not(.switch):not(.custom-file-upload):not(.column-type) {
     display: block;
     font-weight: bold;
     margin-top: 5px;
@@ -1422,7 +1483,8 @@ button:hover:not(.search-btn) {
 #addTagButton[disabled], 
 #editCategoryButton[disabled], 
 #editItemButton[disabled],
-#changePasswordButton[disabled] {
+#changePasswordButton[disabled],
+#addTableColumnButton[disabled] {
     opacity: 0.5;
     pointer-events: none;
 }
@@ -1501,7 +1563,7 @@ button:hover:not(.search-btn) {
 .tags-container {
     border-radius: 5px;
     color: var(--font-color);
-    width: clamp(6.25rem, 4.4643rem + 8.9286vw, 18.75rem);
+    width: clamp(8.75rem, 7.3214rem + 7.1429vw, 18.75rem);
     height: 40px;
     display: flex;
     justify-content: center;
@@ -1538,7 +1600,7 @@ button:hover:not(.search-btn) {
     background-color: var(--font-color);
 }
 
-.image-checkbox:checked, .tag-checkbox:checked, .remember-me-checkbox:checked {
+.image-checkbox:checked, .tag-checkbox:checked, .remember-me-checkbox:checked, .type-radio:checked {
     background-color: var(--bg-color);
     background-image: url('./assets/img/check.png');
     background-size: contain;
@@ -1578,6 +1640,19 @@ button:hover:not(.search-btn) {
     justify-content: center;
     align-items: center;
     gap: 20px;
+}
+
+.editTableColums {
+    position: relative;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.editTableColums img {
+    position: absolute;
+    right: 0
 }
 
 .switchContainer, .accountContainer {
@@ -1738,6 +1813,7 @@ input:checked + .slider:before {
 }
 
 @media only screen and (max-width: 494px) {
+   
     .change-password-btn {
         gap: 10px;
     }

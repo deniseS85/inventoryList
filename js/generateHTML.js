@@ -1,3 +1,5 @@
+let userAccountView = '';
+
 function generateItemHTML(categoryName, categoryID, productCount) {
     currentCategoryID = categoryID;
     let productLabel = productCount === 1 ? 'Produkt' : 'Produkte';
@@ -23,15 +25,14 @@ function generateItemHTML(categoryName, categoryID, productCount) {
 
 function generateTableHTML(product, categoryID) {
     if (product) {
-        let tableID = `productTable_${categoryID}`; 
-        let headers = ['Produkt', 'Menge', 'Wert', 'Beschreibung', 'Tag', 'Bild'];
-
-        let filteredHeaders = headers.map((header, index) => {
-            return { header, index };
-        }).filter(item => switchData[item.index].sliderValue === 'checked');
-
-        let headerHTML = filteredHeaders.map(item => {
-            return `<th data-label="${item.header}" onclick="sortTable('${tableID}', ${item.index})">${item.header}</th>`;
+        let tableID = `productTable_${categoryID}`;
+        let activeColumns = switchData.filter(item => item.sliderValue === 'checked');
+        
+        let headerHTML = activeColumns.map((item, index) => {
+            let dataLabel = item.userID ? item.dataType : item.value;  
+            let displayText = item.value; 
+            let textAlign = index === 0 ? 'text-align: left; padding-left: 20px;' : ''; 
+            return `<th data-label="${dataLabel}" onclick="sortTable('${tableID}', ${index})" style="${textAlign}">${displayText}</th>`;
         }).join('');
 
         return /*html*/`
@@ -54,7 +55,7 @@ function generateTableRow(product, categoryID, tag, image) {
     let columns = [
         { label: 'Produkt', value: product.name },
         { label: 'Menge', value: product.amount },
-        { label: 'Preis', value: formatPrice(product.price) },
+        { label: 'Wert', value: formatPrice(product.price) },
         { label: 'Beschreibung', value: product.information },
         { label: 'Tag', value: tag ? generateTag(tag, tagStyle) : '' },
         { label: 'Bild', value: image ? generateImage(image) : '' }    
@@ -81,35 +82,31 @@ function filterColumns(columns) {
 
 function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image) {
     if (hideEmptyRows(filteredColumns)) { return ''; }
-    let isOnlyTagSelected = filteredColumns.every(item => item.column.label === 'Tag' || !switchData[item.index].sliderValue === 'checked');
+
+    /* calculateColumnWidths(); */
+
+    let isOnlyOneColumnSelected = filteredColumns.length === 1;
     let lastElementIndex = filteredColumns.length - 1;
+    let totalColumns = switchData.filter(item => item.sliderValue === 'checked').length;
+
     let rowHTML = filteredColumns.map((item, index) => {
         let column = item.column;
         let classList = (column.label === 'Tag') ? 'table-column-tag' : '';
         let style = '';
        
-        if (window.innerWidth >= 1261 && column.label === 'Bild') {
-            style = 'padding: 0';
-        }
-
         if (column.label === 'Tag') {
-            style += 'height: 40px; padding-right: 10px; line-height: 28px;';
-            let tagAdditionalStyle = '';
-
-            if (index === 0) {
-                tagAdditionalStyle += 'margin-left: 20px; width: 150px;';
-            } else if (index === filteredColumns.length - 1) {
-                tagAdditionalStyle += 'margin: 0 auto;'
-            } 
-
-            if (column.value.trim().startsWith('<div')) {
-                const additionalStyle = isOnlyTagSelected ? 'width: 150px; margin: 0 20px;' : tagAdditionalStyle;
-                column.value = column.value.replace('<div', `<div style="${additionalStyle} ${tagStyle}"`);
-            }
+            columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelected, tagStyle);  
         }
+
         if (index === lastElementIndex) {
             classList += ' last-element';
         }
+
+        if (index === 0) {
+            classList += ' first-element';
+            style += 'text-align: left; padding-left: 20px;';
+        } 
+
         return `<td class="${classList}" data-label="${column.label}" style="${style}">${column.value || ''}</td>`;
     }).join('');
     return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;
@@ -120,6 +117,28 @@ function hideEmptyRows(filteredColumns) {
         const value = item.column.value;
         return !value || (typeof value === 'string' && value.trim() === '');
     });
+}
+
+function columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelected, tagStyle) {
+    style += 'height: 40px; padding-right: 10px;';
+    let tagDivStyle = '';
+
+    if (index === 0) {
+        tagDivStyle += 'width: 150px;';
+    } 
+    
+    if (index === totalColumns - 1 || totalColumns <= 4) {
+        tagDivStyle += 'margin: 0 auto; width: 145px;';
+    }
+
+    if (index === 0 && !isOnlyOneColumnSelected) {
+        tagDivStyle += 'margin: 0 20px;'
+    }
+
+    if (column.value.trim().startsWith('<div')) {
+        let additionalStyle = isOnlyOneColumnSelected ? 'width: 150px; margin: 0 20px;' : tagDivStyle;
+        column.value = column.value.replace('<div', `<div style="${additionalStyle} ${tagStyle}"`);
+    }
 }
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
@@ -187,23 +206,30 @@ function generateTagsView(tag) {
         </div>`;
 }
 
-function generateEditTable(data) {
-    let switchContent = '';
+async function generateEditTable(data) {
+    try {
+        let currentUserID = await getCurrentUserID();
+        let defaultData = data.filter(item => !item.userID || item.userID === '');
+        let userSpecificData = data.filter(item => item.userID && item.userID === parseInt(currentUserID, 10));
 
-    data.forEach(item => {
-        switchContent += /*html*/`
-            <div class="switch-item">
-                <div>${item.value}</div>
-                <label class="switch">
-                    <input type="checkbox" name="switch" ${item.sliderValue === 'checked' ? 'checked' : ''}>
-                    <span class="slider round" data-name="${item.value}"></span>
-                </label>
-            </div>`;
-    });
-    return switchContent;
+        let switchContent = '';
+
+        [...defaultData, ...userSpecificData].forEach(item => {
+            switchContent += /*html*/`
+                <div class="switch-item">
+                    <div>${item.value}</div>
+                    <label class="switch">
+                        <input type="checkbox" name="switch" ${item.sliderValue === 'checked' ? 'checked' : ''}>
+                        <span class="slider round" data-name="${item.value}"></span>
+                    </label>
+                </div>`;
+        });
+
+        return switchContent;
+    } catch (error) {
+        return '';
+    }
 }
-
-let userAccountView = '';
 
 function generateUserInfo(userData) {
     let user = userData[0];

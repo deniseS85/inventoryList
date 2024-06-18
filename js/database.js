@@ -547,6 +547,64 @@ async function validateAndSubmit(event) {
     }
 }
 
+async function saveColumnData() {
+    let form = document.getElementById('addTableColumnForm');
+    let formData = new FormData(form);
+
+    try {
+        const response = await fetch('php/addTableColumn.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        togglePopupNewTableColumn();
+        form.reset();
+        document.getElementById('infoAddNewColumn').style.display = 'flex';
+        await getCostumTableColumn();
+    } catch (error) {
+        console.error('Fehler beim Senden des Formulars:', error);
+    }
+}
+
+async function getCostumTableColumn() {
+    try {
+        const response = await fetch('php/getCustomTableColumn.php');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const columns = await response.json();
+        updateSwitchData(columns);
+    } catch (error) {
+        console.error('Fehler beim Abrufen der benutzerdefinierten Spalten:', error);
+    }
+}
+
+function updateSwitchData(columns) {
+    const updatedSwitchData = [...switchData];
+
+    columns.forEach(column => {
+        const existingColumn = updatedSwitchData.find(item => item.value === column.field_name);
+        
+        if (!existingColumn) {
+            const dataType = findDataTypeFromCustomColum(column);
+            const newColumn = {
+                value: column.field_name,
+                sliderValue: 'checked',
+                userID: column.user_id,
+                dataType: dataType
+            };
+            updatedSwitchData.push(newColumn);
+        }
+    });
+
+    switchData.length = 0;
+    switchData.push(...updatedSwitchData);
+}
+
 
 
 
