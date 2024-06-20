@@ -27,7 +27,6 @@ function generateTableHTML(product, categoryID) {
     if (product) {
         let tableID = `productTable_${categoryID}`;
         let activeColumns = switchData.filter(item => item.sliderValue === 'checked');
-        
         let headerHTML = activeColumns.map((item, index) => {
             let dataLabel = item.userID ? item.dataType : item.value;  
             let displayText = item.value; 
@@ -35,7 +34,7 @@ function generateTableHTML(product, categoryID) {
             return `<th data-label="${dataLabel}" onclick="sortTable('${tableID}', ${index})" style="${textAlign}">${displayText}</th>`;
         }).join('');
 
-        return /*html*/`
+        let tableHTML = /*html*/`
             <table id="${tableID}">
                 <thead class="table-separator">
                     <tr>
@@ -44,6 +43,10 @@ function generateTableHTML(product, categoryID) {
                 </thead>
                 <tbody></tbody>
             </table>`;
+        
+        calculateColumnWidths();
+
+        return tableHTML;
     } else {
         return '';
     }
@@ -61,8 +64,15 @@ function generateTableRow(product, categoryID, tag, image) {
         { label: 'Bild', value: image ? generateImage(image) : '' }    
     ];
 
+    switchData.forEach(item => {
+        if (item.sliderValue === 'checked' && !columns.some(column => column.label === item.value)) {
+            columns.push({ label: item.value, value: '' });
+        }
+    });
+
     let filteredColumns = filterColumns(columns);
     let rowHTML = buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image);
+   
     return rowHTML;
 }
 
@@ -82,8 +92,6 @@ function filterColumns(columns) {
 
 function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image) {
     if (hideEmptyRows(filteredColumns)) { return ''; }
-
-    /* calculateColumnWidths(); */
 
     let isOnlyOneColumnSelected = filteredColumns.length === 1;
     let lastElementIndex = filteredColumns.length - 1;
@@ -128,7 +136,7 @@ function columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelect
     } 
     
     if (index === totalColumns - 1 || totalColumns <= 4) {
-        tagDivStyle += 'margin: 0 auto; width: 145px;';
+        tagDivStyle += 'margin: 0 auto;'; /*  width: 145px; */
     }
 
     if (index === 0 && !isOnlyOneColumnSelected) {
@@ -263,19 +271,3 @@ function generateUserInfo(userData) {
             accountContainer.innerHTML = userAccountView;
     } 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -660,6 +660,10 @@ td[data-label="Beschreibung"], th[data-label="Beschreibung"] {
     text-overflow: ellipsis;
 }
 
+th[data-label="varchar"] {
+    padding-left: 2%;
+}
+
 td[data-label="Tag"]  {
     width: 10%;
     text-align: center;
@@ -685,11 +689,18 @@ th[data-label="Bild"] {
     white-space: nowrap;
 }
 
+th[data-label="int"],
+th[data-label="date"] {
+    padding: 0 10px;
+    text-align: center;
+}
+
 .table-tag {
     border-radius: 5px;
     padding: 0 5px;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
 }
 
 @media screen and (min-width: 1261px) {
@@ -702,11 +713,6 @@ th[data-label="Bild"] {
         left: 0px;
         right: 0;
         top: 5px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         font-size: 15px;
         border-radius: 5px;
         padding: 5px 10px;
@@ -907,6 +913,12 @@ thead tr:hover {
         border-bottom-right-radius: 10px;
         border: 1px solid var(--turquoise);
         border-top: none;
+    }
+    td[data-label="Bild"]:not(:last-child) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-left: 1px solid var(--turquoise);
+        border-bottom: 0;
     }
     .first-element {
         border-top: 1px solid var(--turquoise) !important;
@@ -1845,3 +1857,9 @@ input:checked + .slider:before {
     background: var(--turquoise);
     border-radius: 15px;
 }
+
+
+
+/* table, th, td {
+  border: 1px solid;
+} */

@@ -1434,42 +1434,91 @@ function findDataTypeFromCustomColum(field) {
 }
 
 function calculateColumnWidths() {
-    let totalColumns = switchData.filter(item => item.sliderValue === 'checked').length;
+    const presetWidths = {
+        'Produkt': 32,
+        'Menge': 8,
+        'Wert': 8,
+        'Beschreibung': 35,
+        'Tag': 10,
+        'Bild': 7
+    };
 
-    if (totalColumns === 6) {
-        let columnStyles = '';
+    const dataTypeWidths = {
+        'varchar': 35,
+        'int': 8,
+        'date': 8
+    };
 
-        // Standardbreiten für die voreingestellten Spalten
-        let presetWidths = {
-            'Produkt': '30%',
-            'Menge': '8%',
-            'Preis': '8%',
-            'Beschreibung': '35%',
-            'Tag': '12%',
-            'Bild': '7%'
-        };
+    let dynamicColumns = switchData.filter(item => item.sliderValue === 'checked').map(item => ({
+        label: item.value,
+        dataType: item.dataType
+    }));
 
-        // Generierung der CSS-Regeln nur für die voreingestellten Spalten
-        Object.keys(presetWidths).forEach(key => {
-            columnStyles += `
-                td[data-label="${key}"], th[data-label="${key}"] {
-                    width: ${presetWidths[key]};
-                }`;
-        });
+    let totalWidth = calculateTotalWidth(dynamicColumns, presetWidths, dataTypeWidths);
+    let columnStyles = generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataTypeWidths);
 
-        // Ersetzen der bestehenden CSS-Regeln
-        const existingStyleElement = document.getElementById('dynamicColumnStyles');
-        if (existingStyleElement) {
-            existingStyleElement.innerHTML = columnStyles;
-        } else {
-            const styleElement = document.createElement('style');
-            styleElement.id = 'dynamicColumnStyles';
-            styleElement.innerHTML = columnStyles;
-            document.head.appendChild(styleElement);
-        }
-    }
+    applyColumnStyles(columnStyles);
 }
 
+function calculateTotalWidth(dynamicColumns, presetWidths, dataTypeWidths) {
+    let totalWidth = 0;
+    dynamicColumns.forEach(column => {
+        let width = presetWidths[column.label] || dataTypeWidths[column.dataType] || 0;
+        totalWidth += width;
+    });
+    return totalWidth;
+}
+
+function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataTypeWidths) {
+    let columnStyles = '';
+
+    dynamicColumns.forEach((column, index, array) => {
+        let width = presetWidths[column.label] || dataTypeWidths[column.dataType] || 0;
+        let percentWidth = (width / totalWidth) * 100;
+
+        if (window.innerWidth >= 1260) {
+            columnStyles += `
+                td[data-label="${column.label}"], th[data-label="${column.label}"] {
+                    width: ${percentWidth}%;
+                }`;
+
+            if (column.dataType === 'varchar') {
+                columnStyles += `
+                    td[data-label="${column.label}"] {
+                        padding-left: 2%;
+                    }`;
+            }
+        } else {
+            columnStyles += `
+                td[data-label="${column.label}"], th[data-label="${column.label}"] {
+                    width: 100%;
+                    padding-left: 10px;
+                }`;
+
+            if (index === array.length - 1) {
+                columnStyles += `
+                    tr td[data-label="${column.label}"] {
+                        border: 1px solid #2BB8EE;
+                        border-top: 0;
+                    }`;
+            }
+        }
+    });
+
+    return columnStyles;
+}
+
+function applyColumnStyles(columnStyles) {
+    const existingStyleElement = document.getElementById('dynamicColumnStyles');
+    if (existingStyleElement) {
+        existingStyleElement.innerHTML = columnStyles;
+    } else {
+        const styleElement = document.createElement('style');
+        styleElement.id = 'dynamicColumnStyles';
+        styleElement.innerHTML = columnStyles;
+        document.head.appendChild(styleElement);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
@@ -1491,3 +1540,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('resize', adjustTableStyle);
+window.addEventListener('resize', calculateColumnWidths);
