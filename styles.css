@@ -636,9 +636,6 @@ th:hover {
     color: silver;
 } 
 
-/* ################################################ */
-
-
 td[data-label="Produkt"], th[data-label="Produkt"] {
     width: 32%;
     white-space: nowrap;
@@ -647,7 +644,7 @@ td[data-label="Produkt"], th[data-label="Produkt"] {
 }
 
 td[data-label="Menge"], th[data-label="Menge"],
-td[data-label="Wert"], th[data-label="Wert"] {
+td[data-label="Wert"], th[data-label="Wert"]{
     width: 8%;
     text-align: center;
 }
@@ -655,6 +652,7 @@ td[data-label="Wert"], th[data-label="Wert"] {
 td[data-label="Beschreibung"], th[data-label="Beschreibung"] {
     width: 35%;
     padding-left: 2%;
+    padding-right: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -687,12 +685,6 @@ th[data-label="Bild"] {
     width: 7%;
     text-align: center;
     white-space: nowrap;
-}
-
-th[data-label="int"],
-th[data-label="date"] {
-    padding: 0 10px;
-    text-align: center;
 }
 
 .table-tag {
@@ -932,8 +924,6 @@ thead tr:hover {
         border-bottom-right-radius: 10px;
     }
 }
-
-/* ################################################ */
 
 footer {
     background-color: rgb(34,151,195);
@@ -1858,8 +1848,8 @@ input:checked + .slider:before {
     border-radius: 15px;
 }
 
+/* 
 
-
-/* table, th, td {
+table, th, td {
   border: 1px solid;
 } */

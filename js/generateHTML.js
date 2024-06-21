@@ -69,10 +69,9 @@ function generateTableRow(product, categoryID, tag, image) {
             columns.push({ label: item.value, value: '' });
         }
     });
-
     let filteredColumns = filterColumns(columns);
+    console.log(filteredColumns)
     let rowHTML = buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image);
-   
     return rowHTML;
 }
 
@@ -85,9 +84,12 @@ function generateImage(image) {
 }
 
 function filterColumns(columns) {
-    return columns.map((column, index) => {
+    return columns.filter(column => {
+        let switchItem = switchData.find(item => item.value === column.label);
+        return switchItem && switchItem.sliderValue === 'checked';
+    }).map((column, index) => {
         return { column, index };
-    }).filter(item => switchData[item.index].sliderValue === 'checked');
+    });
 }
 
 function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image) {
@@ -114,7 +116,7 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
             classList += ' first-element';
             style += 'text-align: left; padding-left: 20px;';
         } 
-
+        
         return `<td class="${classList}" data-label="${column.label}" style="${style}">${column.value || ''}</td>`;
     }).join('');
     return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;

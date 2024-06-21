@@ -1488,6 +1488,22 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                         padding-left: 2%;
                     }`;
             }
+
+            if (column.dataType === 'int' || column.dataType === 'date') {
+                columnStyles += `
+                    th[data-label="${column.dataType}"] {
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        width: ${percentWidth}%;
+                        text-align: center;
+                        max-width: 5px;
+                        padding: 0 5px;
+                    }
+                    td[data-label="${column.label}"] {
+                        padding: 0 5px;
+                    } `;
+            }
         } else {
             columnStyles += `
                 td[data-label="${column.label}"], th[data-label="${column.label}"] {
@@ -1501,6 +1517,14 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                         border: 1px solid #2BB8EE;
                         border-top: 0;
                     }`;
+            } else {
+                columnStyles += `
+                    tr td[data-label="${column.label}"] {
+                        border-left: 1px solid #2BB8EE;
+                        border-right: 1px solid #2BB8EE;
+                        border-top: none;
+                        border-bottom: none;
+                    }`;
             }
         }
     });
@@ -1509,11 +1533,11 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
 }
 
 function applyColumnStyles(columnStyles) {
-    const existingStyleElement = document.getElementById('dynamicColumnStyles');
+    let existingStyleElement = document.getElementById('dynamicColumnStyles');
     if (existingStyleElement) {
         existingStyleElement.innerHTML = columnStyles;
     } else {
-        const styleElement = document.createElement('style');
+        let styleElement = document.createElement('style');
         styleElement.id = 'dynamicColumnStyles';
         styleElement.innerHTML = columnStyles;
         document.head.appendChild(styleElement);
@@ -1541,3 +1565,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', adjustTableStyle);
 window.addEventListener('resize', calculateColumnWidths);
+
