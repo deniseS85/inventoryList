@@ -31,7 +31,7 @@ function generateTableHTML(product, categoryID) {
             let dataLabel = item.userID ? item.dataType : item.value;  
             let displayText = item.value; 
             let textAlign = index === 0 ? 'text-align: left; padding-left: 20px;' : ''; 
-            return `<th data-label="${dataLabel}" onclick="sortTable('${tableID}', ${index})" style="${textAlign}">${displayText}</th>`;
+            return `<th data-label="${dataLabel}" data-id="${item.columnID || ''}" onclick="sortTable('${tableID}', ${index})" style="${textAlign}">${displayText}</th>`;
         }).join('');
 
         let tableHTML = /*html*/`
@@ -66,11 +66,10 @@ function generateTableRow(product, categoryID, tag, image) {
 
     switchData.forEach(item => {
         if (item.sliderValue === 'checked' && !columns.some(column => column.label === item.value)) {
-            columns.push({ label: item.value, value: '' });
+            columns.push({ label: item.value, value: '', columnID: item.columnID || '' });
         }
     });
     let filteredColumns = filterColumns(columns);
-    console.log(filteredColumns)
     let rowHTML = buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image);
     return rowHTML;
 }
@@ -116,8 +115,7 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
             classList += ' first-element';
             style += 'text-align: left; padding-left: 20px;';
         } 
-        
-        return `<td class="${classList}" data-label="${column.label}" style="${style}">${column.value || ''}</td>`;
+        return `<td class="${classList}" data-label="${column.label}" data-id="${item.column.columnID || ''}" style="${style}">${column.value || ''}</td>`;
     }).join('');
     return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;
 }
@@ -221,6 +219,12 @@ async function generateEditTable(data) {
         let currentUserID = await getCurrentUserID();
         let defaultData = data.filter(item => !item.userID || item.userID === '');
         let userSpecificData = data.filter(item => item.userID && item.userID === parseInt(currentUserID, 10));
+        
+        if (userSpecificData.length > 0) {
+            document.getElementById('deleteColumnIcon').style.display = 'flex';
+        } else {
+            document.getElementById('deleteColumnIcon').style.display = 'none';
+        }
 
         let switchContent = '';
 
@@ -230,7 +234,7 @@ async function generateEditTable(data) {
                     <div>${item.value}</div>
                     <label class="switch">
                         <input type="checkbox" name="switch" ${item.sliderValue === 'checked' ? 'checked' : ''}>
-                        <span class="slider round" data-name="${item.value}"></span>
+                        <span class="slider round" data-name="${item.value}" data-id="${item.columnID || ''}"></span>
                     </label>
                 </div>`;
         });
@@ -240,6 +244,7 @@ async function generateEditTable(data) {
         return '';
     }
 }
+
 
 function generateUserInfo(userData) {
     let user = userData[0];

@@ -592,7 +592,7 @@ table {
 tbody {
     max-height: 264px;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     display: block;
     width: calc(100% + 8px);
 }
@@ -600,6 +600,12 @@ tbody {
 thead, tbody tr {
     display: table;
     width: 100%;
+}
+
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
 }
 
 .table-separator {
@@ -625,11 +631,18 @@ thead, tbody tr {
 th, td {
     padding-bottom: 10px;
     padding-top: 10px; 
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 th {
     cursor: pointer;
     transition: color 0.3s ease;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 10px;
 }
 
 th:hover {
@@ -1652,9 +1665,53 @@ button:hover:not(.search-btn) {
     align-items: center;
 }
 
-.editTableColums img {
+.editTableColums h4 {
+    font-size: clamp(1rem, 0.9286rem + 0.3571vw, 1.5rem);
+}
+
+.editTableColums .icon-container-edit-table {
     position: absolute;
-    right: 0
+    right: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.delete-column-icon {
+    color: red;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    left: 21px;
+    top: -8px;
+    cursor: pointer;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.delete-column-icon:hover {
+    filter: brightness(130%);
+    transform: scale(1.2);
+}
+
+.toggle-delete-column-icon {
+    width: clamp(1.5625rem, 1.4286rem + 0.6696vw, 2.5rem);
+    height: clamp(1.25rem, 1.1161rem + 0.6696vw, 2.1875rem);
+    background-color: var(--turquoise);
+    border-radius: 3px;
+    transform: scale(1.2);
+    border: 2px solid var(--turquoise);
+    cursor: pointer;
+}
+
+
+@media only screen and (max-width: 490px) {
+    .editTableColums {
+        margin-bottom: 20px;
+    }
+    .editTableColums .icon-container-edit-table {
+        top: 30px;
+        right: 40%;
+        gap: 10px;
+    }
 }
 
 .switchContainer, .accountContainer {
@@ -1848,8 +1905,7 @@ input:checked + .slider:before {
     border-radius: 15px;
 }
 
-/* 
 
-table, th, td {
+/* table, th, td {
   border: 1px solid;
-} */
+}  */

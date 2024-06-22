@@ -564,6 +564,8 @@ async function saveColumnData() {
         form.reset();
         document.getElementById('infoAddNewColumn').style.display = 'flex';
         await getCostumTableColumn();
+        await toggleSwitches();
+        saveSwitchData();
     } catch (error) {
         console.error('Fehler beim Senden des Formulars:', error);
     }
@@ -575,7 +577,6 @@ async function getCostumTableColumn() {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-
         const columns = await response.json();
         updateSwitchData(columns);
     } catch (error) {
@@ -595,7 +596,8 @@ function updateSwitchData(columns) {
                 value: column.field_name,
                 sliderValue: 'checked',
                 userID: column.user_id,
-                dataType: dataType
+                dataType: dataType,
+                columnID: column.ID
             };
             updatedSwitchData.push(newColumn);
         }
@@ -604,6 +606,54 @@ function updateSwitchData(columns) {
     switchData.length = 0;
     switchData.push(...updatedSwitchData);
 }
+
+async function deleteSwitchItem(columnID) {
+    let userID = await getCurrentUserID();
+
+    try {
+        const response = await fetch('php/deleteTableColumn.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: columnID })
+        });
+
+        if (!response.ok) {
+            throw new Error('Fehler beim Löschen der Tabellenspalte');
+        }
+
+        deleteFromLocalStorage(columnID, userID);
+        removeColumnFromHTML(columnID, userID);
+    } catch (error) {
+        console.error('Fehler beim Löschen der Tabellenspalte:', error.message);
+    }
+}
+
+function deleteFromLocalStorage(columnID, userID) {
+    let localStorageData = localStorage.getItem(`switchData_${userID}`);
+
+    if (localStorageData) {
+        let parsedData = JSON.parse(localStorageData);
+        let updatedLocalStorageData = parsedData.filter(item => item.columnID !== columnID);
+        localStorage.setItem(`switchData_${userID}`, JSON.stringify(updatedLocalStorageData));
+    }
+}
+
+function removeColumnFromHTML(columnID, userID) {
+    let element = document.querySelector(`.slider[data-id="${columnID}"]`);
+    if (element) {
+        element.closest('.switch-item').remove();
+    }
+    let deleteColumnIcon = document.getElementById('deleteColumnIcon');
+    deleteColumnIcon.classList.remove('toggle-delete-column-icon');
+    deleteColumnIcon.classList.add('delete-icon');
+    deleteColumnIcon.src = './assets/img/delete.png';
+    switchData = switchData.filter(item => item.columnID !== columnID);
+    let userSpecificData = switchData.filter(item => item.userID && item.userID === parseInt(userID, 10));
+    document.getElementById('deleteColumnIcon').style.display = userSpecificData.length > 0 ? 'flex' : 'none';
+}
+
 
 
 

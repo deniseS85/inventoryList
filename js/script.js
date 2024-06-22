@@ -8,7 +8,8 @@ let selectedTagIDs = [];
 let imageSelectionListenerAdded = false;
 let isSelectEnabled = false;
 let deleteImageFlag = false;
-const switchData = [
+let deleteMode = false;
+let switchData = [
     { value: 'Produkt', sliderValue: 'checked' },
     { value: 'Menge', sliderValue: 'checked' },
     { value: 'Wert', sliderValue: 'checked' },
@@ -895,11 +896,14 @@ async function goBackToMain(clickedButton) {
     toggleSelection('.image-checkbox', '.gallery img', 'image');
     toggleSelection('.tag-checkbox', '.tags-container', 'tag');
     resetSelectButton();
+    let deleteColumnIcon = document.getElementById('deleteColumnIcon');
+    deleteColumnIcon.classList.remove('toggle-delete-column-icon');
+    deleteColumnIcon.classList.add('delete-icon');
+    deleteColumnIcon.src = './assets/img/delete.png';
 
     if (clickedButton.id === 'backBtnTableView') {
         await isEditTableColumn();
-    }
-    
+    } 
 }
 
 async function isEditTableColumn() {
@@ -1127,6 +1131,7 @@ function showEditViewTable() {
     document.getElementById('editTableViewContainer').style.display = 'flex';
     togglePopup('settingsPopup');
     toggleSwitches();
+    saveSwitchData();
 }
 
 async function toggleSwitches() {
@@ -1167,7 +1172,7 @@ async function loadSwitchData() {
         
         if (switchData.length < parsedData.length) {
             for (let i = switchData.length; i < parsedData.length; i++) {
-                switchData.push({ value: '', sliderValue: '' });
+                switchData.push({ value: '', sliderValue: '', userID: '', dataType: '', columnID: '' });
             }
         }
 
@@ -1176,6 +1181,7 @@ async function loadSwitchData() {
             switchData[index].sliderValue = item.sliderValue;
             switchData[index].userID = item.userID;
             switchData[index].dataType = item.dataType;
+            switchData[index].columnID = item.columnID; 
         });
     }
 }
@@ -1486,6 +1492,9 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                 columnStyles += `
                     td[data-label="${column.label}"] {
                         padding-left: 2%;
+                    }
+                    th[data-label="${column.dataType}"] {
+                        width: ${percentWidth}%;
                     }`;
             }
 
@@ -1542,6 +1551,52 @@ function applyColumnStyles(columnStyles) {
         styleElement.innerHTML = columnStyles;
         document.head.appendChild(styleElement);
     }
+}
+
+async function toggleDeleteColumn(element) {
+    try {
+        deleteMode = !deleteMode;
+        let currentUserID = await getCurrentUserID();
+        let userSpecificData = switchData.filter(item => item.userID && item.userID === parseInt(currentUserID, 10));
+
+        userSpecificData.forEach(item => {
+            let switchItem = document.querySelector(`.switch-item .slider[data-name="${item.value}"]`);
+            if (switchItem) {
+                if (deleteMode) {
+                    showDeleteColumnView(switchItem, element, item);
+                } else {
+                    hideDeleteColumnView(switchItem, element);
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error in toggleDeleteColumn:', error);
+    }
+}
+
+function showDeleteColumnView(switchItem, element, item) {
+    let deleteIcon = document.createElement('span');
+    deleteIcon.textContent = 'X';
+    deleteIcon.classList.add('delete-column-icon');
+    deleteIcon.onclick = async () => {
+        await deleteSwitchItem(item.columnID);
+    };
+    switchItem.style.display = 'none';
+    element.src = './assets/img/delete-toggle.png';
+    element.classList.add('toggle-delete-column-icon');
+    element.classList.remove('delete-icon');
+    switchItem.parentElement.insertBefore(deleteIcon, switchItem);
+}
+
+function hideDeleteColumnView(switchItem, element) {
+    let deleteIcon = switchItem.parentElement.querySelector('.delete-column-icon');
+    if (deleteIcon) {
+        deleteIcon.remove();
+        element.classList.remove('toggle-delete-column-icon');
+        element.classList.add('delete-icon');
+        element.src = './assets/img/delete.png';
+    }
+    switchItem.style.display = '';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

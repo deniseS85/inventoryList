@@ -56,7 +56,10 @@
                 <div onclick="goBackToMain(this)" id="backBtnTableView" class="gallery-button">Zurück</div>
                 <div class="editTableColums">
                     <h4>Tabellenspalten bearbeiten</h4>
-                    <img class="add-icon" onclick="togglePopupNewTableColumn()" src="./assets/img/add.png">
+                    <div class="icon-container-edit-table">
+                        <img style="display:none" class="delete-icon" id="deleteColumnIcon" onclick="toggleDeleteColumn(this)" src="./assets/img/delete.png">
+                        <img class="add-icon" onclick="togglePopupNewTableColumn()" src="./assets/img/add.png">
+                    </div>
                 </div>
                 <div id="switchContainer" class="switchContainer"></div>
             </div>
