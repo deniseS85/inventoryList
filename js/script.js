@@ -495,7 +495,7 @@ async function openProductDetailPopup(categoryID, productID, name, amount, price
     togglePopup('productDetailPopup');
     let formattedPrice = formatPrice(price);
     let tagHtml = getTagHTML(tagName, tagStyle);
-    let infoItems = getInfoItems(name, amount, formattedPrice, information, tagHtml);
+    let infoItems = await getInfoItems(name, amount, formattedPrice, information, tagHtml, productID);
     let editUploadedImage = currentImageUrl[productID] ? currentImageUrl[productID] : imageUrl;
     let infoHtml = generateItemInfoHTML(categoryID, infoItems, editUploadedImage, productID);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
@@ -512,7 +512,7 @@ function getTagHTML(tagName, tagStyle) {
     return '';
 }
 
-function getInfoItems(name, amount, formattedPrice, information, tagHtml) {
+async function getInfoItems(name, amount, formattedPrice, information, tagHtml, productID) {
     let allInfoItems = [
         { label: 'Produkt', value: name },
         { label: 'Menge', value: amount },
@@ -521,12 +521,20 @@ function getInfoItems(name, amount, formattedPrice, information, tagHtml) {
         { label: 'Beschreibung', value: information, isDescription: true }
     ];
 
+    let customValues = await getProductById(productID);
     let userCustomFields = switchData.filter(item => {
         return item.userID !== undefined && item.dataType !== undefined && item.columnID !== undefined;
     });
 
     userCustomFields.forEach(field => {
-        allInfoItems.push({ label: field.value, value: '', dataType: field.dataType, columnID: field.columnID });
+        let value = '';
+        if (customValues.custom_fields[field.columnID]) {
+            value = customValues.custom_fields[field.columnID];
+        }
+        if (field.dataType === 'DATE') {
+            value = value ? formatDate(value) : '';
+        }
+        allInfoItems.push({ label: field.value, value: value, dataType: field.dataType, columnID: field.columnID });
     });
 
     return allInfoItems.filter(item => {
@@ -848,7 +856,16 @@ function setInputTypeAndValidation(input, dataType) {
             flatpickr(input, {
                 dateFormat: "Y-m-d",
                 defaultDate: "",
+                locale: {
+                    firstDayOfWeek: 1,
+                },
                 onReady: function(selectedDates, dateStr, instance) {
+                    const weekdayDropdown = instance.weekdayContainer;
+                    const newWeekdays = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+                    weekdayDropdown.querySelectorAll("span.flatpickr-weekday").forEach((span, index) => {
+                        span.textContent = newWeekdays[index];
+                    });
+
                     const monthDropdown = instance.monthsDropdownContainer;
                     const newMonths = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
                     monthDropdown.querySelectorAll("option").forEach((option, index) => {
@@ -856,9 +873,7 @@ function setInputTypeAndValidation(input, dataType) {
                     });
                 },
                 onChange: function(selectedDates, dateStr, instance) {
-                    // Formatieren des Datums von "YYYY-MM-DD" zu "TT.MM.JJJJ"
-                    let dateParts = dateStr.split('-');
-                    let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                    let formattedDate = formatDate(dateStr);
                     input.value = formattedDate;
                 }
             });
@@ -887,10 +902,7 @@ function setInputValuesCustomColumns(customFields, columnID, productId) {
         if (inputElement) {
             let dataType = inputElement.getAttribute('data-type');
             if (dataType === 'DATE') {
-                let isoDate = value;
-                let dateParts = isoDate.split('-');
-                let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-                inputElement.value = formattedDate;
+                inputElement.value = formatDate(value);
             } else {
                 inputElement.value = value;
             }

@@ -151,7 +151,6 @@ function columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelect
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     let infoHtml = '';
-   
     infoItems.forEach(item => {
         let itemClass = item.isDescription ? 'product description' : 'product';
         infoHtml += /*html*/`
