@@ -531,11 +531,9 @@ async function getInfoItems(name, amount, formattedPrice, information, tagHtml, 
         if (customValues.custom_fields[field.columnID]) {
             value = customValues.custom_fields[field.columnID];
         }
-        if (field.dataType === 'DATE') {
-            value = value ? formatDate(value) : '';
-        }
         allInfoItems.push({ label: field.value, value: value, dataType: field.dataType, columnID: field.columnID });
     });
+
 
     return allInfoItems.filter(item => {
         let switchItem = switchData.find(s => s.value.toLowerCase() === item.label.toLowerCase());
@@ -830,7 +828,6 @@ async function createCustomFields(customFields, containerId, productID) {
             input.id = inputId;
             input.className = 'input-new-item';
             input.name = `${inputId}_value`;
-            input.setAttribute('data-type', field.dataType);
             
             setInputTypeAndValidation(input, field.dataType);
         
@@ -854,7 +851,7 @@ function setInputTypeAndValidation(input, dataType) {
         case 'DATE':
             input.setAttribute('readonly', 'readonly');
             flatpickr(input, {
-                dateFormat: "Y-m-d",
+                dateFormat: "d.m.Y",
                 defaultDate: "",
                 locale: {
                     firstDayOfWeek: 1,
@@ -873,8 +870,7 @@ function setInputTypeAndValidation(input, dataType) {
                     });
                 },
                 onChange: function(selectedDates, dateStr, instance) {
-                    let formattedDate = formatDate(dateStr);
-                    input.value = formattedDate;
+                    input.value = dateStr;
                 }
             });
             break;
@@ -900,12 +896,7 @@ function setInputValuesCustomColumns(customFields, columnID, productId) {
         let inputElement = document.getElementById(inputId);
         
         if (inputElement) {
-            let dataType = inputElement.getAttribute('data-type');
-            if (dataType === 'DATE') {
-                inputElement.value = formatDate(value);
-            } else {
-                inputElement.value = value;
-            }
+            inputElement.value = value;
         } else {
             console.error(`Element with ID ${inputId} not found.`);
         }
