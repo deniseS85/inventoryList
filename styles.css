@@ -1110,12 +1110,13 @@ footer img:hover {
     font-size: 16px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .product.description {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: flex-start;
 }
 
 .label {
@@ -1909,3 +1910,48 @@ input:checked + .slider:before {
 /* table, th, td {
   border: 1px solid;
 }  */
+
+.flatpickr-calendar{
+    background-color: var(--bg-color) !important;
+    border: 3px solid var(--turquoise) !important;
+    box-shadow: unset !important;
+}
+
+.flatpickr-day.selected {
+    background: var(--item-bg)!important;
+    border-color: var(--turquoise)!important;
+}
+
+.flatpickr-day {
+    transition: background-color 0.3s ease;
+    color: var(--font-color) !important;
+}
+
+.flatpickr-day:hover {
+    background-color: var(--turquoise) !important;
+    color: black !important;
+}
+
+span.flatpickr-weekday, .flatpickr-months .flatpickr-month, .flatpickr-current-month .flatpickr-monthDropdown-months {
+    background-color: transparent !important;
+}
+
+.flatpickr-calendar.arrowTop:after {
+    border-bottom-color: var(--turquoise) !important;
+}
+.flatpickr-months .flatpickr-month {
+    margin-bottom: 10px !important;
+    height: 40px !important;
+}
+
+.flatpickr-current-month {
+    height: 46px !important;
+    bottom: -5px !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    height: 34px !important;
+    border-bottom: 2px solid var(--turquoise) !important;
+}
+
+

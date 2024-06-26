@@ -19,6 +19,8 @@
                 <input id="currentProductInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="35">
             </div>
 
+            <div id="customFieldsContainer"></div>
+
             <div class="selectBox-edit">
                 <div class="label-header" style="margin-bottom:10px" onclick="toggleDropdown('dropdownContentEdit')">
                     <div class="current-tag">

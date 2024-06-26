@@ -402,7 +402,7 @@ function selectTagEditProduct(tag) {
     currentTag.className = 'tag current';
     currentTag.innerHTML = /*html*/`
         ${tag.tag_name}
-        <span onclick="removeCurrentTag(${tag.ID})" id="removeTagButton">
+        <span onclick="removeCurrentTag()" id="removeTagButton">
             <img src="./assets/img/remove-tag.png">
         </span>`;
     currentTag.style.backgroundColor = tag.color;
@@ -520,6 +520,14 @@ function getInfoItems(name, amount, formattedPrice, information, tagHtml) {
         { label: 'Tag', value: tagHtml },
         { label: 'Beschreibung', value: information, isDescription: true }
     ];
+
+    let userCustomFields = switchData.filter(item => {
+        return item.userID !== undefined && item.dataType !== undefined && item.columnID !== undefined;
+    });
+
+    userCustomFields.forEach(field => {
+        allInfoItems.push({ label: field.value, value: '', dataType: field.dataType, columnID: field.columnID });
+    });
 
     return allInfoItems.filter(item => {
         let switchItem = switchData.find(s => s.value.toLowerCase() === item.label.toLowerCase());
@@ -682,7 +690,7 @@ async function togglePopupEditProduct() {
 
     try {
         let product = await getProductById(productId);
-        
+
         if (product) {
             await prepareProductData(product, categoryId);
             await getCurrentImage(product);
@@ -706,17 +714,30 @@ async function prepareProductData(product, categoryId) {
         tagHtml = /*html*/`
             <span class="tag current" style="background-color: ${tag.color};">
                 ${tag.tag_name}
-                <span onclick="removeCurrentTag(${tag.ID})" id="removeTagButton">
+                <span onclick="removeCurrentTag()" id="removeTagButton">
                     <img src="./assets/img/remove-tag.png">
                 </span>
             </span>`;
     }
 
+    let userCustomFields = switchData.filter(item => {
+        return item.userID !== undefined && item.dataType !== undefined && item.columnID !== undefined;
+    });
+
+    createCustomFields(userCustomFields, 'customFieldsContainer', product.id);
+    
     let formattedPrice = formatPrice(product.price).replace('€', '').trim();
     let fieldValues = getFieldValues(product, tagHtml, formattedPrice, categoryId);
     setFieldValues(fieldValues);
     document.getElementById('currentImageId').value = product.image_ID || '';
     document.getElementById('currentTagId').value = product.tag_ID || '';
+}
+
+function setDynamicInputValue(inputId, value) {
+    let inputElement = document.getElementById(inputId);
+    if (inputElement) {
+        inputElement.value = value;
+    }
 }
 
 function isEditInputValid() {
@@ -739,7 +760,7 @@ function resetTagStyle() {
     });
 }
 
-function removeCurrentTag(tagID) {
+function removeCurrentTag() {
     let currentTag = document.getElementById('currentTag');
     currentTag.innerHTML = '';
     document.getElementById('currentTagId').value = '';
@@ -766,6 +787,117 @@ function getFieldValues(product, tagHtml, formattedPrice, categoryId) {
         { id: 'currentProductID', value: product.id },
         { id: 'currentCategoryID', value: categoryId }
     ];
+}
+
+class InputValidator {
+    restrictToNumeric(event) {
+        const input = event.target;
+        input.value = input.value.replace(/[^0-9]/g, '').slice(0, 3);
+    }
+
+    restrictToAlphanumeric(event) {
+        const input = event.target;
+        input.value = input.value.replace(/[^\w\säöüß.,]/gi, '').slice(0, 35);
+    }
+}
+
+const inputValidator = new InputValidator();
+
+async function createCustomFields(customFields, containerId, productID) {
+    let container = document.getElementById(containerId);
+    let customValues = await getProductById(productID);
+    container.innerHTML = '';
+
+    customFields.forEach(field => {
+        if (field.sliderValue === 'checked') {
+            let formGroup = document.createElement('div');
+            formGroup.className = 'form-group';
+    
+            let label = document.createElement('label');
+            let inputId = `${field.columnID}_${productID}`;
+            label.setAttribute('for', inputId);
+            label.textContent = field.value + ':';
+    
+            let input = document.createElement('input');
+            input.id = inputId;
+            input.className = 'input-new-item';
+            input.name = `${inputId}_value`;
+            input.setAttribute('data-type', field.dataType);
+            
+            setInputTypeAndValidation(input, field.dataType);
+        
+            let hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `${inputId}_column`;
+            hiddenInput.value = field.dataType;
+
+            formGroup.appendChild(hiddenInput);
+            formGroup.appendChild(label);
+            formGroup.appendChild(input);
+            container.appendChild(formGroup);
+
+            setInputValuesCustomColumns(customValues.custom_fields, field.columnID, productID);
+        }
+    });
+}
+
+function setInputTypeAndValidation(input, dataType) {
+    switch (dataType) {
+        case 'DATE':
+            input.setAttribute('readonly', 'readonly');
+            flatpickr(input, {
+                dateFormat: "Y-m-d",
+                defaultDate: "",
+                onReady: function(selectedDates, dateStr, instance) {
+                    const monthDropdown = instance.monthsDropdownContainer;
+                    const newMonths = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+                    monthDropdown.querySelectorAll("option").forEach((option, index) => {
+                        option.textContent = newMonths[index];
+                    });
+                },
+                onChange: function(selectedDates, dateStr, instance) {
+                    // Formatieren des Datums von "YYYY-MM-DD" zu "TT.MM.JJJJ"
+                    let dateParts = dateStr.split('-');
+                    let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                    input.value = formattedDate;
+                }
+            });
+            break;
+        case 'INT':
+            input.type = 'text';
+            input.addEventListener('input', inputValidator.restrictToNumeric);
+            input.maxLength = 3;
+            break;
+        case 'VARCHAR':
+        default:
+            input.type = 'text';
+            input.addEventListener('input', inputValidator.restrictToAlphanumeric);
+            input.maxLength = 35;
+            break;
+    }
+}
+
+
+function setInputValuesCustomColumns(customFields, columnID, productId) {
+    if (customFields && customFields[columnID]) {
+        let inputId = `${columnID}_${productId}`;
+        let value = customFields[columnID];
+        let inputElement = document.getElementById(inputId);
+        
+        if (inputElement) {
+            let dataType = inputElement.getAttribute('data-type');
+            if (dataType === 'DATE') {
+                let isoDate = value;
+                let dateParts = isoDate.split('-');
+                let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                inputElement.value = formattedDate;
+            } else {
+                inputElement.value = value;
+            }
+        } else {
+            console.error(`Element with ID ${inputId} not found.`);
+        }
+    }
 }
 
 async function getCurrentImage(product) {
@@ -829,6 +961,7 @@ async function editProduct(event) {
     } else {
         formData.delete('imageToRemove');
     }
+
     await saveEditProductInDatabase(formData);
     resetUploadImageSrc('currentImage', 'newImage', 'currentImageId', null);
     document.getElementById('newImage').style.filter = 'grayscale(0)';
@@ -900,6 +1033,7 @@ async function goBackToMain(clickedButton) {
     deleteColumnIcon.classList.remove('toggle-delete-column-icon');
     deleteColumnIcon.classList.add('delete-icon');
     deleteColumnIcon.src = './assets/img/delete.png';
+    deleteMode = false;
 
     if (clickedButton.id === 'backBtnTableView') {
         await isEditTableColumn();
@@ -907,9 +1041,9 @@ async function goBackToMain(clickedButton) {
 }
 
 async function isEditTableColumn() {
-        updateItemInfos();
-        updateCategoryItems();
-        updateProductContainers();
+    updateItemInfos();
+    updateCategoryItems();
+    updateProductContainers();
 }
 
 async function updateItemInfos() {
@@ -1175,13 +1309,12 @@ async function loadSwitchData() {
                 switchData.push({ value: '', sliderValue: '', userID: '', dataType: '', columnID: '' });
             }
         }
-
         parsedData.forEach((item, index) => {
             switchData[index].value = item.value;
             switchData[index].sliderValue = item.sliderValue;
             switchData[index].userID = item.userID;
             switchData[index].dataType = item.dataType;
-            switchData[index].columnID = item.columnID; 
+            switchData[index].columnID = item.columnID;
         });
     }
 }
@@ -1427,18 +1560,6 @@ async function validateAddColumnForm(event) {
     }
 }
 
-function findDataTypeFromCustomColum(field) {
-    if (field.field_value_varchar !== null) {
-        return 'varchar';
-    } else if (field.field_value_int !== null) {
-        return 'int';
-    } else if (field.field_value_date !== null) {
-        return 'date';
-    } else {
-        return 'varchar';
-    }
-}
-
 function calculateColumnWidths() {
     const presetWidths = {
         'Produkt': 32,
@@ -1450,9 +1571,9 @@ function calculateColumnWidths() {
     };
 
     const dataTypeWidths = {
-        'varchar': 35,
-        'int': 8,
-        'date': 8
+        'VARCHAR': 35,
+        'INT': 8,
+        'DATE': 8
     };
 
     let dynamicColumns = switchData.filter(item => item.sliderValue === 'checked').map(item => ({
@@ -1488,7 +1609,7 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                     width: ${percentWidth}%;
                 }`;
 
-            if (column.dataType === 'varchar') {
+            if (column.dataType === 'VARCHAR') {
                 columnStyles += `
                     td[data-label="${column.label}"] {
                         padding-left: 2%;
@@ -1498,7 +1619,7 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                     }`;
             }
 
-            if (column.dataType === 'int' || column.dataType === 'date') {
+            if (column.dataType === 'INT' || column.dataType === 'DATE') {
                 columnStyles += `
                     th[data-label="${column.dataType}"] {
                         overflow: hidden;
@@ -1599,6 +1720,38 @@ function hideDeleteColumnView(switchItem, element) {
     switchItem.style.display = '';
 }
 
+
+function deleteFromLocalStorage(columnID, userID) {
+    let localStorageData = localStorage.getItem(`switchData_${userID}`);
+
+    if (localStorageData) {
+        let parsedData = JSON.parse(localStorageData);
+        let updatedLocalStorageData = parsedData.filter(item => item.columnID !== columnID);
+        localStorage.setItem(`switchData_${userID}`, JSON.stringify(updatedLocalStorageData));
+    }
+}
+
+function removeColumnFromHTML(columnID, userID) {
+    let element = document.querySelector(`.slider[data-id="${columnID}"]`);
+    if (element) {
+        element.closest('.switch-item').remove();
+    }
+
+    switchData = switchData.filter(item => item.columnID !== columnID);
+
+    let userSpecificData = switchData.filter(item => item.userID && item.userID === parseInt(userID, 10));
+    
+    if (userSpecificData.length > 0) {
+        document.getElementById('deleteColumnIcon').style.display = 'flex';
+    } else {
+        document.getElementById('deleteColumnIcon').style.display = 'none';
+        let deleteColumnIcon = document.getElementById('deleteColumnIcon');
+        deleteColumnIcon.classList.remove('toggle-delete-column-icon');
+        deleteColumnIcon.classList.add('delete-icon');
+        deleteColumnIcon.src = './assets/img/delete.png';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     getCategories();
     addNewItemAfterLoadDOM();
@@ -1620,4 +1773,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', adjustTableStyle);
 window.addEventListener('resize', calculateColumnWidths);
-

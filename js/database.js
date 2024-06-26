@@ -271,6 +271,7 @@ async function saveEditProductInDatabase(formData) {
         }
 
         const updatedProduct = await response.json();
+        console.log('Empfangene Daten:', updatedProduct);
         
         if (updatedProduct.error) {
             console.error('Fehler beim Ändern des Produktes:', updatedProduct.error);
@@ -579,6 +580,7 @@ async function getCostumTableColumn() {
         }
         const columns = await response.json();
         updateSwitchData(columns);
+        return columns;
     } catch (error) {
         console.error('Fehler beim Abrufen der benutzerdefinierten Spalten:', error);
     }
@@ -591,12 +593,11 @@ function updateSwitchData(columns) {
         const existingColumn = updatedSwitchData.find(item => item.value === column.field_name);
         
         if (!existingColumn) {
-            const dataType = findDataTypeFromCustomColum(column);
             const newColumn = {
                 value: column.field_name,
                 sliderValue: 'checked',
                 userID: column.user_id,
-                dataType: dataType,
+                dataType: column.field_type,
                 columnID: column.ID
             };
             updatedSwitchData.push(newColumn);
@@ -630,29 +631,7 @@ async function deleteSwitchItem(columnID) {
     }
 }
 
-function deleteFromLocalStorage(columnID, userID) {
-    let localStorageData = localStorage.getItem(`switchData_${userID}`);
 
-    if (localStorageData) {
-        let parsedData = JSON.parse(localStorageData);
-        let updatedLocalStorageData = parsedData.filter(item => item.columnID !== columnID);
-        localStorage.setItem(`switchData_${userID}`, JSON.stringify(updatedLocalStorageData));
-    }
-}
-
-function removeColumnFromHTML(columnID, userID) {
-    let element = document.querySelector(`.slider[data-id="${columnID}"]`);
-    if (element) {
-        element.closest('.switch-item').remove();
-    }
-    let deleteColumnIcon = document.getElementById('deleteColumnIcon');
-    deleteColumnIcon.classList.remove('toggle-delete-column-icon');
-    deleteColumnIcon.classList.add('delete-icon');
-    deleteColumnIcon.src = './assets/img/delete.png';
-    switchData = switchData.filter(item => item.columnID !== columnID);
-    let userSpecificData = switchData.filter(item => item.userID && item.userID === parseInt(userID, 10));
-    document.getElementById('deleteColumnIcon').style.display = userSpecificData.length > 0 ? 'flex' : 'none';
-}
 
 
 

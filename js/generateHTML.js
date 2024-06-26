@@ -136,7 +136,7 @@ function columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelect
     } 
     
     if (index === totalColumns - 1 || totalColumns <= 4) {
-        tagDivStyle += 'margin: 0 auto;'; /*  width: 145px; */
+        tagDivStyle += 'margin: 0 auto;';
     }
 
     if (index === 0 && !isOnlyOneColumnSelected) {
@@ -151,7 +151,7 @@ function columTagStyle(column, style, index, totalColumns, isOnlyOneColumnSelect
 
 function generateItemInfoHTML(categoryID, infoItems, imageUrl, productID) {
     let infoHtml = '';
-
+   
     infoItems.forEach(item => {
         let itemClass = item.isDescription ? 'product description' : 'product';
         infoHtml += /*html*/`
@@ -244,7 +244,6 @@ async function generateEditTable(data) {
         return '';
     }
 }
-
 
 function generateUserInfo(userData) {
     let user = userData[0];

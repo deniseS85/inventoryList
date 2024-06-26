@@ -7,34 +7,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $columnType = $_POST['column_type'];
     $userId = $_SESSION['user_id'];
 
-    switch ($columnType) {
-        case 'VARCHAR':
-            $sql = "INSERT INTO UserCustomFields (user_id, field_name, field_value_varchar) VALUES (?, ?, '')";
-            break;
-        case 'INT':
-            $sql = "INSERT INTO UserCustomFields (user_id, field_name, field_value_int) VALUES (?, ?, 0)";
-            break;
-        case 'DATE':
-            $sql = "INSERT INTO UserCustomFields (user_id, field_name, field_value_date) VALUES (?, ?, '1970-01-01')";
-            break;
-        default:
-            echo "Ungültiger Datentyp ausgewählt.";
-            exit;
-    }
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("is", $userId, $columnName);
+    $sqlInsert = "INSERT INTO UserCustomFields (user_id, field_name, field_type) VALUES (?, ?, ?)";
+    
+    $stmtInsert = $conn->prepare($sqlInsert);
+    $stmtInsert->bind_param("iss", $userId, $columnName, $columnType);
 
-    if ($stmt->execute()) {
-        echo "Datensatz erfolgreich hinzugefügt";
+    if ($stmtInsert->execute()) {
+        echo "Benutzerdefiniertes Feld erfolgreich hinzugefügt.";
     } else {
-        echo "Fehler beim Hinzufügen der benutzerdefinierten Spalte: " . $stmt->error;
+        echo "Fehler beim Hinzufügen des benutzerdefinierten Feldes: " . $stmtInsert->error;
     }
 
-    $stmt->close();
+    $stmtInsert->close();
+    $conn->close();
 } else {
     echo "Ungültige Anfrage";
 }
-
-$conn->close();
 ?>
-

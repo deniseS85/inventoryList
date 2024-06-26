@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="assets/img/inventar.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <script language="javascript" type="text/javascript" src="js/login.js"></script>
     <?php 
     include 'authentification/check_login.php'; 
@@ -15,6 +16,7 @@
         <script src="js/script.js"></script>
         <script src="js/database.js"></script>
         <script src="js/generateHTML.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <?php endif; ?>
 </head>
 

@@ -30,6 +30,14 @@ if (isset($_GET['product_id'])) {
             'image_ID' => $product['image_ID'],
             'user_id' => $product['user_id']
         );
+
+        $customFields = json_decode($product['custom_fields'], true);
+        if (is_array($customFields)) {
+            $product_data['custom_fields'] = $customFields;
+        } else {
+            $product_data['custom_fields'] = array();
+        }
+
         echo json_encode($product_data);
     } else {
         echo json_encode(['error' => 'Product not found']);
