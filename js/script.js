@@ -995,19 +995,32 @@ async function updateProductDetail(updatedProduct) {
     let tag = await getTagPerProduct(updatedProduct.tag_ID);
     let tagHtml = tag ? getTagHTML(tag.tag_name, `background-color: ${tag.color}; padding: 5px 10px; border-radius: 5px; font-size: 15px`) : '';
     let image = await getImagePerProduct(updatedProduct.image_ID);
-    let imageUrl = '';
-    if (image && image.url) {
-        imageUrl = image.url;
-    }
+    let imageUrl = image && image.url ? image.url : '';
 
     let infoItems = [
-        { label: 'Name', value: updatedProduct.name },
+        { label: 'Produkt', value: updatedProduct.name },
         { label: 'Menge', value: updatedProduct.amount },
         { label: 'Preis', value: formatPrice(updatedProduct.price) },
         { label: 'Tag', value: tagHtml },
         { label: 'Information', value: updatedProduct.information }
     ];
-   
+
+    let customValues = await getProductById(updatedProduct.id);
+    let userCustomFields = switchData.filter(item => item.userID !== undefined && item.dataType !== undefined && item.columnID !== undefined);
+
+    userCustomFields.forEach(field => {
+        let value = '';
+        if (customValues.custom_fields[field.columnID] !== undefined) {
+            value = customValues.custom_fields[field.columnID];
+        }
+        infoItems.push({ label: field.value, value: value, dataType: field.dataType, columnID: field.columnID });
+    });
+
+    infoItems = infoItems.filter(item => {
+        let switchItem = switchData.find(s => s.value.toLowerCase() === item.label.toLowerCase());
+        return switchItem && switchItem.sliderValue === 'checked';
+    });
+
     let infoHtml = generateItemInfoHTML(updatedProduct.categoryId, infoItems, imageUrl, updatedProduct.id);
     document.getElementById('productDetailContent').innerHTML = infoHtml;
 }
@@ -1619,6 +1632,7 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                     }
                     th[data-label="${column.dataType}"] {
                         width: ${percentWidth}%;
+                        padding-left: 2%;
                     }`;
             }
 
@@ -1635,6 +1649,7 @@ function generateColumnStyles(dynamicColumns, totalWidth, presetWidths, dataType
                     }
                     td[data-label="${column.label}"] {
                         padding: 0 5px;
+                        text-align: center;
                     } `;
             }
         } else {

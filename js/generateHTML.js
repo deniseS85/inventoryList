@@ -63,10 +63,16 @@ function generateTableRow(product, categoryID, tag, image) {
         { label: 'Tag', value: tag ? generateTag(tag, tagStyle) : '' },
         { label: 'Bild', value: image ? generateImage(image) : '' }    
     ];
+    
+    let customFields = product.custom_fields;
 
     switchData.forEach(item => {
         if (item.sliderValue === 'checked' && !columns.some(column => column.label === item.value)) {
-            columns.push({ label: item.value, value: '', columnID: item.columnID || '' });
+            let value = '';
+            if (customFields && customFields[item.columnID]) {
+                value = customFields[item.columnID];
+            }
+            columns.push({ label: item.value, value: value, columnID: item.columnID || '' });
         }
     });
     let filteredColumns = filterColumns(columns);

@@ -27,7 +27,15 @@ if(isset($_GET['category_id'])) {
             'image_ID' => $row['image_ID'],
             'user_id' => $row['user_id']
         );
+
+        $customFields = json_decode($row['custom_fields'], true);
+        if (is_array($customFields)) {
+            $product['custom_fields'] = $customFields;
+        } else {
+            $product['custom_fields'] = array();
+        }
         $products[] = $product;
+        
     }
 
     echo json_encode($products);

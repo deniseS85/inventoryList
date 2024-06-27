@@ -271,7 +271,6 @@ async function saveEditProductInDatabase(formData) {
         }
 
         const updatedProduct = await response.json();
-        console.log('Empfangene Daten:', updatedProduct);
         
         if (updatedProduct.error) {
             console.error('Fehler beim Ändern des Produktes:', updatedProduct.error);
