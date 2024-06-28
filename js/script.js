@@ -828,8 +828,10 @@ async function createCustomFields(customFields, containerId, productID) {
             input.id = inputId;
             input.className = 'input-new-item';
             input.name = `${inputId}_value`;
-            
-            setInputTypeAndValidation(input, field.dataType);
+
+            let storedDate = customValues.custom_fields[field.columnID];
+
+            setInputTypeAndValidation(input, field.dataType, storedDate);
         
             let hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -846,28 +848,34 @@ async function createCustomFields(customFields, containerId, productID) {
     });
 }
 
-function setInputTypeAndValidation(input, dataType) {
+function setInputTypeAndValidation(input, dataType, storedDate) {
     switch (dataType) {
         case 'DATE':
             input.setAttribute('readonly', 'readonly');
             flatpickr(input, {
                 dateFormat: "d.m.Y",
-                defaultDate: "",
+                defaultDate: storedDate ? storedDate : null,
                 locale: {
                     firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+                        longhand: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                    },
+                    months: {
+                        shorthand: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                        longhand: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                    },
                 },
                 onReady: function(selectedDates, dateStr, instance) {
-                    const weekdayDropdown = instance.weekdayContainer;
-                    const newWeekdays = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
-                    weekdayDropdown.querySelectorAll("span.flatpickr-weekday").forEach((span, index) => {
-                        span.textContent = newWeekdays[index];
+                    const yearDropdown = createYearDropdown(instance, selectedDates);
+                    const monthContainer = instance.calendarContainer.querySelector('.flatpickr-current-month');
+
+                    instance.yearElements.forEach(yearElement => {
+                        yearElement.style.display = 'none';
                     });
 
-                    const monthDropdown = instance.monthsDropdownContainer;
-                    const newMonths = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-                    monthDropdown.querySelectorAll("option").forEach((option, index) => {
-                        option.textContent = newMonths[index];
-                    });
+                    const numInputWrapper = monthContainer.querySelector('.numInputWrapper');
+                    numInputWrapper.appendChild(yearDropdown);
                 },
                 onChange: function(selectedDates, dateStr, instance) {
                     input.value = dateStr;
@@ -888,6 +896,29 @@ function setInputTypeAndValidation(input, dataType) {
     }
 }
 
+function createYearDropdown(instance, selectedDates) {
+    const yearDropdown = document.createElement('select');
+    yearDropdown.className = 'flatpickr-yearDropdown';
+
+    const currentYear = new Date().getFullYear();
+    const yearsRange = Array.from({ length: 41 }, (_, i) => currentYear - 20 + i);
+
+    yearsRange.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearDropdown.appendChild(option);
+    });
+
+    const currentSelectedYear = selectedDates[0] ? selectedDates[0].getFullYear() : new Date().getFullYear();
+    yearDropdown.value = currentSelectedYear;
+    yearDropdown.addEventListener('change', function() {
+        instance.currentYear = parseInt(yearDropdown.value);
+        instance.redraw();
+    });
+
+    return yearDropdown;
+}
 
 function setInputValuesCustomColumns(customFields, columnID, productId) {
     if (customFields && customFields[columnID]) {

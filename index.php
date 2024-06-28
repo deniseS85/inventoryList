@@ -8,7 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <link rel="stylesheet" href="cookiebanner/cookiebanner.style.css">
     <script language="javascript" type="text/javascript" src="js/login.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="cookiebanner/cookiebanner.script.js"></script>
+    <style>*{margin:0;padding:0;text-decoration:none;list-style:none;box-sizing:border-box;}</style>
+    <script>$(document).ready(function() {cookieBanner.init();});</script>
     <?php 
     include 'authentification/check_login.php'; 
     if (isset($_SESSION['user_id'])) : 

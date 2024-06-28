@@ -1,0 +1,70 @@
+body {
+    background-color: rgb(5,43,56) !important;
+    box-sizing: border-box;
+    user-select: none;
+    color: rgb(223, 223, 250) !important;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    padding-top: 20px;
+}
+
+.h1, .h3, .h4, .h5, .h6, h1, h3, h4, h5, h6 {
+    margin-bottom: 0rem !important;
+}
+
+.gallery-button {
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    background-color: #051C25;
+    border: 1px solid #2BB8EE;
+    border-radius: 10px;
+    padding: 5px 10px;
+    text-align: center;
+    width: 120px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.gallery-button:hover {
+    background-color: #2BB8EE;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: #051C25;
+}
+
+.imprint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(7,67,91);
+    border: 2px solid #2BB8EE;
+    padding: 20px; 
+    border-radius: 15px;
+    width: 80%;
+}
+
+.imprint .content a {
+    text-decoration: none;
+    color: #2BB8EE;
+    cursor: pointer;
+}
+.imprint .content p, .imprint .content .privacy {
+    font-size: clamp(0.875rem, 0.8393rem + 0.1786vw, 1.125rem);
+}
+.imprint .content h2 {
+    font-size: clamp(1.125rem, 0.9286rem + 0.9821vw, 2.5rem);
+}
+
+.imprint .content h4 {
+    font-size: clamp(1rem, 0.7857rem + 1.0714vw, 2.5rem);
+}
+
+@media screen and (max-width: 768px) {
+    .imprint {
+        width: 100%;
+    }
+    
+}

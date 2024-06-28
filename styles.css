@@ -239,7 +239,6 @@ h6 {
     width: 100%;
 }
 
-
 .login-message-bg {
     position: absolute;
     inset: 0;
@@ -1911,7 +1910,7 @@ input:checked + .slider:before {
   border: 1px solid;
 }  */
 
-.flatpickr-calendar{
+.flatpickr-calendar {
     background-color: var(--bg-color) !important;
     border: 3px solid var(--turquoise) !important;
     box-shadow: unset !important;
@@ -1939,6 +1938,7 @@ span.flatpickr-weekday, .flatpickr-months .flatpickr-month, .flatpickr-current-m
 .flatpickr-calendar.arrowTop:after {
     border-bottom-color: var(--turquoise) !important;
 }
+
 .flatpickr-months .flatpickr-month {
     margin-bottom: 10px !important;
     height: 40px !important;
@@ -1950,8 +1950,42 @@ span.flatpickr-weekday, .flatpickr-months .flatpickr-month, .flatpickr-current-m
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-    height: 34px !important;
+    height: 33px !important;
     border-bottom: 2px solid var(--turquoise) !important;
+    margin: unset !important;
+    transition: color 0.3s ease;
+}
+
+.flatpickr-yearDropdown {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0 20px 6px 5px;
+    border-bottom: 2px solid var(--turquoise) !important;
+    transition: color 0.3s ease;
+    margin-left: 10px;
+}
+
+.flatpickr-yearDropdown option {
+    max-height: 22px;
+    overflow-y: auto;
+    background-color: var(--bg-color) !important;
+    border: 1px solid var(--turquoise);
+    border-radius: 10px;
+}
+
+.flatpickr-yearDropdown:hover, .flatpickr-current-month:hover .flatpickr-monthDropdown-months:hover {
+    color: var(--turquoise);
+    background-color: var(--bg-color) !important;
+}
+
+.flatpickr-current-month .numInputWrapper:hover {
+    background-color: var(--bg-color) !important;
+}
+
+.arrowDown, .arrowUp {
+    display: none !important;
 }
 
 
