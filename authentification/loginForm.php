@@ -17,7 +17,7 @@
         </div>
 
         <div class="sub-form-group">
-            <div class="remember-container">
+            <div id="rememberContainer" class="remember-container">
                 <input type="checkbox" id="rememberMe" name="rememberMe" class="remember-me-checkbox">
                 <label for="rememberMe">Angemeldet bleiben</label>
             </div>

@@ -1,6 +1,44 @@
 "use strict;"
 
-var config={"primaryColor":"#2BB8EE","darkColor":"rgb(223, 223, 250)","lightColor":"rgb(7, 67, 91)","themeMode":"light","showSettingsBtn":false,"showCloseIcon":true,"showDeclineBtn":true,"fullWidth":false,"displayPosition":"center","settingsBtnLabel":"Customize","delay":2000,"expires":365,"title":"WIR VERWENDEN COOKIES","description":"Diese Website verwendet Cookies, um sicherzustellen, dass Sie während Ihres Besuchs auf der Seite angemeldet bleiben. Diese Cookies sind essenziell für die Bereitstellung unserer Dienste. Weitere Informationen darüber, wie wir Cookies verwenden und wie Sie Ihre Einstellungen ändern können, finden Sie in unserer","acceptBtnLabel":"Akzeptieren","declineInfoBtnLabel":"Ablehnen","moreInfoBtnLink":"/inventoryList/imprint/imprint.html","moreInfoBtnLabel":"Datenschutzerklärung.","cookieTypesTitle":"Select cookies to accept","necessaryCookieTypeLabel":"Necessary","necessaryCookieTypeDesc":"These cookies are necessary for the website to function and cannot be switched off in our systems.","cookieTypes":[{"type":"Preferences","value":"preferences","description":"Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in."},{"type":"Marketing","value":"marketing","description":"Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers."},{"type":"Analytics","value":"analytics","description":"Analytics cookies allow us to count visits and traffic sources, so we can measure and improve the performance of our site. They help us know which pages are the most and least popular and see how visitors move around the site."}]};
+var config = {
+    "primaryColor":"#2BB8EE",
+    "darkColor":"rgb(223, 223, 250)",
+    "lightColor":"rgb(7, 67, 91)",
+    "themeMode":"light",
+    "showSettingsBtn":false,
+    "showCloseIcon":true,
+    "showDeclineBtn":true,
+    "fullWidth":false,
+    "displayPosition":"center",
+    "settingsBtnLabel":"Customize",
+    "delay":0,
+    "expires":365,
+    "title":"WIR VERWENDEN COOKIES","description":"Diese Website verwendet Cookies, um sicherzustellen, dass Sie während Ihres Besuchs auf der Seite angemeldet bleiben. Diese Cookies sind essenziell für die Bereitstellung unserer Dienste. Weitere Informationen darüber, wie wir Cookies verwenden und wie Sie Ihre Einstellungen ändern können, finden Sie in unserer",
+    "acceptBtnLabel":"Akzeptieren",
+    "declineInfoBtnLabel":"Ablehnen",
+    "moreInfoBtnLink":"/inventoryList/imprint/imprint.html",
+    "moreInfoBtnLabel":"Datenschutzerklärung.",
+    "cookieTypesTitle":"Select cookies to accept",
+    "necessaryCookieTypeLabel":"Necessary",
+    "necessaryCookieTypeDesc":"These cookies are necessary for the website to function and cannot be switched off in our systems.",
+    "cookieTypes":[
+        {
+            "type":"Preferences",
+            "value":"preferences",
+            "description":"Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in."
+        },
+        {
+            "type":"Marketing",
+            "value":"marketing",
+            "description":"Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers."
+        },
+        {
+            "type":"Analytics",
+            "value":"analytics",
+            "description":"Analytics cookies allow us to count visits and traffic sources, so we can measure and improve the performance of our site. They help us know which pages are the most and least popular and see how visitors move around the site."
+        }
+    ]
+};
 
 function _slicedToArray(e,c){return _arrayWithHoles(e)||_iterableToArrayLimit(e,c)||_unsupportedIterableToArray(e,c)||_nonIterableRest()}function _nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}function _unsupportedIterableToArray(e,c){if(e){if("string"==typeof e)return _arrayLikeToArray(e,c)
 var i=Object.prototype.toString.call(e).slice(8,-1)
@@ -18,9 +56,9 @@ var n='<li><input type="checkbox" name="gdprPrefItem" value="necessary" checked=
 e.each(config.cookieTypes,function(e,c){if(""!==c.type&&""!==c.value){var i=""
 c.description!==!1&&(i=' title="'+c.description+'"'),n+='<li><input type="checkbox" id="gdprPrefItem'+c.value+'" name="gdprPrefItem" value="'+c.value+'" data-compulsory="on"> <label for="gdprPrefItem'+c.value+'"'+i+">"+c.type+"</label></li>"}})
 var p='<div id="cookieBanner-bg"><div id="cookieBanner" class="'+config.themeMode+" display-"+config.displayPosition+" full-width-"+config.fullWidth+'"><div id="closeIcon">'+s+'</div><div class="title-wrap">'+a+"<h4>"+config.title+'</h4></div><div class="content-wrap"><div class="msg-wrap"><p>'+config.description+' <a style="color:'+config.primaryColor+';" href="'+config.moreInfoBtnLink+'">'+config.moreInfoBtnLabel+'</a></p><div id="cookieSettings">'+l+config.settingsBtnLabel+'</div><div id="cookieTypes" style="display:none;"><h5>'+config.cookieTypesTitle+"</h5><ul>"+n+'</ul></div></div><div class="btn-wrap"><button id="cookieAccept" style="color:'+config.lightColor+";background:"+config.primaryColor+";border: 1px solid "+config.primaryColor+';" type="button">'+config.acceptBtnLabel+'</button><button id="cookieReject" style="color:'+config.primaryColor+";border: 1px solid "+config.primaryColor+';" type="button">'+config.declineInfoBtnLabel+"</button></div></div>"
-setTimeout(function(){e("body").append(p),e("#cookieBanner, #cookieBanner-bg").hide().fadeIn("slow"),config.showSettingsBtn||e("#cookieSettings").hide(),config.showDeclineBtn||e("#cookieReject").hide(),config.showCloseIcon||e("#closeIcon").hide()},config.delay),e("body").on("click","#cookieAccept",function(){r(!0,config.expires),e('input[name="gdprPrefItem"][data-compulsory="on"]').prop("checked",!0)
+setTimeout(function(){e("body").append(p),e("#cookieBanner, #cookieBanner-bg").hide().fadeIn("slow"),config.showSettingsBtn||e("#cookieSettings").hide(),config.showDeclineBtn||e("#cookieReject").hide(),config.showCloseIcon||e("#closeIcon").hide()},config.delay),e("body").on("click","#cookieAccept",function(){r(!0,config.expires),e('input[name="gdprPrefItem"][data-compulsory="on"]').prop("checked",!0);e("#rememberContainer").show();
 var c=[]
-e.each(e('input[name="gdprPrefItem"]').serializeArray(),function(e,i){c.push(i.value)}),t("cookieConsentPrefs",encodeURIComponent(JSON.stringify(c)),{expires:o(365),path:"/"}),injectScripts()}),e("body").on("click","#cookieSettings",function(){e('input[name="gdprPrefItem"]:not(:disabled)').attr("data-compulsory","off").prop("checked",!0),e("#cookieTypes").toggle("fast",function(){e("#cookieSettings").prop("disabled",!1)})}),e("body").on("click","#closeIcon",function(){e("#cookieBanner, #cookieBanner-bg").remove()}),e("body").on("click","#cookieReject",function(){r(!1,config.expires),t("cookieConsentPrefs","",{expires:o(-365),path:"/"})})}}
+e.each(e('input[name="gdprPrefItem"]').serializeArray(),function(e,i){c.push(i.value)}),t("cookieConsentPrefs",encodeURIComponent(JSON.stringify(c)),{expires:o(365),path:"/"}),injectScripts()}),e("body").on("click","#cookieSettings",function(){e('input[name="gdprPrefItem"]:not(:disabled)').attr("data-compulsory","off").prop("checked",!0),e("#cookieTypes").toggle("fast",function(){e("#cookieSettings").prop("disabled",!1)})}),e("body").on("click","#closeIcon",function(){e("#cookieBanner, #cookieBanner-bg").remove()}),e("body").on("click","#cookieReject",function(){r(!1,config.expires),t("cookieConsentPrefs","",{expires:o(-365),path:"/"});e("#rememberContainer").hide();})}}
 var i=function(e){return document.cookie.indexOf(e)>-1?!0:!1},r=function(i,r){t("cookieConsent",i,{expires:o(r),path:"/"}),e("#cookieBanner, #cookieBanner-bg").fadeOut("fast",function(){e(c).remove()})},t=function(e,c){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{}
 document.cookie="".concat(e,"=").concat(c).concat(Object.keys(i).reduce(function(e,c){return e+";".concat(c.replace(/([A-Z])/g,function(e){return"-"+e.toLowerCase()}),"=").concat(i[c])},""))},o=function(e){var c=new Date
 return c.setTime(c.getTime()+24*e*60*60*1e3),c.toUTCString()},n=function(e){var c=document.cookie.split(";").reduce(function(e,c){var i=c.split("=").map(function(e){return e.trim()}),r=_slicedToArray(i,2),t=r[0],o=r[1]

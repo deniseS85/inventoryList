@@ -13,7 +13,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="cookiebanner/cookiebanner.script.js"></script>
     <style>*{margin:0;padding:0;text-decoration:none;list-style:none;box-sizing:border-box;}</style>
-    <script>$(document).ready(function() {cookieBanner.init();});</script>
+    <script>$(document).ready(function() {cookieBanner.init();});
+</script>
     <?php 
     include 'authentification/check_login.php'; 
     if (isset($_SESSION['user_id'])) : 

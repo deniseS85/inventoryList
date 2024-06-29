@@ -16,7 +16,7 @@ if (!$loggedIn && $hasCookie) {
         $tokenData = $result->fetch_assoc();
         $_SESSION['user_id'] = $tokenData['id'];
 
-        $stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT username FROM Users WHERE id = ?");
         $stmt->bind_param("i", $tokenData['id']);
         $stmt->execute();
         $result = $stmt->get_result();
