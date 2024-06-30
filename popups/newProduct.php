@@ -19,6 +19,8 @@
                 <input id="productInfo" class="input-new-item" type="text" name="product-info" onkeydown="return /[a-zA-Z0-9\säöüß.,]/.test(event.key)" maxlength="35">
             </div>
 
+            <div id="customFieldsContainerNewProduct"></div>
+
             <div class="tagImage">
                 <div>
                     <div class="selectBox">

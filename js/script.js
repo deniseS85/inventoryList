@@ -809,45 +809,6 @@ class InputValidator {
 
 const inputValidator = new InputValidator();
 
-async function createCustomFields(customFields, containerId, productID) {
-    let container = document.getElementById(containerId);
-    let customValues = await getProductById(productID);
-    container.innerHTML = '';
-
-    customFields.forEach(field => {
-        if (field.sliderValue === 'checked') {
-            let formGroup = document.createElement('div');
-            formGroup.className = 'form-group';
-    
-            let label = document.createElement('label');
-            let inputId = `${field.columnID}_${productID}`;
-            label.setAttribute('for', inputId);
-            label.textContent = field.value + ':';
-    
-            let input = document.createElement('input');
-            input.id = inputId;
-            input.className = 'input-new-item';
-            input.name = `${inputId}_value`;
-
-            let storedDate = customValues.custom_fields[field.columnID];
-
-            setInputTypeAndValidation(input, field.dataType, storedDate);
-        
-            let hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = `${inputId}_column`;
-            hiddenInput.value = field.dataType;
-
-            formGroup.appendChild(hiddenInput);
-            formGroup.appendChild(label);
-            formGroup.appendChild(input);
-            container.appendChild(formGroup);
-
-            setInputValuesCustomColumns(customValues.custom_fields, field.columnID, productID);
-        }
-    });
-}
-
 function setInputTypeAndValidation(input, dataType, storedDate) {
     switch (dataType) {
         case 'DATE':
@@ -1436,7 +1397,11 @@ function adjustFormBySwitchTableColumn(formID, tagElement, imageElement, switchD
     });
     tagFormGroup(tagElement, switchData);
     imageFormGroup(imageElement, switchData);
-}
+
+    let userCustomFields = switchData.filter(item => {
+        return item.userID !== undefined && item.dataType !== undefined && item.columnID !== undefined;
+    });
+    createCustomFields(userCustomFields, 'customFieldsContainerNewProduct');}
 
 function adjustFormGroups(group, switchData) {
     let label = group.querySelector('label');
@@ -1451,6 +1416,49 @@ function adjustFormGroups(group, switchData) {
             group.style.display = 'none';
         }
     }
+}
+
+async function createCustomFields(customFields, containerId, productID = null) {
+    let container = document.getElementById(containerId);
+    let customValues = productID ? await getProductById(productID) : {};
+    container.innerHTML = '';
+
+    customFields.forEach(field => {
+        if (field.sliderValue === 'checked') {
+            let formGroup = document.createElement('div');
+            formGroup.className = 'form-group';
+    
+            let label = document.createElement('label');
+            let inputId = productID ? `${field.columnID}_${productID}` : field.columnID;
+            label.setAttribute('for', inputId);
+            label.textContent = field.value + ':';
+    
+            let input = document.createElement('input');
+            input.id = inputId;
+            input.className = 'input-new-item';
+            input.name = productID ? `${inputId}_value` : `${field.columnID}_value`;
+
+            let storedDate = productID ? customValues.custom_fields[field.columnID] : null;
+
+            setInputTypeAndValidation(input, field.dataType, storedDate);
+        
+            if (productID) {
+                let hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `${inputId}_column`;
+                hiddenInput.value = field.dataType;
+                formGroup.appendChild(hiddenInput);
+            }
+
+            formGroup.appendChild(label);
+            formGroup.appendChild(input);
+            container.appendChild(formGroup);
+
+            if (productID) {
+                setInputValuesCustomColumns(customValues.custom_fields, field.columnID, productID);
+            }
+        }
+    });
 }
 
 function tagFormGroup(tagElement, switchData) {

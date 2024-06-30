@@ -42,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newImageURL = null;
 
     $conn->begin_transaction();
+    
     try {
         // Überprüfen, ob ein neues Bild hochgeladen wurde
         if (isset($_FILES['uploadImage']) && $_FILES['uploadImage']['size'] > 0) {
@@ -142,11 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $productID = $productId;
                     $fieldValue = $_POST[$columnID . '_' . $productID . '_value'];
 
-                    // Füge den Wert nur hinzu, wenn er nicht leer ist
                     if (!empty($fieldValue)) {
-                        // Überprüfen, ob die Spalte bereits existiert und den Wert hinzufügen
                         if (isset($customFields[$columnID])) {
-                            // Wenn bereits ein Wert für diese Spalte existiert, füge den neuen Wert hinzu (z.B. als Array)
                             if (!is_array($customFields[$columnID])) {
                                 $existingValue = $customFields[$columnID];
                                 $customFields[$columnID] = array($existingValue, $fieldValue);
@@ -160,7 +158,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            // Lade bestehende custom_fields aus der Datenbank, falls sie existieren
             $stmt = $conn->prepare("SELECT custom_fields FROM Products WHERE ID = ?");
             $stmt->bind_param("i", $productId);
             $stmt->execute();
@@ -168,7 +165,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $product = $result->fetch_assoc();
             $existingCustomFields = json_decode($product['custom_fields'], true);
 
-            // Sicherstellen, dass $existingCustomFields ein Array ist, auch wenn es null ist
             if (!is_array($existingCustomFields)) {
                 $existingCustomFields = array();
             }
@@ -181,8 +177,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $jsonCustomFields = json_encode($finalCustomFields);
-
-            // Aktualisieren der custom_fields in der Datenbank
             $stmtUpdateCustomFields = $conn->prepare("UPDATE Products SET custom_fields = ? WHERE ID = ?");
             $stmtUpdateCustomFields->bind_param("si", $jsonCustomFields, $productId);
             if ($stmtUpdateCustomFields->execute()) {
