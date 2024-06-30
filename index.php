@@ -83,7 +83,10 @@
         <a href="php/logout.php">
             <img src="./assets/img/logout.png">
         </a>
-        <img onclick="openSettings()" src="./assets/img/setting.png">
+        <div>
+            <img class="imprint-icon" onclick="window.location.href = 'imprint/imprint.html';"  src="./assets/img/imprint-icon.png">
+            <img onclick="openSettings()" src="./assets/img/setting.png">
+        <div>
     </footer>
     
     <?php 
