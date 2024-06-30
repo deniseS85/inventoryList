@@ -630,6 +630,49 @@ async function deleteSwitchItem(columnID) {
     }
 }
 
+async function setLoginCookie() {
+    const token = generateToken();
+    const days = 365;
+    setCookie('login_cookie', token, days);
+
+    try {
+        const response = await fetch('php/setRememberToken.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `token=${token}`
+        });
+
+        if (response.ok) {
+            console.log('Remember token set successfully in database');
+        } else {
+            console.error('Failed to set remember token in database');
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+
+async function deleteLoginToken() {
+    try {
+        const response = await fetch('php/deleteRememberToken.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        if (response.ok) {
+            console.log('Remember token deleted successfully');
+        } else {
+            console.error('Failed to delete remember token');
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+    
 
 
 

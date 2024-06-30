@@ -1542,11 +1542,62 @@ function togglePopupDeleteUser() {
     togglePopup('deleteUserConfirmation')
 }
 
+async function toggleCookies() {
+    let cookieSwitch = document.getElementById('cookieSwitch');
+    let sliderEnabled = cookieSwitch.checked;
+
+    if (sliderEnabled) {
+        setCookie('cookieConsent', 'true', 365);
+        setCookie('cookieConsentPrefs', encodeURIComponent(JSON.stringify(['preferences', 'marketing', 'analytics'])), 365);   
+        await setLoginCookie();    
+    } else {
+        deleteCookie('cookieConsent');
+        deleteCookie('cookieConsentPrefs');
+        await deleteLoginToken();
+        deleteCookie('login_cookie');
+    }
+}
+
+function generateToken() {
+    const tokenLength = 32;
+    const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+    for (let i = 0; i < tokenLength; i++) {
+        token += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+    }
+    return token;
+}
+
+function getCookie(name) {
+    const cookieName = `${name}=`;
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+
+    for (let i = 0; i < cookieArray.length; i++) {
+        let cookie = cookieArray[i].trim();
+        if (cookie.indexOf(cookieName) === 0) {
+            return cookie.substring(cookieName.length, cookie.length);
+        }
+    }
+    return null;
+}
+
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+}
+
+function deleteCookie(name) {
+    const date = new Date('Thu, 01 Jan 1970 00:00:00 UTC');
+    document.cookie = `${name}=; expires=${date.toUTCString()}; path=/;`;
+}
+
 function backToAccountView() {
     let accountContainer = document.getElementById('accountContainer');
     accountContainer.innerHTML = userAccountView;
 }
-
 
 function changePasswort() {
     fetch('popups/changePasswordForm.php')

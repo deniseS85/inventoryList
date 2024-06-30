@@ -162,7 +162,7 @@ h6 {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.remember-me-checkbox, .type-radio{
+.remember-me-checkbox, .type-radio {
     width: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
     height: clamp(0.9375rem, 0.8929rem + 0.2232vw, 1.25rem);
     cursor: pointer;
@@ -172,6 +172,10 @@ h6 {
     -webkit-appearance: none;
     outline: none;
     background-color: var(--font-color);
+}
+
+label[for="rememberMe"] {
+    margin-top: 0 !important;
 }
 
 .forgot-container {
@@ -1749,6 +1753,10 @@ button:hover:not(.search-btn) {
     width: 0;
     height: 0;
 }
+
+.switch-cookie {
+    height: unset;
+}
   
 .slider {
     position: absolute;
@@ -1770,6 +1778,17 @@ button:hover:not(.search-btn) {
     bottom: 2px;
     background-color: white;
     transition: 0.4s;
+}
+
+.slider-cookie {
+    right: 6px;
+}
+
+.slider-cookie:before {
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    bottom: 2px;
 }
   
 input:checked + .slider {
@@ -1967,12 +1986,19 @@ span.flatpickr-weekday, .flatpickr-months .flatpickr-month, .flatpickr-current-m
     margin-left: 10px;
 }
 
-.flatpickr-yearDropdown option {
+
+/* .flatpickr-yearDropdown option {
     max-height: 22px;
     overflow-y: auto;
     background-color: var(--bg-color) !important;
     border: 1px solid var(--turquoise);
     border-radius: 10px;
+} */
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg{
+    fill: var(--turquoise) !important;
+    color: var(--turquoise) !important;
 }
 
 .flatpickr-yearDropdown:hover, .flatpickr-current-month:hover .flatpickr-monthDropdown-months:hover {
@@ -1987,5 +2013,6 @@ span.flatpickr-weekday, .flatpickr-months .flatpickr-month, .flatpickr-current-m
 .arrowDown, .arrowUp {
     display: none !important;
 }
+
 
 

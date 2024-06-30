@@ -254,12 +254,18 @@ function generateUserInfo(userData) {
     let user = userData[0];
     if (user) {
         let accountContainer = document.getElementById('accountContainer');
+        let cookieConsent = getCookie('cookieConsent');
+        let cookieConsentPrefs = getCookie('cookieConsentPrefs');
+        let cookieAccepted = cookieConsent === 'true';
+        let preferencesAccepted = cookieConsentPrefs && cookieConsentPrefs.includes('preferences');
+        let sliderEnabled = cookieAccepted && preferencesAccepted;
         userAccountView = /*html*/`
             <div class="user-content">
                 <div class="left-user-content">
                     <div>Vorname: </div>
                     <div>Email: </div>
                     <div>Mitglied seit: </div>
+                    <div>Cookie-Einstellung: </div>
                     <div class="forgot-container">
                         <a style="font-size: 16px" onclick="changePasswort()" class="forgot-link">Passwort ändern</a>
                     </div>
@@ -274,6 +280,14 @@ function generateUserInfo(userData) {
                         <img onclick="changeValueUserInfo('${user.email}', '.email', 'email')" class="edit-icon right-10" src="./assets/img/edit.png">
                     </div>
                     <div>${formatDate(user.registration_date)}</div>
+
+                    <div>
+                        <label class="switch switch-cookie">
+                        <input type="checkbox" id="cookieSwitch" ${sliderEnabled ? 'checked' : ''} onchange="toggleCookies()">
+                            <span class="slider slider-cookie round"></span>
+                        </label>
+                    </div>
+
                     <div class="forgot-container">
                         <a style="font-size: 16px" onclick="togglePopupDeleteUser()" class="forgot-link">Konto löschen</a>
                     </div>
