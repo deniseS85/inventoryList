@@ -737,6 +737,10 @@ th[data-label="Bild"] {
     .switch-item, .change-password-container {
         padding: 10px !important;
     }
+    .right-user-content .forgot-container {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
 td[data-label="Bild"] img, .table-image {
@@ -1552,7 +1556,7 @@ button:hover:not(.search-btn) {
 
 .gallery-header {
     display: flex;
-    gap: 50px;
+    gap: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
     align-items: center;
 }
 
@@ -1847,6 +1851,42 @@ input:checked + .slider:before {
     background-color: #07374a;
 }
 
+@media (max-width: 928px) {
+    .left-user-content > div, .right-user-content > div {
+        font-size: 12px;
+    }
+    .left-user-content .forgot-link, .right-user-content .forgot-link {
+        font-size: 12px !important;
+    }
+    .left-user-content div {
+        padding: 15px 0 15px 10px !important;
+    }
+    .right-user-content div {
+        padding-left: 0px !important;
+    }
+    .slider-cookie {
+        height: 24px;
+        top: -2px;
+    }
+    p {
+        font-size: 12px;
+    }
+    label, .label, .value, td {
+        font-size: 12px;
+    }
+    h4 {
+        font-size: 16px;
+    }
+    button {
+        font-size: 14px;
+        padding: 5px 10px !important;
+        border-radius: 10px !important;    
+    }
+    input {
+        font-size: 12px;
+    }
+}
+
 .left-user-content div, .right-user-content div {
     padding: 15px 20px;
 }
@@ -1927,7 +1967,6 @@ input:checked + .slider:before {
     background: var(--turquoise);
     border-radius: 15px;
 }
-
 
 /* table, th, td {
   border: 1px solid;

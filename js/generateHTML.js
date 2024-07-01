@@ -121,8 +121,13 @@ function buildRowHTML(filteredColumns, categoryID, product, tag, tagStyle, image
             classList += ' first-element';
             style += 'text-align: left; padding-left: 20px;';
         } 
-        return `<td class="${classList}" data-label="${column.label}" data-id="${item.column.columnID || ''}" style="${style}">${column.value || ''}</td>`;
-    }).join('');
+        if (column.label === 'Bild') {
+            let imageTdId = `imageColumn_${product.id}_${categoryID}`;
+            return `<td id="${imageTdId}" class="${classList}" data-label="${column.label}" data-id="${item.column.columnID || ''}" style="${style}">${column.value || ''}</td>`;
+        } else {
+            return `<td class="${classList}" data-label="${column.label}" data-id="${item.column.columnID || ''}" style="${style}">${column.value || ''}</td>`;
+        }
+        }).join('');
     return `<tr id="productRow_${product.id}" onclick="openProductDetailPopup('${categoryID}', '${product.id}', '${product.name}', '${product.amount}', '${product.price}', '${product.information}', '${tag ? tag.tag_name : ''}', '${tagStyle}', '${image ? image.url : ''}')">${rowHTML}</tr>`;
 }
 
@@ -262,10 +267,10 @@ function generateUserInfo(userData) {
         userAccountView = /*html*/`
             <div class="user-content">
                 <div class="left-user-content">
-                    <div>Vorname: </div>
-                    <div>Email: </div>
-                    <div>Mitglied seit: </div>
-                    <div>Cookie-Einstellung: </div>
+                    <div>Vorname:</div>
+                    <div>Email:</div>
+                    <div>Mitglied seit:</div>
+                    <div>Cookies:</div>
                     <div class="forgot-container">
                         <a style="font-size: 16px" onclick="changePasswort()" class="forgot-link">Passwort ändern</a>
                     </div>

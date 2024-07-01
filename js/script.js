@@ -816,6 +816,7 @@ function setInputTypeAndValidation(input, dataType, storedDate) {
             flatpickr(input, {
                 dateFormat: "d.m.Y",
                 defaultDate: storedDate ? storedDate : null,
+                disableMobile: "true",
                 locale: {
                     firstDayOfWeek: 1,
                     weekdays: {
